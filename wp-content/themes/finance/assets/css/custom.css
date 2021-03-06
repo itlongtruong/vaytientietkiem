@@ -1,0 +1,332 @@
+#header{
+  padding : 5px 0px !important;
+}
+#header .logo img {
+    max-height: 60px !important;
+}
+
+.services-2 .box{
+   padding : 15px !important;
+}
+
+.block-more{
+  padding-top: 2rem;
+  text-align: center;
+}
+
+.btn-more {
+    text-transform: uppercase;
+    font-size: 13px;
+    font-weight: 500;
+    color: #5f5b96;
+    border-radius: 0;
+    padding: 10px 24px;
+    letter-spacing: 1px;
+    border-radius: 3px;
+    display: inline-block;
+    background: #1bb1dc;
+    color: #fff;
+}
+
+.block-more a:hover{
+   color: #fff;
+   background: #413e66;
+}
+
+.portfolio-details .portfolio-details-carousel .owl-dots{
+    position: absolute !important;
+    bottom: 15px !important;
+    margin: 0 auto !important;
+    text-align: center !important;
+    width: 100% !important;
+}
+
+#why-us {
+    padding: 0px 0 30px 0;
+}
+
+#pricing .card .card-title {
+    margin-bottom: 16px;
+    color: #535074;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+#pricing .card:after{
+  background-color: transparent;
+}
+
+#pricing .card .logo{
+   padding-bottom: 10px;
+}
+
+#pricing .card .card-header{
+  padding: .75rem 0.25rem;
+}
+
+#pricing .product-2{
+  padding-top: 2rem;
+}
+
+#pricing .card{
+    padding: 20px 0;
+}
+
+#pricing .card h3{
+  font-size: 36px;
+}
+
+#pricing .card .list-group {
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+
+
+#pricing .card .panel-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    -webkit-box-shadow: 0 2px 6px rgb(33 81 72 / 10%), 0 2px 3px rgb(33 81 72 / 10%);
+    box-shadow: 0 2px 6px rgb(33 81 72 / 10%), 0 2px 3px rgb(33 81 72 / 10%);
+    background-color: #e63;
+    height: 1.25em;
+    color: #fff;
+    font-size: 1rem;
+    line-height: 1.25em;
+    z-index: 9999999;
+}
+
+#pricing .card .panel-label:after, #pricing .card .panel-label:before {
+    display: inline-block;
+    position: absolute;
+    right: 100%;
+    width: calc(.4375em + 1px);
+    content: "";
+}
+
+#pricing .card .panel-label-text {
+    display: inline-block;
+    vertical-align: top;
+    padding-right: 8px;
+    padding-left: 15px;
+    font-size: .875em;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+#pricing .card .panel-label .triangle-right {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    border-color: transparent transparent transparent #e63;
+    border-style: solid;
+    border-width: .625em 0 .625em .3125em;
+    width: 0;
+    height: 0;
+}
+
+#pricing .card .panel-label:before {
+    top: 0;
+    border-top-left-radius: .375em;
+    background-color: #e63;
+    height: calc(100% + .25em);
+}
+
+#pricing .card .panel-label:after {
+    top: 100%;
+    border-top-left-radius: 50%;
+    border-bottom-left-radius: 50%;
+    background-color: #d52;
+    height: .5em;
+}
+
+#pricing .card  .offers-tags {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 50px;
+}
+
+#pricing .card  .offers-tags__item {
+    height: 100%;
+    width: auto;
+}
+
+#team .member span {
+    font-style: italic;
+    display: block;
+    font-size: 13px;
+    color: #535074;
+}
+
+
+#news {
+    padding: 60px 0;
+}
+
+#team .member h4 {
+    font-weight: 700;
+    margin-bottom: 2px;
+    font-size: 18px;
+    color: #535074;
+}
+
+#team .member .member-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transition: 0.2s;
+    padding: 15px 0;
+    background: #fff;
+}
+
+#news .box, #news .box-image, #news .box-text {
+    transition: opacity .3s,transform .3s,background-color .3s;
+}
+#news .box {
+    width: 100%;
+    position: relative;
+    margin: 0 auto;
+}
+
+#news .box-image {
+    position: relative;
+    height: auto;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+#news .image-cover {
+    position: relative;
+    height: auto;
+    overflow: hidden;
+    padding-top: 100%;
+    background-position: 50% 50%;
+    background-size: cover;
+}
+
+#news .image-cover img, #news .has-equal-box-heights .box-image img {
+    right: 0;
+    width: 100%;
+    height: 100%;
+    bottom: 0;
+    left: 0;
+    top: 0;
+    position: absolute;
+    object-position: 50% 50%;
+    object-fit: cover;
+    font-family: 'object-fit:cover;';
+}
+
+#news .text-left {
+    text-align: left;
+}
+
+#news .box-text {
+    padding-top: .7em;
+    padding-bottom: 1.4em;
+    position: relative;
+    width: 100%;
+    font-size: .9em;
+}
+
+#news .box-text p {
+    max-height: 46px;
+    overflow: hidden;
+    color: #535074;
+}
+
+#news .box-text p {
+    margin-top: .1em;
+    margin-bottom: .1em;
+}
+
+#news .is-large {
+    font-size: 1.15em;
+    font-weight: 700;
+    color: #535074;
+    margin-bottom: 5px;
+}
+
+#news .box-list-view .box .box-image, #news .box-list-view .box .box-text, #news .box-vertical .box-image, #news .box-vertical .box-text {
+    direction: ltr;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#news .box-vertical{
+   margin-bottom: 20px;
+}
+
+#news .box-list-view .box .box-text, #news .box-vertical .box-text {
+    padding-left: 1.5em;
+    padding-right: 1.5em;
+}
+
+@font-face {
+    font-family: "fl-icons"; 
+ src: url("fonts/30a0adada561ec8493b9dfce36a805f8.eot");
+ src: url("fonts/30a0adada561ec8493b9dfce36a805f8.eot?#iefix") format("embedded-opentype"), 
+ url("fonts/30a0adada561ec8493b9dfce36a805f8.woff2") format("woff2"), 
+ url("fonts/30a0adada561ec8493b9dfce36a805f8.woff") format("woff"), 
+ url("fonts/30a0adada561ec8493b9dfce36a805f8.ttf") format("truetype"),
+ url("fonts/30a0adada561ec8493b9dfce36a805f8.svg#fl-icons") format("svg");
+}
+
+
+.star-rating {
+    text-align: left;
+    font-size: 16px;
+    display: block;
+    overflow: hidden;
+    position: relative;
+    height: 1em;
+    line-height: 1em;
+    letter-spacing: 0;
+    margin: .5em 0;
+    width: 8.06em;
+    font-family: "fl-icons"!important;
+    font-weight: 400!important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.star-rating:before {
+    content: '\e006\e006\e006\e006\e006';
+    color: #d26e4b;
+    float: left;
+    top: 0;
+    left: 20px;
+    position: absolute;
+}
+
+.star-rating span {
+    overflow: hidden;
+    float: left;
+    width: 10px;
+    height: 10px;
+    top: 0;
+    left: 20px;
+    font-family: "fl-icons"!important;
+    font-weight: 400!important;
+    position: absolute;
+    padding-top: 1.5em;
+}
+
+.star-rating span:before {
+    content: '\e005\e005\e005\e005\e005';
+    color: #d26e4b;
+    top: 0;
+    position: absolute;
+    left: 0;
+}
+
+@media (min-width: 992px) {
+  #testimonials .testimonial-item p {
+    width: unset !important;
+  }
+}
