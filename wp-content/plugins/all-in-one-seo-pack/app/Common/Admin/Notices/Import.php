@@ -12,7 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.0.0
  */
 class Import {
-
 	/**
 	 * Go through all the checks to see if we should show the notice.
 	 *

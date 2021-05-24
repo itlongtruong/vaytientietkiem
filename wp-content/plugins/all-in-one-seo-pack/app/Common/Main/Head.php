@@ -14,7 +14,6 @@ use AIOSEO\Plugin\Common\Meta;
  * @since 4.0.0
  */
 class Head {
-
 	/**
 	 * The page title.
 	 *

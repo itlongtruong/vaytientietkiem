@@ -30,6 +30,7 @@ class Access {
 		'aioseo_page_schema_settings',
 		'aioseo_page_social_settings',
 		'aioseo_local_seo_settings',
+		'aioseo_page_local_seo_settings',
 		'aioseo_about_us_page'
 	];
 
@@ -260,5 +261,16 @@ class Access {
 	 */
 	protected function canManage( $role ) {
 		return $this->isAdmin( $role );
+	}
+
+	/**
+	 * Returns Roles.
+	 *
+	 * @since 4.0.17
+	 *
+	 * @return array An array of role names.
+	 */
+	public function getRoles() {
+		return $this->roles;
 	}
 }

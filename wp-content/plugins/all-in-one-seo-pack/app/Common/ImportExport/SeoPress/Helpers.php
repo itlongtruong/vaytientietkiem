@@ -16,7 +16,6 @@ use AIOSEO\Plugin\Common\ImportExport;
  * @since 4.0.0
  */
 class Helpers extends ImportExport\Helpers {
-
 	/**
 	 * Converts the macros from SEOPress to our own smart tags.
 	 *

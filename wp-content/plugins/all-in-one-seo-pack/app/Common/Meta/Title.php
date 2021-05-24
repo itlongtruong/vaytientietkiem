@@ -97,23 +97,30 @@ class Title {
 	 * @return string               The post title.
 	 */
 	public function getPostTitle( $post, $default = false ) {
-		$post     = $post && is_object( $post ) ? $post : aioseo()->helpers->getPost( $post );
-		$metaData = aioseo()->meta->metaData->getMetaData( $post );
+		$post = $post && is_object( $post ) ? $post : aioseo()->helpers->getPost( $post );
 
-		$title = '';
+		static $posts = [];
+		if ( isset( $posts[ $post->ID ] ) ) {
+			return $posts[ $post->ID ];
+		}
+
+		$title    = '';
+		$metaData = aioseo()->meta->metaData->getMetaData( $post );
 		if ( ! empty( $metaData->title ) && ! $default ) {
 			$title = $this->prepareTitle( $metaData->title, $post->ID );
 		}
 
 		// If this post is the static home page and we have no title, let's reset to the site name.
 		if ( empty( $title ) && 'page' === get_option( 'show_on_front' ) && (int) get_option( 'page_on_front' ) === $post->ID ) {
-			return aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'name' ) );
+			$title = aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'name' ) );
 		}
 
 		if ( ! $title ) {
 			$title = $this->prepareTitle( $this->getPostTypeTitle( $post->post_type ), $post->ID, $default );
 		}
-		return $title ? $title : '';
+
+		$posts[ $post->ID ] = $title;
+		return $posts[ $post->ID ];
 	}
 
 	/**
@@ -125,12 +132,18 @@ class Title {
 	 * @return string           The title.
 	 */
 	public function getPostTypeTitle( $postType ) {
-		$options = aioseo()->options->noConflict();
-		if ( $options->searchAppearance->dynamic->postTypes->has( $postType, false ) ) {
-			return $options->{$postType}->title;
+		static $postTypeTitle = [];
+		if ( isset( $postTypeTitle[ $postType ] ) ) {
+			return $postTypeTitle[ $postType ];
 		}
 
-		return '';
+		if ( aioseo()->options->searchAppearance->dynamic->postTypes->has( $postType ) ) {
+			$title = aioseo()->options->searchAppearance->dynamic->postTypes->{$postType}->title;
+		}
+
+		$postTypeTitle[ $postType ] = empty( $title ) ? '' : $title;
+
+		return $postTypeTitle[ $postType ];
 	}
 
 	/**
@@ -143,6 +156,11 @@ class Title {
 	 * @return string           The term title.
 	 */
 	public function getTermTitle( $term, $default = false ) {
+		static $terms = [];
+		if ( isset( $terms[ $term->term_id ] ) ) {
+			return $terms[ $term->term_id ];
+		}
+
 		$title   = '';
 		$options = aioseo()->options->noConflict();
 		if ( ! $title && $options->searchAppearance->dynamic->taxonomies->has( $term->taxonomy ) ) {
@@ -150,7 +168,9 @@ class Title {
 			$newTitle = preg_replace( '/#taxonomy_title/', aioseo()->helpers->escapeRegexReplacement( $term->name ), $newTitle );
 			$title    = $this->prepareTitle( $newTitle, false, $default );
 		}
-		return $title ? $title : '';
+
+		$terms[ $term->term_id ] = $title;
+		return $terms[ $term->term_id ];
 	}
 
 	/**

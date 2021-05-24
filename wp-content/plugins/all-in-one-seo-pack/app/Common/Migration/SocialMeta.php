@@ -16,7 +16,6 @@ use AIOSEO\Plugin\Common\Models;
  * @since 4.0.0
  */
 class SocialMeta {
-
 	/**
 	 * The old V3 options.
 	 *
@@ -155,7 +154,7 @@ class SocialMeta {
 			return;
 		}
 
-		$ogMeta = maybe_unserialize( $ogMeta );
+		$ogMeta = aioseo()->helpers->maybeUnserialize( $ogMeta );
 
 		$ogTitle = '';
 		if ( ! $useHomePageMeta ) {
@@ -237,7 +236,7 @@ class SocialMeta {
 			return;
 		}
 
-		$ogMeta = maybe_unserialize( $ogMeta );
+		$ogMeta = aioseo()->helpers->maybeUnserialize( $ogMeta );
 
 		$ogDescription = '';
 		if ( ! $useHomePageMeta ) {

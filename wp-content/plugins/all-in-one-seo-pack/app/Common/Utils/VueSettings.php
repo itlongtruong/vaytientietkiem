@@ -91,14 +91,20 @@ class VueSettings {
 			'completeSeoChecklist'      => true,
 			'localBusinessInfo'         => true,
 			'localBusinessOpeningHours' => true,
+			'locationsSettings'         => true,
+			'advancedLocationsSettings' => true,
 			'robotsEditor'              => true,
 			'badBotBlocker'             => true,
 			'databaseTools'             => true,
 			'htaccessEditor'            => true,
 			'databaseToolsLogs'         => true,
-			'systemStatusInfo'          => true
+			'systemStatusInfo'          => true,
+			'addNewRedirection'         => true,
+			'redirectSettings'          => true,
+			'debug'                     => true
 		],
 		'toggledRadio'    => [
+			'locationsShowOnWebsite'        => 'widget',
 			'breadcrumbsShowOnWebsite'      => 'shortcode',
 			'breadcrumbsShowMoreSeparators' => false,
 			'searchShowMoreSeparators'      => false

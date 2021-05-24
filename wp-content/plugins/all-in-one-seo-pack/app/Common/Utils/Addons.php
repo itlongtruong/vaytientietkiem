@@ -14,6 +14,14 @@ use AIOSEO\Plugin\Common\Utils;
  * @since 4.0.0
  */
 class Addons {
+	/**
+	 * Holds our list of loaded addons.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @var array
+	 */
+	protected $loadedAddons = [];
 
 	/**
 	 * The licensing URL.
@@ -78,14 +86,13 @@ class Addons {
 		$addon = aioseo()->transients->get( 'addon_' . $sku );
 		if ( false === $addon || $flushCache ) {
 			$addon = aioseo()->helpers->sendRequest( $this->getLicensingUrl() . 'addons/', $this->getAddonPayload( $sku ) );
+			aioseo()->transients->update( 'addon_' . $sku, $addon, DAY_IN_SECONDS );
 		}
 
-		$transientTime = 10 * MINUTE_IN_SECONDS;
 		if ( ! $addon || ! empty( $addon->error ) ) {
 			$addon = $this->getDefaultAddon( $sku );
+			aioseo()->transients->update( 'addon_' . $sku, $addon, 10 * MINUTE_IN_SECONDS );
 		}
-
-		aioseo()->transients->update( 'addon_' . $sku, $addon, $transientTime );
 
 		// The API request will tell us if we can activate a plugin, but let's check if its already active.
 		$installedPlugins  = array_keys( get_plugins() );
@@ -106,7 +113,7 @@ class Addons {
 	 * @return array       A payload array.
 	 */
 	protected function getAddonPayload( $sku = 'all-in-one-seo-pack-pro' ) {
-		return [
+		$payload = [
 			'license'     => aioseo()->options->has( 'general' ) && aioseo()->options->general->has( 'licenseKey' )
 				? aioseo()->options->general->licenseKey
 				: '',
@@ -116,6 +123,12 @@ class Addons {
 			'php_version' => PHP_VERSION,
 			'wp_version'  => get_bloginfo( 'version' )
 		];
+
+		if ( defined( 'AIOSEO_INTERNAL_ADDONS' ) && AIOSEO_INTERNAL_ADDONS ) {
+			$payload['internal'] = true;
+		}
+
+		return $payload;
 	}
 
 	/**
@@ -290,6 +303,52 @@ class Addons {
 	}
 
 	/**
+	 * Load an addon into aioseo
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param string $slug
+	 * @param object $addon Addon class instance
+	 *
+	 * @return void
+	 */
+	public function loadAddon( $slug, $addon ) {
+		$this->{$slug}        = $addon;
+		$this->loadedAddons[] = $slug;
+	}
+
+	/**
+	 * Return a loaded addon
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param string $slug
+	 *
+	 * @return object|null
+	 */
+	public function getLoadedAddon( $slug ) {
+		return isset( $this->{$slug} ) ? $this->{$slug} : null;
+	}
+
+	/**
+	 * Returns loaded addons
+	 *
+	 * @since 4.1.0
+	 *
+	 * @return array
+	 */
+	public function getLoadedAddons() {
+		$loadedAddonsList = [];
+		if ( ! empty( $this->loadedAddons ) ) {
+			foreach ( $this->loadedAddons as $addonSlug ) {
+				$loadedAddonsList[ $addonSlug ] = $this->{$addonSlug};
+			}
+		}
+
+		return $loadedAddonsList;
+	}
+
+	/**
 	 * Retrieves a default addon with whatever information is needed if the API cannot be reached.
 	 *
 	 * @since 4.0.0
@@ -431,6 +490,37 @@ class Addons {
 				'learnMoreUrl'       => 'https://aioseo.com/news-sitemap',
 				'manageUrl'          => 'https://route#aioseo-sitemaps:news-sitemap',
 				'basename'           => 'aioseo-news-sitemap/aioseo-news-sitemap.php',
+				'installed'          => false,
+				'isActive'           => false,
+				'canInstall'         => false
+			],
+			[
+				'sku'                => 'aioseo-redirects',
+				'name'               => 'Redirection Manager',
+				'version'            => '1.0.0',
+				'image'              => null,
+				'icon'               => 'svg-redirect',
+				'levels'             => [
+					'agency',
+					'basic',
+					'plus',
+					'pro',
+					'elite'
+				],
+				'currentLevels'      => [
+					'basic',
+					'plus',
+					'pro',
+					'elite'
+				],
+				'requiresUpgrade'    => false,
+				'description'        => '<p>Our Redirection Manager allows you to easily create and manage redirects for your broken links to avoid confusing search engines and users, as well as losing valuable backlinks. It even automatically sends users and search engines from your old URLs to your new ones.</p>', // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+				'descriptionVersion' => 0,
+				'downloadUrl'        => '',
+				'productUrl'         => 'https://aioseo.com/redirection-manager',
+				'learnMoreUrl'       => 'https://aioseo.com/redirection-manager',
+				'manageUrl'          => 'https://route#aioseo-redirects',
+				'basename'           => 'aioseo-redirects/aioseo-redirects.php',
 				'installed'          => false,
 				'isActive'           => false,
 				'canInstall'         => false

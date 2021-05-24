@@ -97,6 +97,9 @@ class SetupWizard {
 		// Remove an action in the Gutenberg plugin ( not core Gutenberg ) which throws an error.
 		remove_action( 'admin_print_styles', 'gutenberg_block_editor_admin_print_styles' );
 
+		// If we are redirecting, clear the transient so it only happens once.
+		aioseo()->transients->delete( 'activation_redirect' );
+
 		$this->loadOnboardingWizard();
 	}
 

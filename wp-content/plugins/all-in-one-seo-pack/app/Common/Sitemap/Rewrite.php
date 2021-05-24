@@ -12,7 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.0.0
  */
 class Rewrite {
-
 	/**
 	 * Returns our sitemap rewrite rules.
 	 *

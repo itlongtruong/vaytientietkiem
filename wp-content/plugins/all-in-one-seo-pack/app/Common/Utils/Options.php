@@ -252,6 +252,7 @@ TEMPLATE
 					'nofollow'          => [ 'type' => 'boolean', 'default' => false ],
 					'noindexPaginated'  => [ 'type' => 'boolean', 'default' => true ],
 					'nofollowPaginated' => [ 'type' => 'boolean', 'default' => true ],
+					'noindexFeed'       => [ 'type' => 'boolean', 'default' => true ],
 					'noarchive'         => [ 'type' => 'boolean', 'default' => false ],
 					'noimageindex'      => [ 'type' => 'boolean', 'default' => false ],
 					'notranslate'       => [ 'type' => 'boolean', 'default' => false ],
@@ -464,6 +465,8 @@ TEMPLATE
 			$this->groupKey  = $originalGroupKey;
 			$this->subGroups = $originalSubGroups;
 		}
+
+		add_action( 'wp_loaded', [ $this, 'maybeFlushRewriteRules' ] );
 	}
 
 	/**
@@ -768,7 +771,7 @@ TEMPLATE
 	 *
 	 * @return void
 	 */
-	private function translateDefaults() {
+	protected function translateDefaults() {
 		$default = sprintf( '{"label":"%1$s","value":"default"}', __( 'default', 'all-in-one-seo-pack' ) );
 		$this->defaults['sitemap']['general']['advancedSettings']['priority']['homePage']['priority']['default']    = $default;
 		$this->defaults['sitemap']['general']['advancedSettings']['priority']['homePage']['frequency']['default']   = $default;
@@ -796,17 +799,12 @@ TEMPLATE
 	public function sanitizeAndSave( $options ) {
 		$sitemapOptions           = ! empty( $options['sitemap'] ) && ! empty( $options['sitemap']['general'] ) ? $options['sitemap']['general'] : null;
 		$oldSitemapOptions        = aioseo()->options->sitemap->general->all();
-		$deprecatedSitemapOptions = ! empty( $options['deprecated'] ) &&
-			! empty( $options['deprecated']['sitemap'] ) &&
-			! empty( $options['deprecated']['sitemap']['general'] )
+		$deprecatedSitemapOptions = ! empty( $options['deprecated']['sitemap']['general'] )
 				? $options['deprecated']['sitemap']['general']
 				: null;
 		$oldDeprecatedSitemapOptions = aioseo()->options->deprecated->sitemap->general->all();
 		$oldPhoneOption              = aioseo()->options->searchAppearance->global->schema->phone;
-		$phoneNumberOptions          = ! empty( $options['searchAppearance'] ) &&
-			! empty( $options['searchAppearance']['global'] ) &&
-			! empty( $options['searchAppearance']['global']['schema'] ) &&
-			isset( $options['searchAppearance']['global']['schema']['phone'] )
+		$phoneNumberOptions          = isset( $options['searchAppearance']['global']['schema']['phone'] )
 				? $options['searchAppearance']['global']['schema']['phone']
 				: null;
 
@@ -916,55 +914,42 @@ TEMPLATE
 			$this->options['sitemap']['rss']['postTypes']['included']['value']                = $this->sanitizeField( $options['sitemap']['rss']['postTypes']['included'], 'array' );
 		}
 
+		// Advanced options.
 		if ( ! empty( $options['advanced'] ) ) {
-			if (
-				! empty( $options['advanced']['postTypes'] ) &&
-				isset( $options['advanced']['postTypes']['included'] )
-			) {
+			if ( isset( $options['advanced']['postTypes']['included'] ) ) {
 				$this->options['advanced']['postTypes']['included']['value'] = $this->sanitizeField( $options['advanced']['postTypes']['included'], 'array' );
 			}
 
-			if (
-				! empty( $options['advanced']['taxonomies'] ) &&
-				isset( $options['advanced']['taxonomies']['included'] )
-			) {
+			if ( isset( $options['advanced']['taxonomies']['included'] ) ) {
 				$this->options['advanced']['taxonomies']['included']['value'] = $this->sanitizeField( $options['advanced']['taxonomies']['included'], 'array' );
 			}
 		}
 
+		// Tools.
 		if ( ! empty( $options['tools'] ) ) {
-			if (
-				! empty( $options['tools']['robots'] ) &&
-				isset( $options['tools']['robots']['rules'] )
-			) {
+			if ( isset( $options['tools']['robots']['rules'] ) ) {
 				$this->options['tools']['robots']['rules']['value'] = $this->sanitizeField( $options['tools']['robots']['rules'], 'array' );
 			}
 		}
 
+		// Deprecated options.
 		if ( ! empty( $options['deprecated'] ) ) {
 
-			if (
-				! empty( $options['deprecated']['webmasterTools'] ) &&
-				! empty( $options['deprecated']['webmasterTools']['googleAnalytics'] ) &&
-				isset( $options['deprecated']['webmasterTools']['googleAnalytics']['excludeUsers'] )
-			) {
+			if ( isset( $options['deprecated']['webmasterTools']['googleAnalytics']['excludeUsers'] ) ) {
 				$this->options['deprecated']['webmasterTools']['googleAnalytics']['excludeUsers']['value'] = $this->sanitizeField( $options['deprecated']['webmasterTools']['googleAnalytics']['excludeUsers'], 'array' ); // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 			}
-			if (
-				! empty( $options['deprecated']['searchAppearance'] ) &&
-				! empty( $options['deprecated']['searchAppearance']['advanced'] ) &&
-				isset( $options['deprecated']['searchAppearance']['advanced']['excludePosts'] )
-			) {
+			if ( isset( $options['deprecated']['searchAppearance']['advanced']['excludePosts'] ) ) {
 				$this->options['deprecated']['searchAppearance']['advanced']['excludePosts']['value'] = $this->sanitizeField( $options['deprecated']['searchAppearance']['advanced']['excludePosts'], 'array' ); // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 			}
 
-			if (
-				! empty( $options['deprecated']['searchAppearance'] ) &&
-				! empty( $options['deprecated']['searchAppearance']['advanced'] ) &&
-				isset( $options['deprecated']['searchAppearance']['advanced']['excludeTerms'] )
-			) {
+			if ( isset( $options['deprecated']['searchAppearance']['advanced']['excludeTerms'] ) ) {
 				$this->options['deprecated']['searchAppearance']['advanced']['excludeTerms']['value'] = $this->sanitizeField( $options['deprecated']['searchAppearance']['advanced']['excludeTerms'], 'array' ); // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 			}
+		}
+
+		// Social networks.
+		if ( isset( $options['social']['profiles']['sameUsername']['included'] ) ) {
+			$this->options['social']['profiles']['sameUsername']['included']['value'] = $this->sanitizeField( $options['social']['profiles']['sameUsername']['included'], 'array' );
 		}
 
 		// Update localized options.
@@ -1035,5 +1020,54 @@ TEMPLATE
 		}
 
 		return $options;
+	}
+
+	/**
+	 * Set a redirection URL after saving options or a slug ( 'reload' )
+	 *
+	 * @since 4.0.17
+	 *
+	 * @param  string $urlOrSlug
+	 * @return void
+	 */
+	public function setRedirection( $urlOrSlug ) {
+		$this->screenRedirection = $urlOrSlug;
+	}
+
+	/**
+	 * Get the redirection URL after saving options
+	 *
+	 * @since 4.0.17
+	 *
+	 * @return boolean|string The screen redirection URL.
+	 */
+	public function getRedirection() {
+		return $this->screenRedirection ? $this->screenRedirection : false;
+	}
+
+
+	/**
+	 * Indicate we need to flush rewrite rules on next load.
+	 *
+	 * @since 4.0.17
+	 *
+	 * @return void
+	 */
+	public function flushRewriteRules() {
+		update_option( 'aioseo_flush_rewrite_rules_flag', true );
+	}
+
+	/**
+	 * Flush rewrite rules if needed.
+	 *
+	 * @since 4.0.17
+	 *
+	 * @return void
+	 */
+	public function maybeFlushRewriteRules() {
+		if ( get_option( 'aioseo_flush_rewrite_rules_flag' ) ) {
+			flush_rewrite_rules();
+			delete_option( 'aioseo_flush_rewrite_rules_flag' );
+		}
 	}
 }

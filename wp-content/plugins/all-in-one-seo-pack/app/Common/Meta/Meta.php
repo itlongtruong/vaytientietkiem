@@ -14,7 +14,6 @@ use AIOSEO\Plugin\Common\Models;
  * @since 4.0.0
  */
 class Meta {
-
 	/**
 	 * Class constructor.
 	 *

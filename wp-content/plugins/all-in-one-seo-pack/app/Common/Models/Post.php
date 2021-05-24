@@ -212,17 +212,8 @@ class Post extends Model {
 		$thePost->reset();
 
 		// Update the post meta as well for localization.
-		$keywords = ! empty( $data['keywords'] ) ? json_decode( $data['keywords'] ) : [];
-		foreach ( $keywords as $k => $keyword ) {
-			$keywords[ $k ] = $keyword->value;
-		}
-		$keywords = implode( ',', $keywords );
-
-		$ogArticleTags = ! empty( $data['og_article_tags'] ) ? json_decode( $data['og_article_tags'] ) : [];
-		foreach ( $ogArticleTags as $k => $tag ) {
-			$ogArticleTags[ $k ] = $tag->value;
-		}
-		$ogArticleTags = implode( ',', $ogArticleTags );
+		$keywords      = ! empty( $data['keywords'] ) ? aioseo()->helpers->jsonTagsToCommaSeparatedList( $data['keywords'] ) : [];
+		$ogArticleTags = ! empty( $data['og_article_tags'] ) ? aioseo()->helpers->jsonTagsToCommaSeparatedList( $data['og_article_tags'] ) : [];
 
 		if ( ! empty( $data ) ) {
 			update_post_meta( $postId, '_aioseo_title', $data['title'] );

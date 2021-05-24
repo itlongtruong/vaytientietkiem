@@ -1,13 +1,13 @@
-=== All in One SEO ===
-Contributors: semperplugins, smub, benjaminprojas
-Tags: SEO, Google Search Console, XML Sitemap, meta description, schema, meta title, rich snippets, woocommerce seo, local seo, open graph, google news sitemap, video sitemap, robots.txt, seo audit, content analysis  
+=== All in One SEO - Best WordPress SEO Plugin - Easily Improve Your SEO Rankings ===
+Contributors: aioseo, smub, benjaminprojas
+Tags: SEO, Google Search Console, XML Sitemap, meta description, schema, meta title, rich snippets, woocommerce seo, local seo, open graph, google news sitemap, video sitemap, robots.txt, seo audit, content analysis, seo plugin, redirection
 Requires at least: 4.9
-Tested up to: 5.6.2
-Stable tag: 4.0.16
+Tested up to: 5.7.1
+Stable tag: 4.1.0.2
 License: GPLv2 or later
 Requires PHP: 5.4
 
-The original WordPress SEO plugin. Improve your WordPress SEO rankings with our comprehensive All in One SEO plugin and toolkit.
+The original WordPress SEO plugin. Improve your WordPress SEO rankings and traffic with our comprehensive SEO tools and smart SEO optimizations.
 
 == Description ==
 
@@ -81,7 +81,7 @@ AIOSEO comes with built-in smart schema makup features to help you get more traf
 
 All in One SEO is the most comprehensive WordPress SEO plugin / toolkit in the market.
 
-We offer complete support for Google Knowledge Graph and Schema.org markup for local businesses. You can add multiple busiess locations, opening hours, contact info (business email, business phone, business address, etc) and more with our Local SEO module.
+We offer complete support for Google Knowledge Graph and Schema.org markup for local businesses. You can add multiple business locations, opening hours, contact info (business email, business phone, business address, etc) and more with our Local SEO module.
 
 AIOSEO also makes WooCommerce SEO easy. With our SEO plugin, you can optimize your product pages and product categories for better SEO rankings (with just a few clicks).
 
@@ -236,6 +236,6 @@ AIOSEO is the original WordPress SEO plugin, and it's trusted by over 2 million 
 
 == Upgrade Notice ==
 
-= 4.0.16 =
+= 4.1.0.2 =
 
 This update adds major improvements and bugfixes.

@@ -244,8 +244,8 @@ class Tools {
 		switch ( $log ) {
 			case 'badBotBlockerLog':
 				aioseo()->badBotBlocker->clearLog();
+				$logSize = aioseo()->badBotBlocker->getLogSize();
 				break;
-
 		}
 
 		return new \WP_REST_Response( [

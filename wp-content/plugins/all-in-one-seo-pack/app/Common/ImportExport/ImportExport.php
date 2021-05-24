@@ -77,7 +77,7 @@ class ImportExport {
 					$sections[ $sectionLabel ][ $matches[1] ] = '';
 				}
 			} else {
-				return false;
+				continue;
 			}
 		}
 
@@ -265,7 +265,7 @@ class ImportExport {
 	 * @return mixed         The sanitized, converted option value.
 	 */
 	private function convertAndSanitize( $value ) {
-		$value = maybe_unserialize( $value );
+		$value = aioseo()->helpers->maybeUnserialize( $value );
 
 		switch ( gettype( $value ) ) {
 			case 'boolean':

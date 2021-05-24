@@ -15,7 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class BadRobots {
 
-
 	/**
 	 * Class constructor.
 	 *

@@ -14,7 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.0.0
  */
 class Sitemap {
-
 	/**
 	 * The old V3 options.
 	 *

@@ -16,7 +16,6 @@ use AIOSEO\Plugin\Common\ImportExport;
  * @since 4.0.0
  */
 class SearchAppearance {
-
 	/**
 	 * Class constructor.
 	 *

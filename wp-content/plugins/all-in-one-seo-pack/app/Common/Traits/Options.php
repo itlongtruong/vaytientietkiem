@@ -86,6 +86,15 @@ trait Options {
 	protected $defaultsMerged = [];
 
 	/**
+	 * Holds a redirect link or slug.
+	 *
+	 * @since 4.0.17
+	 *
+	 * @var string
+	 */
+	protected $screenRedirection = '';
+
+	/**
 	 * Initialize network options.
 	 *
 	 * @since 4.0.0

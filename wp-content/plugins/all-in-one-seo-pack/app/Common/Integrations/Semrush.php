@@ -1,6 +1,11 @@
 <?php
 namespace AIOSEO\Plugin\Common\Integrations;
 
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Class to integrate with the Semrush API.
  *

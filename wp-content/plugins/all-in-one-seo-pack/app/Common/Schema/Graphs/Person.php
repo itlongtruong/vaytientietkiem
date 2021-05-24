@@ -14,7 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.0.0
  */
 class Person extends Graph {
-
 	/**
 	 * Returns the graph data.
 	 *
@@ -37,15 +36,10 @@ class Person extends Graph {
 			return [];
 		}
 
-		$name = trim( sprintf( '%1$s %2$s', get_the_author_meta( 'first_name', $person ), get_the_author_meta( 'last_name', $person ) ) );
-		if ( ! $name ) {
-			$name = get_the_author_meta( 'display_name', $person );
-		}
-
 		$data = [
 			'@type' => 'Person',
 			'@id'   => trailingslashit( home_url() ) . '#person',
-			'name'  => $name
+			'name'  => get_the_author_meta( 'display_name', $person )
 		];
 
 		$avatar = $this->avatar( $person, 'personImage' );

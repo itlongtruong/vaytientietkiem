@@ -7,7 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class SeoPress {
-
 	/**
 	 * Starts the import.
 	 *

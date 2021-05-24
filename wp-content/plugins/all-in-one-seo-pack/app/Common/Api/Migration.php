@@ -15,7 +15,6 @@ use AIOSEO\Plugin\Common\Models;
  * @since 4.0.6
  */
 class Migration {
-
 	/**
 	 * Resets blank title formats and retriggers the post/term meta migration.
 	 *

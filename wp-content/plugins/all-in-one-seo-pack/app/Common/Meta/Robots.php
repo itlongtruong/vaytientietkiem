@@ -12,7 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.0.0
  */
 class Robots {
-
 	/**
 	 * The robots meta tag attributes.
 	 *
@@ -41,6 +40,7 @@ class Robots {
 	 * @since 4.0.16
 	 */
 	public function __construct() {
+		add_action( 'template_redirect', [ $this, 'noindexFeed' ] );
 		add_action( 'wp_head', [ $this, 'disableWpRobotsCore' ], -1 );
 	}
 
@@ -48,9 +48,29 @@ class Robots {
 	 * Prevents WP Core from outputting its own robots meta tag.
 	 *
 	 * @since 4.0.16
+	 *
+	 * @return void
 	 */
 	public function disableWpRobotsCore() {
 		remove_all_filters( 'wp_robots' );
+	}
+
+	/**
+	 * Noindexes RSS feed pages.
+	 *
+	 * @since 4.0.17
+	 *
+	 * @return void
+	 */
+	public function noindexFeed() {
+		if (
+			! is_feed() ||
+			( ! aioseo()->options->searchAppearance->advanced->globalRobotsMeta->default && ! aioseo()->options->searchAppearance->advanced->globalRobotsMeta->noindexFeed )
+		) {
+			return;
+		}
+
+		header( 'X-Robots-Tag: noindex, follow', true );
 	}
 
 	/**

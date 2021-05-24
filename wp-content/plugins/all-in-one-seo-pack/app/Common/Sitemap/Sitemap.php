@@ -14,7 +14,6 @@ use AIOSEO\Plugin\Common\Models;
  * @since 4.0.0
  */
 class Sitemap {
-
 	/**
 	 * Holds all active addons and their classes.
 	 *
@@ -211,7 +210,7 @@ class Sitemap {
 	 * @return string           Either the original requested URL for the sitemap or the redirect URL.
 	 */
 	public function untrailUrl( $redirect, $request ) {
-		if ( preg_match( '#(.*sitemap[0-9]?.xml|.*sitemap[0-9]?.xml.gz|.*sitemap.rss)$#i', $request ) ) {
+		if ( preg_match( '#(.*sitemap[0-9]*?.xml|.*sitemap[0-9]*?.xml.gz|.*sitemap.rss)$#i', $request ) ) {
 			return $request;
 		}
 		return $redirect;

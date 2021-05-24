@@ -216,7 +216,9 @@ class Content {
 				! empty( $entry['guid'] ) ? $entry['guid'] : ''
 			);
 
-			$location = apply_filters( 'wpml_permalink', $permalink, $translation->language_code, true );
+			$location = is_home()
+				? apply_filters( 'wpml_home_url', get_option( 'home' ) )
+				: apply_filters( 'wpml_permalink', $permalink, $translation->language_code );
 			if ( $rss ) {
 				$entry['guid'] = $location;
 				continue;
@@ -252,8 +254,12 @@ class Content {
 	 */
 	private function postArchive() {
 		$entries = [];
-		foreach ( aioseo()->sitemap->helpers->includedPostTypes() as $postType ) {
-			if ( in_array( $postType, [ 'post', 'page', 'product' ], true ) ) {
+		foreach ( aioseo()->sitemap->helpers->includedPostTypes( true ) as $postType ) {
+			if (
+				aioseo()->options->noConflict()->searchAppearance->dynamic->archives->has( $postType ) &&
+				! aioseo()->options->searchAppearance->dynamic->archives->$postType->advanced->robotsMeta->default &&
+				aioseo()->options->searchAppearance->dynamic->archives->$postType->advanced->robotsMeta->noindex
+			) {
 				continue;
 			}
 

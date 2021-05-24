@@ -62,7 +62,7 @@ class Filters extends CommonMain\Filters {
 			'proupgrade' => [
 				// Translators: This is an action link users can click to purchase a license for All in One SEO Pro.
 				'label' => __( 'Upgrade to Pro', 'all-in-one-seo-pack' ),
-				'url'   => aioseo()->helpers->utmUrl( AIOSEO_MARKETING_URL . 'lite-upgrade/', 'plugin-action-links', 'Upgrade' ),
+				'url'   => apply_filters( 'aioseo_upgrade_link', aioseo()->helpers->utmUrl( AIOSEO_MARKETING_URL . 'lite-upgrade/', 'plugin-action-links', 'Upgrade', false ) ),
 			]
 		];
 

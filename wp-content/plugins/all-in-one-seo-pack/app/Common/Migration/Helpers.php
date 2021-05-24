@@ -14,7 +14,6 @@ use AIOSEO\Plugin\Common\Models;
  * @since 4.0.0
  */
 class Helpers {
-
 	/**
 	 * Maps a list of old settings from V3 to their counterparts in V4.
 	 *

@@ -44,7 +44,6 @@ class Amp {
 			}
 
 			add_action( 'amp_post_template_head', [ aioseo()->head, 'output' ], 11 );
-			add_action( 'amp_post_template_head', [ aioseo()->social->output, 'getMeta' ], 12 );
 		}
 	}
 

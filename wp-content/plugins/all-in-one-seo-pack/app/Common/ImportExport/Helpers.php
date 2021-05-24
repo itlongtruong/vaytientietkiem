@@ -12,7 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.0.0
  */
 abstract class Helpers {
-
 	/**
 	 * Maps a list of old settings from V3 to their counterparts in V4.
 	 *

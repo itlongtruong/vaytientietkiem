@@ -134,7 +134,8 @@ class Settings {
 			'notifications' => [
 				'active'    => Models\Notification::getAllActiveNotifications(),
 				'dismissed' => Models\Notification::getAllDismissedNotifications()
-			]
+			],
+			'redirection'   => aioseo()->options->getRedirection()
 		], 200 );
 	}
 
@@ -216,14 +217,11 @@ class Settings {
 				], 400 );
 			}
 
-			$imported = false;
 			if ( ! empty( $contents['settings'] ) ) {
-				$imported = true;
 				aioseo()->options->sanitizeAndSave( $contents['settings'] );
 			}
 
 			if ( ! empty( $contents['postOptions'] ) ) {
-				$imported = true;
 				foreach ( $contents['postOptions'] as $postType => $postData ) {
 					// Posts.
 					if ( ! empty( $postData['posts'] ) ) {
@@ -235,12 +233,6 @@ class Settings {
 						}
 					}
 				}
-			}
-
-			if ( ! $imported ) {
-				return new \WP_REST_Response( [
-					'success' => false
-				], 400 );
 			}
 		}
 
@@ -324,6 +316,22 @@ class Settings {
 		foreach ( $plugins as $plugin ) {
 			aioseo()->importExport->startImport( $plugin['plugin'], $plugin['settings'] );
 		}
+
+		return new \WP_REST_Response( [
+			'success' => true
+		], 200 );
+	}
+
+	/**
+	 * Clears the AIOSEO cache.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param  \WP_REST_Request  $request The REST Request
+	 * @return \WP_REST_Response          The response.
+	 */
+	public static function clearCache() {
+		aioseo()->transients->clearCache();
 
 		return new \WP_REST_Response( [
 			'success' => true

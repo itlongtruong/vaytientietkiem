@@ -12,7 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.0.0
  */
 class File {
-
 	/**
 	 * Whether the static files have already been updated during the current request.
 	 *

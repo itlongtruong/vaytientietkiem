@@ -12,7 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.0.0
  */
 class WebSite extends Graph {
-
 	/**
 	 * Returns the graph data.
 	 *

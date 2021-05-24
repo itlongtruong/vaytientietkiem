@@ -84,6 +84,7 @@ class Meta {
 			$aioseoPost->set( $newPostMeta );
 			$aioseoPost->save();
 
+			$this->updateLocalizedPostMeta( $post->ID, $newPostMeta );
 			$this->migrateAdditionalPostMeta( $post->ID );
 		}
 
@@ -284,6 +285,41 @@ class Meta {
 	}
 
 	/**
+	 * Updates the traditional post meta table with the new data.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param  int   $postId  The post ID.
+	 * @param  array $newMeta The new meta data.
+	 * @return void
+	 */
+	protected function updateLocalizedPostMeta( $postId, $newMeta ) {
+		$localizedFields = [
+			'title',
+			'description',
+			'keywords',
+			'og_title',
+			'og_description',
+			'og_article_section',
+			'og_article_tags',
+			'twitter_title',
+			'twitter_description'
+		];
+
+		foreach ( $newMeta as $k => $v ) {
+			if ( ! in_array( $k, $localizedFields, true ) ) {
+				continue;
+			}
+
+			if ( in_array( $k, [ 'keywords', 'og_article_tags' ], true ) ) {
+				$v = ! empty( $v ) ? aioseo()->helpers->jsonTagsToCommaSeparatedList( $v ) : '';
+			}
+
+			update_post_meta( $postId, "_aioseo_{$k}", $v );
+		}
+	}
+
+	/**
 	 * Migrates additional post meta data.
 	 *
 	 * @since 4.0.2
@@ -304,7 +340,7 @@ class Meta {
 	 * @return array $meta   The mapped meta.
 	 */
 	public function convertOpenGraphMeta( $ogMeta ) {
-		$ogMeta = maybe_unserialize( $ogMeta );
+		$ogMeta = aioseo()->helpers->maybeUnserialize( $ogMeta );
 
 		if ( ! is_array( $ogMeta ) ) {
 			return [];

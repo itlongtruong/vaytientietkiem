@@ -12,7 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Handles the migration from V3 to V4.
  */
 class Migration {
-
 	/**
 	 * The old V3 options.
 	 *

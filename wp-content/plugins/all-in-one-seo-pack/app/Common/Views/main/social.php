@@ -10,18 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
-// phpcs:disable Generic.WhiteSpace.ScopeIndent.Incorrect
-// phpcs:disable Generic.WhiteSpace.ScopeIndent.IncorrectExact
+// phpcs:disable Generic.WhiteSpace.ScopeIndent
 
 // Set context for meta class to social meta.
-$socialMeta = aioseo()->social->output->getMeta();
-if ( ! $socialMeta || ! count( $socialMeta ) ) {
-	return;
-}
-?>
-<?php
-foreach ( $socialMeta as $key => $meta ) :
+$facebookMeta = aioseo()->social->output->getFacebookMeta();
+foreach ( $facebookMeta as $key => $meta ) :
+	// Each article tag needs to be output in a separate meta tag so we cast and loop over each key.
 	if ( ! is_array( $meta ) ) {
 		$meta = [ $meta ];
 	}
@@ -30,4 +24,11 @@ foreach ( $socialMeta as $key => $meta ) :
 		<meta property="<?php echo esc_attr( $key ); ?>" content="<?php echo esc_attr( $m ); ?>" />
 <?php
 	endforeach;
+endforeach;
+
+$twitterMeta = aioseo()->social->output->getTwitterMeta();
+foreach ( $twitterMeta as $key => $meta ) :
+?>
+		<meta name="<?php echo esc_attr( $key ); ?>" content="<?php echo esc_attr( $meta ); ?>" />
+<?php
 endforeach;

@@ -16,7 +16,6 @@ use AIOSEO\Plugin\Common\Models;
  * @since 4.0.0
  */
 class GeneralSettings {
-
 	/**
 	 * The old V3 options.
 	 *

@@ -12,7 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.0.0
  */
 class Schema {
-
 	/**
 	 * The included graphs.
 	 *
@@ -83,12 +82,18 @@ class Schema {
 		$graphs = apply_filters( 'aioseo_schema_graphs', array_unique( array_filter( $this->graphs ) ) );
 		foreach ( $graphs as $graph ) {
 			if ( class_exists( "\AIOSEO\Plugin\Common\Schema\Graphs\\$graph" ) ) {
-				$namespace          = "\AIOSEO\Plugin\Common\Schema\Graphs\\$graph";
+				$namespace = "\AIOSEO\Plugin\Common\Schema\Graphs\\$graph";
+
+				//if graph is actually a fully qualified class name
+				if ( class_exists( $graph ) ) {
+					$namespace = $graph;
+				}
+
 				$schema['@graph'][] = array_filter( ( new $namespace )->get() );
 			}
 		}
 
-		$schema['@graph'] = $this->cleanData( $schema['@graph'] );
+		$schema['@graph'] = array_values( $this->cleanData( $schema['@graph'] ) );
 
 		return isset( $_GET['aioseo-dev'] ) ? wp_json_encode( $schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) : wp_json_encode( $schema );
 	}

@@ -12,7 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.0.0
  */
 abstract class Importer {
-
 	/**
 	 * Starts the import.
 	 *

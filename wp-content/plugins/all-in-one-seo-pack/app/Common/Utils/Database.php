@@ -273,13 +273,8 @@ class Database {
 	 * @return boolean        Whether or not the table exists.
 	 */
 	public function tableExists( $table ) {
-		$tables = $this->getInstalledTables();
-
-		if ( ! in_array( $this->prefix . $table, $tables, true ) ) {
-			return false;
-		}
-
-		return true;
+		$results = $this->db->get_results( 'SHOW TABLES LIKE "' . $this->prefix . $table . '"' );
+		return ! ( empty( $results ) );
 	}
 
 	/**
@@ -302,6 +297,29 @@ class Database {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Gets the size of a table in bytes.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param  string  $table The table to check.
+	 * @return integer        The size of the table in bytes.
+	 */
+	public function getTableSize( $table ) {
+		$this->db->query( 'ANALYZE TABLE ' . $this->prefix . $table );
+		$results = $this->db->get_results( '
+			SELECT
+				TABLE_NAME AS `table`,
+				ROUND(SUM(DATA_LENGTH + INDEX_LENGTH)) AS `size`
+			FROM information_schema.TABLES
+			WHERE TABLE_SCHEMA = "' . $this->db->dbname . '"
+			AND TABLE_NAME = "' . $this->prefix . $table . '"
+			ORDER BY (DATA_LENGTH + INDEX_LENGTH) DESC;
+		' );
+
+		return empty( $results ) ? 0 : $results[0]->size;
 	}
 
 	/**
@@ -927,6 +945,22 @@ class Database {
 	}
 
 	/**
+	 * Inject a count select statement and return the result.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @param  string $countColumn The column to count with. Defaults to '*' all.
+	 * @return void                The count total.
+	 */
+	public function count( $countColumn = '*' ) {
+		$results = $this->select( 'count(' . $countColumn . ') as count' )
+			->run()
+			->result();
+
+		return 1 === $this->numRows() ? (int) $results[0]->count : $this->numRows();
+	}
+
+	/**
 	 * Returns the query results based on the output.
 	 *
 	 * @since 4.0.0
@@ -960,18 +994,19 @@ class Database {
 	 * @param string  $index The index if necessary.
 	 * @return array         An array of class models.
 	 */
-	public function models( $class, $id = null, $index = null ) {
+	public function models( $class, $id = null, $toJson = false ) {
 		if ( empty( $this->models ) ) {
-			$i = 0;
-			$this->models = [];
+			$i      = 0;
+			$models = [];
 			foreach ( $this->result() as $row ) {
-				$var = ( null === $id ) ? $row : $row[ $id ];
-				// $ndx   = ( null === $index ) ? $i : $row[ $index ];
+				$var   = ( null === $id ) ? $row : $row[ $id ];
 				$class = new $class( $var );
 				// Lets add the class to the array using the class ID.
-				$this->models[ $class->id ] = $class;
+				$models[ $class->id ] = $toJson ? $class->jsonSerialize() : $class;
 				$i++;
 			}
+
+			$this->models = $models;
 		}
 
 		return $this->models;
@@ -1256,5 +1291,16 @@ class Database {
 		} else {
 			return $this->$what;
 		}
+	}
+
+	/**
+	 * In order to not have a conflict, we need to return a clone.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @return Options The cloned Options object.
+	 */
+	public function noConflict() {
+		return clone $this;
 	}
 }

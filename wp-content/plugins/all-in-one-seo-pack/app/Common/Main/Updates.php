@@ -12,7 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.0.0
  */
 class Updates {
-
 	/**
 	 * Class constructor.
 	 *
@@ -82,6 +81,12 @@ class Updates {
 		if ( version_compare( $lastActiveVersion, '4.0.13', '<' ) ) {
 			$this->removeDuplicateRecords();
 		}
+
+		if ( version_compare( $lastActiveVersion, '4.0.17', '<' ) ) {
+			$this->removeLocationColumn();
+		}
+
+		do_action( 'aioseo_run_updates', $lastActiveVersion );
 	}
 
 	/**
@@ -199,7 +204,6 @@ class Updates {
 					videos longtext DEFAULT NULL,
 					video_thumbnail text DEFAULT NULL,
 					video_scan_date datetime DEFAULT NULL,
-					location text DEFAULT NULL,
 					local_seo longtext DEFAULT NULL,
 					created datetime NOT NULL,
 					updated datetime NOT NULL,
@@ -306,6 +310,23 @@ class Updates {
 			aioseo()->db->delete( 'aioseo_posts' )
 				->whereRaw( "( id > $firstRecordId AND post_id = $postId )" )
 				->run();
+		}
+	}
+
+	/**
+	 * Removes the location column.
+	 *
+	 * @since 4.0.17
+	 *
+	 * @return void
+	 */
+	public function removeLocationColumn() {
+		if ( aioseo()->db->columnExists( 'aioseo_posts', 'location' ) ) {
+			$tableName = aioseo()->db->db->prefix . 'aioseo_posts';
+			aioseo()->db->execute(
+				"ALTER TABLE {$tableName}
+				DROP location"
+			);
 		}
 	}
 }

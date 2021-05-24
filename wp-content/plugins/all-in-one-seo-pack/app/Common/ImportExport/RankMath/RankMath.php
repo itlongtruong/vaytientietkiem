@@ -9,7 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 use AIOSEO\Plugin\Common\ImportExport;
 
 class RankMath extends ImportExport\Importer {
-
 	/**
 	 * A list of plugins to look for to import.
 	 *

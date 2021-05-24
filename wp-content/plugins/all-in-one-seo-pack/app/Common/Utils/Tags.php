@@ -879,7 +879,12 @@ class Tags {
 					$excerpt = '';
 				}
 
-				return $excerpt;
+				if ( $excerpt || ! is_admin() ) {
+					return $excerpt;
+				}
+
+				// Fall through to post content if we're in the admin.
+				// This is needed since get_the_excerpt doesn't generate an excerpt from the post content outside of the loop.
 			case 'post_content':
 				return empty( $postId ) ? ( $sampleData ? __( 'An example of content from your page/post.', 'all-in-one-seo-pack' ) : '' ) : aioseo()->helpers->getContent( $post );
 			case 'category':

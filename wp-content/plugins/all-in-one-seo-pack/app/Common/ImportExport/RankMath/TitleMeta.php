@@ -17,7 +17,6 @@ use AIOSEO\Plugin\Common\Models;
  * @since 4.0.0
  */
 class TitleMeta extends ImportExport\SearchAppearance {
-
 	/**
 	 * Our robot meta settings.
 	 *
