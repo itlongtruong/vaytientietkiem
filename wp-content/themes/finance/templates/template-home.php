@@ -15,14 +15,14 @@ get_header();
     <div class="container d-flex h-100">
       <div class="row justify-content-center align-self-center" data-aos="fade-up">
         <div class="col-md-6 intro-info order-md-first order-last" data-aos="zoom-in" data-aos-delay="100">
-          <h2>Vay tiền online<br><span>Giải pháp kinh doanh</span> của bạn</h2>
+          <h2>Vay Tiền Online<br><span>Sự lựa chọn thông minh</span> của bạn</h2>
           <div>
-            <a href="#about" class="btn-get-started scrollto">Đăng ký tư vấn</a>
+            <a href="#about" class="btn-get-started scrollto">Đăng ký tư vấn ngay</a>
           </div>
         </div>
 
         <div class="col-md-6 intro-img order-md-last order-first" data-aos="zoom-out" data-aos-delay="200">
-          <img src="assets/img/intro-img.svg" alt="" class="img-fluid">
+          <img src="<?php echo get_template_directory_uri();?>/assets/img/intro-img.svg" alt="" class="img-fluid">
         </div>
       </div>
 
@@ -588,11 +588,6 @@ get_header();
 
         </div>
     </section>
-
-
-
-
-
     <!-- ======= Testimonials Section ======= -->
     <section id="testimonials" class="testimonials">
       <div class="container" data-aos="zoom-in">

@@ -57,7 +57,7 @@
 
       <!-- <h1 class="logo mr-auto"><a href="index.html">Rapid</a></h1> -->
       <!-- Uncomment below if you prefer to use an image logo -->
-       <a href="index.html" class="logo mr-auto"><img src="<?php echo get_template_directory_uri();?>/assets/img/logo.png" alt="" class="img-fluid"></a>
+       <a href="<?php echo home_url(); ?>/" class="logo mr-auto"><img src="<?php echo get_template_directory_uri();?>/assets/img/logo.png" alt="" class="img-fluid"></a>
 
       <nav class="main-nav d-none d-lg-block">
         <ul>
