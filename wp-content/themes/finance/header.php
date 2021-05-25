@@ -26,7 +26,8 @@
 
   	<!-- Vendor CSS Files -->
   	<link href="<?php echo get_template_directory_uri();?>/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  	<link href="<?php echo get_template_directory_uri();?>/assets/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<link href="<?php echo get_template_directory_uri();?>/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+	<link href="<?php echo get_template_directory_uri();?>/assets/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet">
   	<link href="<?php echo get_template_directory_uri();?>/assets/vendor/ionicons/css/ionicons.min.css" rel="stylesheet">
   	<link href="<?php echo get_template_directory_uri();?>/assets/vendor/venobox/venobox.css" rel="stylesheet">
   	<link href="<?php echo get_template_directory_uri();?>/assets/vendor/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">

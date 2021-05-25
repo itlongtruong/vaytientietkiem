@@ -18,10 +18,10 @@ get_header();
       <div class="container">
 
         <ol>
-          <li><a href="index.html">Home</a></li>
-          <li>Inner Page</li>
+          <li><a href="index.html">Trang Chủ</a></li>
+          <li>Giới Thiệu</li>
         </ol>
-        <h2>Inner Page</h2>
+        <h2>Giới Thiệu</h2>
 
       </div>
     </section><!-- End Breadcrumbs -->
@@ -29,7 +29,7 @@ get_header();
     <section class="inner-page pt-4">
       <div class="container">
         <p>
-          Example inner page template
+          Giới Thiệu
         </p>
       </div>
     </section>
