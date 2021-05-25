@@ -1,6 +1,6 @@
 <?php
 /**
- * Template Name: Introduce Template
+ * Template Name: Blog Template
  * Template Post Type: post, page
  *
  * @package WordPress
