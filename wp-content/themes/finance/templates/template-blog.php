@@ -21,8 +21,7 @@ get_header();
           <li><a href="index.html">Trang Chủ</a></li>
           <li>Blog</li>
         </ol>
-        <h2>Blog</h2>
-
+    
       </div>
     </section><!-- End Breadcrumbs -->
 
@@ -41,7 +40,7 @@ get_header();
               </div>
 
               <h2 class="entry-title">
-                <a href="blog-single.html">Dolorum optio tempore voluptas dignissimos cumque fuga qui quibusdam quia</a>
+                <a href="<?php echo home_url(); ?>/blog-single">Dolorum optio tempore voluptas dignissimos cumque fuga qui quibusdam quia</a>
               </h2>
 
               <div class="entry-meta">
@@ -58,7 +57,7 @@ get_header();
                   Et eveniet enim. Qui velit est ea dolorem doloremque deleniti aperiam unde soluta. Est cum et quod quos aut ut et sit sunt. Voluptate porro consequatur assumenda perferendis dolore.
                 </p>
                 <div class="read-more">
-                  <a href="blog-single.html">Read More</a>
+                  <a href="<?php echo home_url(); ?>/blog-single">Read More</a>
                 </div>
               </div>
 
@@ -71,7 +70,7 @@ get_header();
               </div>
 
               <h2 class="entry-title">
-                <a href="blog-single.html">Nisi magni odit consequatur autem nulla dolorem</a>
+                <a href="<?php echo home_url(); ?>/blog-single">Nisi magni odit consequatur autem nulla dolorem</a>
               </h2>
 
               <div class="entry-meta">
@@ -88,7 +87,7 @@ get_header();
                   Ad impedit qui officiis est in non aliquid veniam laborum. Id ipsum qui aut. Sit aliquam et quia molestias laboriosam. Tempora nam odit omnis eum corrupti qui aliquid excepturi molestiae. Facilis et sint quos sed voluptas. Maxime sed tempore enim omnis non alias odio quos distinctio.
                 </p>
                 <div class="read-more">
-                  <a href="blog-single.html">Read More</a>
+                  <a href="<?php echo home_url(); ?>/blog-single">Read More</a>
                 </div>
               </div>
 
@@ -101,7 +100,7 @@ get_header();
               </div>
 
               <h2 class="entry-title">
-                <a href="blog-single.html">Possimus soluta ut id suscipit ea ut. In quo quia et soluta libero sit sint.</a>
+                <a href="<?php echo home_url(); ?>/blog-single">Possimus soluta ut id suscipit ea ut. In quo quia et soluta libero sit sint.</a>
               </h2>
 
               <div class="entry-meta">
@@ -118,7 +117,7 @@ get_header();
                   Doloremque est saepe laborum aut. Ipsa cupiditate ex harum at recusandae nesciunt. Ut dolores velit.
                 </p>
                 <div class="read-more">
-                  <a href="blog-single.html">Read More</a>
+                  <a href="<?php echo home_url(); ?>/blog-single">Read More</a>
                 </div>
               </div>
 
@@ -131,7 +130,7 @@ get_header();
               </div>
 
               <h2 class="entry-title">
-                <a href="blog-single.html">Non rem rerum nam cum quo minus. Dolor distinctio deleniti explicabo eius exercitationem.</a>
+                <a href="<?php echo home_url(); ?>/blog-single">Non rem rerum nam cum quo minus. Dolor distinctio deleniti explicabo eius exercitationem.</a>
               </h2>
 
               <div class="entry-meta">
@@ -148,7 +147,7 @@ get_header();
                   Quia sed sunt. Ea asperiores expedita et et delectus voluptates rerum. Id saepe ut itaque quod qui voluptas nobis porro rerum. Quam quia nesciunt qui aut est non omnis. Inventore occaecati et quaerat magni itaque nam voluptas. Voluptatem ducimus sint id earum ut nesciunt sed corrupti nemo.
                 </p>
                 <div class="read-more">
-                  <a href="blog-single.html">Read More</a>
+                  <a href="<?php echo home_url(); ?>/blog-single">Read More</a>
                 </div>
               </div>
 
@@ -192,31 +191,31 @@ get_header();
               <div class="sidebar-item recent-posts">
                 <div class="post-item clearfix">
                   <img src="<?php echo get_template_directory_uri();?>/assets/img/news/blog-recent-1.jpg" alt="">
-                  <h4><a href="blog-single.html">Nihil blanditiis at in nihil autem</a></h4>
+                  <h4><a href="<?php echo home_url(); ?>/blog-single">Nihil blanditiis at in nihil autem</a></h4>
                   <time datetime="2020-01-01">Jan 1, 2020</time>
                 </div>
 
                 <div class="post-item clearfix">
                   <img src="<?php echo get_template_directory_uri();?>/assets/img/news/blog-recent-1.jpg" alt="">
-                  <h4><a href="blog-single.html">Quidem autem et impedit</a></h4>
+                  <h4><a href="<?php echo home_url(); ?>/blog-single">Quidem autem et impedit</a></h4>
                   <time datetime="2020-01-01">Jan 1, 2020</time>
                 </div>
 
                 <div class="post-item clearfix">
                   <img src="<?php echo get_template_directory_uri();?>/assets/img/news/blog-recent-1.jpg" alt="">
-                  <h4><a href="blog-single.html">Id quia et et ut maxime similique occaecati ut</a></h4>
+                  <h4><a href="<?php echo home_url(); ?>/blog-single">Id quia et et ut maxime similique occaecati ut</a></h4>
                   <time datetime="2020-01-01">Jan 1, 2020</time>
                 </div>
 
                 <div class="post-item clearfix">
                   <img src="<?php echo get_template_directory_uri();?>/assets/img/news/blog-recent-1.jpg" alt="">
-                  <h4><a href="blog-single.html">Laborum corporis quo dara net para</a></h4>
+                  <h4><a href="<?php echo home_url(); ?>/blog-single">Laborum corporis quo dara net para</a></h4>
                   <time datetime="2020-01-01">Jan 1, 2020</time>
                 </div>
 
                 <div class="post-item clearfix">
                   <img src="<?php echo get_template_directory_uri();?>/assets/img/news/blog-recent-1.jpg" alt="">
-                  <h4><a href="blog-single.html">Et dolores corrupti quae illo quod dolor</a></h4>
+                  <h4><a href="<?php echo home_url(); ?>/blog-single">Et dolores corrupti quae illo quod dolor</a></h4>
                   <time datetime="2020-01-01">Jan 1, 2020</time>
                 </div>
 

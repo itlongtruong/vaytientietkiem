@@ -1,6 +1,6 @@
 <?php
 /**
- * Template Name: Fast-loan Template
+ * Template Name: Pawn Template
  * Template Post Type: post, page
  *
  * @package WordPress
@@ -17,10 +17,9 @@ get_header();
 
         <ol>
           <li><a href="index.html">Trang Chủ</a></li>
-          <li>Vay Tiền Nhanh</li>
+          <li>Cầm Đồ Online</li>
         </ol>
-        <h2>Vay Tiền Nhanh</h2>
-
+  
       </div>
       
     </section><!-- End Breadcrumbs -->
@@ -32,9 +31,10 @@ get_header();
       <div class="container" data-aos="fade-up">
 
         <header class="section-header">
-          <h3>So sánh khoản vay online từ các đối tác uy tín tại VayTienOnline</h3>          
+          <h3>Các Dịch Vụ Cầm Đồ Online</h3>          
         </header>
 
+    
         <div class="row flex-items-xs-middle flex-items-xs-center">
 
           <!-- Basic Plan  -->
@@ -44,25 +44,25 @@ get_header();
               	<div class="panel-label"><span class="panel-label-text">TOP #1 tốt nhất</span><br><span class="triangle-right"></span></div>
               	<div class="offers-tags"><img class="offers-tags__item" height="20" src="<?php echo get_template_directory_uri();?>/assets/img/new-2.png"></div>
                 <div class="logo">
-                   <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/doctordong.png" class="testimonial-img" alt="">
+                   <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/f88.png" class="testimonial-img" alt="">
                 </div>
                 <h4 class="card-title">
-                  Vay tiêu dùng tín chấp VIB
+                Cầm đồ online F88
                 </h4>
-                <p class="gift"><i aria-hidden="true" class="fa fa-gift"></i> <span style="font-size: 85%;"> 0% lãi suất đến 30 ngày cho khoản vay đầu</span></p>
+                <p class="gift"><i aria-hidden="true" class="fa fa-gift"></i> <span style="font-size: 85%;"> Hệ thống F88 trải rộng khắp tỉnh thành VN</span></p>
               </div>
               <div class="card-block">
                 <h3>
-                	10<span class="currency">triệu</span><span class="period">lãi suất</span>
-                	20<span class="currency">%</span><span class="period">/năm</span>
+                1<span class="currency">tỉ</span><span class="period">lãi suất</span>
+                	1.1<span class="currency">%</span><span class="period">/tháng</span>
                 </h3>
                 <ul class="list-group">
-                  <li class="list-group-item">Độ tuổi từ 20 – 60</li>
-                  <li class="list-group-item">Thời gian vay tối đa 30 ngày</li>
-                  <li class="list-group-item">Chỉ cần CMND, giải ngân trong 5 phút</li>
+                  <li class="list-group-item">Độ tuổi từ 18 trở nên</li>
+                  <li class="list-group-item">Không thời hạn vay tối thiểu</li>
+                  <li class="list-group-item">Thủ tục đơn giản, giải ngân nhanh chóng</li>
                   <li class="list-group-item"><a href="#">Xem thêm</a></li>
                 </ul>
-                <a href="#" class="btn">Đăng ký vay ngay</a>
+                <a href="#" class="btn">Đăng ký cầm ngay</a>
               </div>
             </div>
           </div>
@@ -74,7 +74,7 @@ get_header();
               	<div class="panel-label"><span class="panel-label-text">TOP #2 tốt nhất</span><br><span class="triangle-right"></span></div>
               	<div class="offers-tags"><img class="offers-tags__item" height="20" src="<?php echo get_template_directory_uri();?>/assets/img/new-2.png"></div>
                 <div class="logo">
-                   <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/moneyveo.png" class="testimonial-img" alt="">
+                   <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/tima.png" class="testimonial-img" alt="">
                 </div>
                 <h4 class="card-title">
                   Vay tiêu dùng tín chấp TPBank
@@ -159,7 +159,7 @@ get_header();
             <div class="card">
               <div class="card-header">
                 <div class="logo">
-                   <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/moneycat.png" class="testimonial-img" alt="">
+                   <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/f88.png" class="testimonial-img" alt="">
                 </div>
                 <h4 class="card-title">
                   Vay tiêu dùng tín chấp TPBank
@@ -187,7 +187,7 @@ get_header();
             <div class="card">
               <div class="card-header">
               	<div class="logo">
-                   <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/tamo.png" class="testimonial-img" alt="">
+                   <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/tima.png" class="testimonial-img" alt="">
                 </div>
                 <h4 class="card-title">
                   OnCredit &#8211; Vay tiền nhanh online 24/7
@@ -221,64 +221,11 @@ get_header();
 
     </section><!-- End Pricing Section -->
 
-      <!-- ======= Services Section ======= -->
-      <section id="services" class="services services-2">
-      <div class="container" data-aos="fade-up">
-
-        <header class="section-header">
-          <h3>Cách thanh toán khoản vay</h3>
-          <p style="width: 80%">Thanh toán khoản vay cho các đối tác <span style='font-size: 110%; color: #50b848;'> VayTienOnline </span> vô cùng dễ dàng thông qua các kênh dưới đây</p>
-        </header>
-
-        <div class="row">
-
-          <div class="col-md-6 col-lg-3 wow bounceInUp" data-aos="zoom-in" data-aos-delay="100">
-            <div class="box">
-            <div class="icon">
-            <img  src="<?php echo get_template_directory_uri();?>/assets/img/icon/Mobile-Banking.png" style="width:60px">
-             </div>
-              <h4 class="title"><a href="javascript:void(0)">Internet banking/mobile banking</a></h4>
-			        <p>Quý khách có thể sử dụng internet banking/mobile banking của bất kỳ ngân hàng nào để thanh toán.</p>              
-            </div>
-          </div>
-
-          <div class="col-md-6 col-lg-3 wow bounceInUp" data-aos="zoom-in" data-aos-delay="100">
-            <div class="box">
-            <div class="icon">
-            <img  src="<?php echo get_template_directory_uri();?>/assets/img/icon/vi-dien-tu.png" style="width:60px">
-             </div>
-              <h4 class="title"><a href="javascript:void(0)">Thanh toán qua ví điện tử</a></h4>
-			        <p>Thanh toán thông qua ví điện tử đối với một số công ty có tích hợp cổng thanh toán điện tử như MOMO, Zalo ,Payoo, Vnpay&#8230;</p>              
-            </div>
-          </div>
-
-          <div class="col-md-6 col-lg-3 wow bounceInUp" data-aos="zoom-in" data-aos-delay="100">
-            <div class="box">
-            <div class="icon">
-            <img  src="<?php echo get_template_directory_uri();?>/assets/img/icon/thanh-toan-bang-tai-khoan-ao.png" style="width:60px">
-             </div>
-              <h4 class="title"><a href="javascript:void(0)">Thanh toán bằng tài khoản ảo</a></h4>
-			        <p>Đăng nhập vào hồ sơ của bạn, chọn số tiền thanh toán, chọn hình thức thanh toán phù hợp và tiến hành thanh toán.</p>              
-            </div>
-          </div>
-
-          <div class="col-md-6 col-lg-3 wow bounceInUp" data-aos="zoom-in" data-aos-delay="100">
-            <div class="box">
-            <div class="icon">
-            <img  src="<?php echo get_template_directory_uri();?>/assets/img/icon/ngan-hang.png" style="width:60px">
-             </div>
-              <h4 class="title"><a href="javascript:void(0)">Thanh toán tiền mặt tại ngân hàng</a></h4>
-			        <p>Quý khách có thể thanh toán những khoản vay  cho các đối tác tại ngân hàng theo số tài khoản thụ hưởng của bên cho vay</p>              
-            </div>
-          </div>
-        </div>
-      </div>
-    </section><!-- End Services Section -->
 
     <section id="team" class="team">
       <div class="container" data-aos="fade-up">
         <header class="section-header">
-          <h3>Hướng dẫn vay tiền nhanh online</h3>
+          <h3>Hướng dẫn cầm đồ online</h3>
         </header>
 
         <div class="row">
@@ -289,7 +236,7 @@ get_header();
 	              <img src="<?php echo get_template_directory_uri();?>/assets/img/news/1.png" width="225" height="179"  class="img-fluid" alt="">
 	              <div class="member-info">
 	                <div class="member-info-content">
-	                  <h4>Tiền Ơi – Hướng dẫn vay 10 triệu tại Tienoi.com.vn chỉ cần CMND</h4>
+	                  <h4>Cầm xe ô tô chính chủ được vay tối đa bao nhiêu?</h4>
 	                </div>
 	              </div>
               </a>
@@ -302,7 +249,7 @@ get_header();
 	              <img src="<?php echo get_template_directory_uri();?>/assets/img/news/3.jpg" width="225" height="179" alt="">
 	              <div class="member-info">
 	                <div class="member-info-content">
-	                  <h4>Takomo – Vay 10 triệu online 0% lãi suất bằng CMND</h4>                  
+	                  <h4>Top #4 Dịch vụ cầm ô tô TPHCM uy tín, an toàn</h4>                  
 	                </div>
 	              </div>
               </a>
@@ -315,7 +262,7 @@ get_header();
 	              <img src="<?php echo get_template_directory_uri();?>/assets/img/news/vay-online-2-trieu.jpg" width="225" height="179"  alt="">
 	              <div class="member-info">
 	                <div class="member-info-content">
-	                  <h4>MoneyCat – vay tiền nhanh online tới 10 triệu 0% lãi suất chỉ với CMND</h4>                 
+	                  <h4>TOP #5 Cầm đồ điện thoại Hà Nội an toàn, nhanh chóng</h4>                 
 	                </div>
 	              </div>
 	           </a>   
@@ -328,7 +275,7 @@ get_header();
 	              <img src="<?php echo get_template_directory_uri();?>/assets/img/news/no-nan-chong-chat.jpg" width="225" height="179"  alt="">
 	              <div class="member-info">
 	                <div class="member-info-content">
-	                  <h4>ATM Online : Vay online 3-10 triệu chỉ cần CMND, nhận tiền trong ngày</h4>                 
+	                  <h4>TOP #10 Cầm đồ điện thoại Đà Nẵng an toàn, nhanh chóng</h4>                 
 	                </div>
 	              </div>
 	           </a>   
@@ -345,30 +292,31 @@ get_header();
 
       </div>
     </section>
+     
     
     <!-- ======= F.A.Q Section ======= -->
     <section id="faq" class="faq">
       <div class="container" data-aos="fade-up">
         <header class="section-header">
           <h3>Câu hỏi thường gặp</h3>
-          <p>Các thắc mắc thường gặp khi vay tiền online bằng CMND</p>
+          <p>Các thắc mắc thường gặp khi cầm đồ online</p>
         </header>
 
         <ul id="faq-list" data-aos="fade-up" data-aos-delay="100">
           <li>
-            <a data-toggle="collapse" class="collapsed" href="#faq1">Vay tiền nhanh online là gì? <i class="ion-android-remove"></i></a>
+            <a data-toggle="collapse" class="collapsed" href="#faq1">Cầm đồ online là gì? <i class="ion-android-remove"></i></a>
             <div id="faq1" class="collapse" data-parent="#faq-list">
               <p>
-              Vay tiền online hay vay tiền trực tuyến là hình thức vay tín chấp chỉ cần CMND/ thẻ CCCD, số điện thoại, số tài khoản ngân hàng với thời gian giải ngân nhanh trong vòng 5 phút tới 24 giờ.
+              Cầm đồ (cầm cố) là hình thức cho vay tiền có tài sản đảm bảo như ô tô, xe máy, điện thoại, laptop, máy ảnh, sim số đẹp, và nhiều tài sản có giá trị khác.
               </p>
             </div>
           </li>
 
           <li>
-            <a data-toggle="collapse" href="#faq2" class="collapsed">Vay tiền nhanh online có lừa đảo không?<i class="ion-android-remove"></i></a>
+            <a data-toggle="collapse" href="#faq2" class="collapsed">Cầm đồ online có lừa đảo không?<i class="ion-android-remove"></i></a>
             <div id="faq2" class="collapse" data-parent="#faq-list">
               <p>
-              Các trang web/ ứng dụng (app) vay tiền nhanh online được giới thiệu trên VayTienOnline được triển khai bởi các ngân hàng hay các công ty tài chính chính thống, có giấy phép ĐKKD.
+              Các trang web/ ứng dụng (app) cầm đồ online được giới thiệu trên VayTienOnline được triển khai bởi các ngân hàng hay các công ty tài chính chính thống, có giấy phép ĐKKD.
               </p>
             </div>
           </li>

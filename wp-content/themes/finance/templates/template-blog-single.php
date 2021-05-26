@@ -19,10 +19,8 @@ get_header();
 
         <ol>
           <li><a href="index.html">Trang Chủ</a></li>
-          <li>Blog</li>
+          <li>Blog Single</li>
         </ol>
-        <h2>Blog Single</h2>
-
       </div>
     </section><!-- End Breadcrumbs -->
 

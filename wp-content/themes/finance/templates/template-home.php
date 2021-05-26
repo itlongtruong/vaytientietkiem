@@ -390,43 +390,6 @@ get_header();
       </div>
     </section><!--  End Call To Action Section -->
 
-
-    <!-- ======= Services Section ======= -->
-    <section id="services" class="services services-3 section-bg">
-      <div class="container" data-aos="fade-up">
-
-        <header class="section-header">
-          <h3>Tại sao chọn và sử dụng <span style="font-size: 115%; color: #50b848;">Vay tiền Online</span></h3>         
-        </header>
-
-        <div class="row">
-
-          <div class="col-md-6 col-lg-4 wow" data-aos="zoom-in" data-aos-delay="100">
-            <div class="box">
-              <div class="icon" style="background: #eafde7;"><i class="ion-ios-speedometer-outline" style="color:#41cf2e;"></i></div>
-              <h4 class="title"><a href="javascript:void(0)">HOÀN TOÀN MIỄN PHÍ</a></h4>
-              <p>Nền tảng so sánh miễn phí, dễ sử dụng, và minh bạch</p>
-            </div>
-          </div>
-
-          <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="200"">
-	        <div class=" box">
-	            <div class="icon" style="background: #e1eeff;"><i class="ion-ios-world-outline" style="color: #2282ff;"></i></div>
-	            <h4 class="title"><a href="javascript:void(0)">CẬP NHẬT LIÊN TỤC</a></h4>
-	            <p>Sản phẩm, chương trình ưu đãi được cập nhật liên tục, mới nhất</p>
-	          </div>
-	        </div>
-	        <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="300">
-	          <div class="box">
-	            <div class="icon" style="background: #ecebff;"><i class="ion-ios-clock-outline" style="color: #8660fe;"></i></div>
-	            <h4 class="title"><a href="javascript:void(0)">CHUYÊN NGHIỆP TUYỆT ĐỐI</a></h4>
-	            <p>Đội ngũ tư vấn nhiều kinh nghiệm, nhiệt tình trong công việc</p>     
-	          </div>
-	        </div>
-        </div>
-      </div>
-    </section><!-- End Services Section -->
-
         <!-- ======= Team Section ======= -->
     <section id="team" class="team">
       <div class="container" data-aos="fade-up">
