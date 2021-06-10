@@ -187,6 +187,9 @@ class Settings {
 				case 'image-seo':
 					aioseo()->options->image->reset();
 					break;
+				case 'breadcrumbs':
+					aioseo()->options->breadcrumbs->reset();
+					break;
 			}
 		}
 

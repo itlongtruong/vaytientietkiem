@@ -111,24 +111,24 @@ get_header();
               <div class="row gy-4">
 
                 <div class="col-md-6">
-                  <input type="text" name="name" class="form-control" placeholder="Tên của bạn" required>
+                  <input type="text" name="name" require class="form-control" placeholder="Tên của bạn" required>
                 </div>
 
                 <div class="col-md-6 ">
-                  <input type="email" class="form-control" name="email" placeholder="Email của bạn" required>
+                  <input type="email" class="form-control" name="email" require placeholder="Email của bạn" required>
                 </div>
 
                 <div class="col-md-12">
-                  <input type="text" class="form-control" name="subject" placeholder="Tiêu đề" required>
+                  <input type="text" class="form-control" name="subject" require placeholder="Tiêu đề" required>
                 </div>
 
                 <div class="col-md-12">
-                  <textarea class="form-control" name="message" rows="6" placeholder="Nội dung" required></textarea>
+                  <textarea class="form-control" name="message" rows="6" require placeholder="Nội dung" required></textarea>
                 </div>
 
                 <div class="col-md-12 text-center">
                   <div class="loading">Loading</div>
-                  <div class="error-message"></div>
+                  <!-- <div class="error-message"></div> -->
                   <div class="sent-message">Your message has been sent. Thank you!</div>
 
                   <button type="submit">Gửi</button>

@@ -184,6 +184,7 @@ class Api {
 	 * @return void
 	 */
 	public function allowHeaders() {
+		// TODO: Remove this entire function after a while. It's only here to ensure compatibility with people that are still using Image SEO 1.0.3 or lower.
 		header( 'Access-Control-Allow-Headers: X-WP-Nonce' );
 	}
 

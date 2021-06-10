@@ -132,7 +132,7 @@ trait Options {
 			$this->resetGroups();
 			return ! empty( $this->arguments[0] )
 				? $this->arguments[0]
-				: $this->getDefault( $name );
+				: $this->getDefault( $name, false );
 		}
 
 		if ( empty( $defaults[ $name ]['type'] ) ) {
@@ -144,7 +144,7 @@ trait Options {
 			: (
 				! empty( $this->arguments[0] )
 					? $this->arguments[0]
-					: $this->getDefault( $name )
+					: $this->getDefault( $name, false )
 			);
 
 		$this->resetGroups();
@@ -178,7 +178,7 @@ trait Options {
 		}
 
 		if ( ! isset( $defaults[ $name ] ) ) {
-			$default = $this->getDefault( $name );
+			$default = $this->getDefault( $name, false );
 			$this->resetGroups();
 
 			return $default;
@@ -188,7 +188,7 @@ trait Options {
 			return $this->setSubGroup( $name );
 		}
 
-		$value = $this->getDefault( $name );
+		$value = $this->getDefault( $name, false );
 
 		if ( isset( $defaults[ $name ]['value'] ) ) {
 			$preserveHtml = ! empty( $defaults[ $name ]['preserveHtml'] );
@@ -260,7 +260,7 @@ trait Options {
 		}
 
 		if ( ! isset( $defaults[ $name ] ) ) {
-			$default = $this->getDefault( $name );
+			$default = $this->getDefault( $name, false );
 			$this->resetGroups();
 
 			return $default;
@@ -590,7 +590,7 @@ trait Options {
 	 * @param  string $name The option name.
 	 * @return void
 	 */
-	public function getDefault( $name ) {
+	public function getDefault( $name, $resetGroups = true ) {
 		$defaults = $this->defaultsMerged[ $this->groupKey ];
 		if ( ! empty( $this->subGroups ) ) {
 			foreach ( $this->subGroups as $subGroup ) {
@@ -599,6 +599,10 @@ trait Options {
 				}
 				$defaults = $defaults[ $subGroup ];
 			}
+		}
+
+		if ( $resetGroups ) {
+			$this->resetGroups();
 		}
 
 		if ( ! isset( $defaults[ $name ] ) ) {

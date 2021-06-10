@@ -553,6 +553,13 @@ class Admin {
 				remove_submenu_page( 'aioseo', 'aioseo' );
 			}
 		}
+
+		global $submenu;
+		$submenu['tools.php'][] = [
+			esc_html__( 'Redirection Manager', 'all-in-one-seo-pack' ),
+			apply_filters( 'aioseo_redirects_settings', 'aioseo_redirects_settings' ),
+			admin_url( '/admin.php?page=aioseo-redirects' )
+		];
 	}
 
 	/**

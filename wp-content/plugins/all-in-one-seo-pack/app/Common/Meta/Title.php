@@ -196,7 +196,13 @@ class Title {
 		}
 
 		$title = aioseo()->helpers->decodeHtmlEntities( $title );
+		$title = aioseo()->helpers->encodeExceptions( $title );
+
 		$title = wp_strip_all_tags( strip_shortcodes( $title ) );
+
+		// Because we encoded the exceptions, we need to decode them again first to prevent double encoding later down the line.
+		$title = aioseo()->helpers->decodeHtmlEntities( $title );
+
 		// Trim both internal and external whitespace.
 		$title = preg_replace( '/[\s]+/u', ' ', trim( $title ) );
 		return aioseo()->helpers->internationalize( $title );

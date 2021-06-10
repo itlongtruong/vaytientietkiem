@@ -67,24 +67,57 @@ class Helpers {
 	}
 
 	/**
+	 * Get the home page object.
+	 *
+	 * @since 4.1.1
+	 *
+	 * @return WP_Post|null The home page.
+	 */
+	public function getHomePage() {
+		$homePageId = $this->getHomePageId();
+
+		return $homePageId ? get_post( $homePageId ) : null;
+	}
+
+	/**
+	 * Get the ID of the home page.
+	 *
+	 * @since 4.0.0
+	 *
+	 * @return integer|null The home page ID.
+	 */
+	public function getHomePageId() {
+		$pageShowOnFront = ( 'page' === get_option( 'show_on_front' ) );
+		$pageOnFrontId   = get_option( 'page_on_front' );
+
+		return $pageShowOnFront && $pageOnFrontId ? (int) $pageOnFrontId : null;
+	}
+
+	/**
 	 * Returns the blog page.
 	 *
 	 * @since 4.0.0
 	 *
-	 * @return WP_Post The blog page.
+	 * @return WP_Post|null The blog page.
 	 */
 	public function getBlogPage() {
-		static $blogPage = null;
-		if ( $blogPage ) {
-			return $blogPage;
-		}
+		$blogPageId = $this->getBlogPageId();
 
-		$isStaticHomepage = ( 'page' === get_option( 'show_on_front' ) );
-		$pageForPosts     = (int) get_option( 'page_for_posts' );
-		if ( $isStaticHomepage && $pageForPosts ) {
-			$blogPage = get_post( $pageForPosts );
-		}
-		return $blogPage;
+		return $blogPageId ? get_post( $blogPageId ) : null;
+	}
+
+	/**
+	 * Gets the current blog page id if it's configured.
+	 *
+	 * @since 4.1.1
+	 *
+	 * @return int|null
+	 */
+	public function getBlogPageId() {
+		$pageShowOnFront = ( 'page' === get_option( 'show_on_front' ) );
+		$blogPageId      = (int) get_option( 'page_for_posts' );
+
+		return $pageShowOnFront && $blogPageId ? $blogPageId : null;
 	}
 
 	/**
@@ -480,7 +513,8 @@ class Helpers {
 					'monsterinsights'  => admin_url( 'admin.php?page=aioseo-monsterinsights' )
 				],
 				'admin'             => [
-					'widgets' => admin_url( 'widgets.php' )
+					'widgets'        => admin_url( 'widgets.php' ),
+					'optionsReading' => admin_url( 'options-reading.php' )
 				]
 			],
 			'backups'          => [],
@@ -508,6 +542,8 @@ class Helpers {
 				'isWooCommerceActive' => $this->isWooCommerceActive(),
 				'isBBPressActive'     => class_exists( 'bbPress' ),
 				'staticHomePage'      => $isStaticHomePage ? $staticHomePage : false,
+				'staticBlogPage'      => $this->getBlogPageId(),
+				'staticBlogPageTitle' => get_the_title( $this->getBlogPageId() ),
 				'isDev'               => $this->isDev()
 			],
 			'user'             => [
@@ -612,7 +648,7 @@ class Helpers {
 					? json_decode( Models\Post::getDefaultSchemaOptions( $post->schema_type_options ) )
 					: json_decode( Models\Post::getDefaultSchemaOptions() ),
 				'local_seo'                   => ( ! empty( $post->local_seo ) )
-					? json_decode( $post->local_seo )
+					? Models\Post::getDefaultLocalSeoOptions( $post->local_seo )
 					: json_decode( Models\Post::getDefaultLocalSeoOptions() ),
 				'metaDefaults'                => [
 					'title'       => aioseo()->meta->title->getPostTypeTitle( $postTypeObj->name ),
@@ -687,6 +723,10 @@ class Helpers {
 			];
 			$data['data']['status']   = Tools\SystemStatus::getSystemStatusInfo();
 			$data['data']['htaccess'] = aioseo()->htaccess->getContents();
+		}
+
+		if ( 'settings' === $page ) {
+			$data['breadcrumbs']['defaultTemplate'] = aioseo()->helpers->encodeOutputHtml( aioseo()->breadcrumbs->frontend->getDefaultTemplate() );
 		}
 
 		$loadedAddons = aioseo()->addons->getLoadedAddons();
@@ -801,6 +841,7 @@ class Helpers {
 				'hasExcerpt'   => post_type_supports( $postObject->name, 'excerpt' ),
 				'hasArchive'   => $postObject->has_archive,
 				'hierarchical' => $postObject->hierarchical,
+				'taxonomies'   => get_object_taxonomies( $name ),
 				'slug'         => isset( $postObject->rewrite['slug'] ) ? $postObject->rewrite['slug'] : $name
 			];
 		}
@@ -856,11 +897,12 @@ class Helpers {
 			}
 
 			$taxonomies[] = [
-				'name'     => $name,
-				'label'    => ucwords( $taxObject->label ),
-				'singular' => ucwords( $taxObject->labels->singular_name ),
-				'icon'     => strpos( $taxObject->label, 'categor' ) !== false ? 'dashicons-category' : 'dashicons-tag',
-				'slug'     => isset( $taxObject->rewrite['slug'] ) ? $taxObject->rewrite['slug'] : ''
+				'name'         => $name,
+				'label'        => ucwords( $taxObject->label ),
+				'singular'     => ucwords( $taxObject->labels->singular_name ),
+				'icon'         => strpos( $taxObject->label, 'categor' ) !== false ? 'dashicons-category' : 'dashicons-tag',
+				'hierarchical' => $taxObject->hierarchical,
+				'slug'         => isset( $taxObject->rewrite['slug'] ) ? $taxObject->rewrite['slug'] : ''
 			];
 		}
 
@@ -1314,36 +1356,6 @@ class Helpers {
 		}
 
 		return apply_filters( 'localization', $in );
-	}
-
-	/**
-	 * Get the ID of the home page.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @return integer The home page ID.
-	 */
-	public function getHomePageId() {
-		$id        = null;
-		$firstPage = 2 > aioseo()->helpers->getPageNumber();
-		if ( 'page' === get_option( 'show_on_front' ) ) {
-			$pageOnFront = get_option( 'page_on_front' );
-			if ( is_page() && ! empty( $pageOnFront ) && $firstPage ) {
-				$id = $pageOnFront;
-			}
-		} elseif (
-			is_post_type_archive() &&
-			is_post_type_archive( 'product' ) &&
-			function_exists( 'wc_get_page_id' )
-		) {
-			// WooCommerce.
-			$wcShopPostID = wc_get_page_id( 'shop' );
-			if ( wc_get_page_id( 'shop' ) === get_option( 'page_on_front' ) ) {
-				$id = $wcShopPostID;
-			}
-		}
-
-		return intval( $id );
 	}
 
 	/**
@@ -2224,7 +2236,7 @@ class Helpers {
 	 *
 	 * @since 4.1.0
 	 *
-	 * @param  string $tags The JSON formatted data tags.
+	* @param  string $tags The JSON formatted data tags.
 	 * @return string       The comma separated values.
 	 */
 	public function jsonTagsToCommaSeparatedList( $tags ) {
@@ -2235,6 +2247,23 @@ class Helpers {
 			$values[ $k ] = $tag->value;
 		}
 		return implode( ',', $values );
+	}
+
+	/**
+	 * Encodes a number of exceptions before we strip tags.
+	 * We need this function to allow certain character (combinations) in the title/description.
+	 *
+	 * @since 4.1.1
+	 *
+	 * @param  string $string The string.
+	 * @return string $string The string with exceptions encoded.
+	 */
+	public function encodeExceptions( $string ) {
+		$exceptions = [ '<3' ];
+		foreach ( $exceptions as $exception ) {
+			$string = preg_replace( "/$exception/", $this->encodeOutputHtml( $exception ), $string );
+		}
+		return $string;
 	}
 
 	/**

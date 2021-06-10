@@ -10,8 +10,8 @@
 
 get_header();
 ?>
-
-  <section id="hero" class="clearfix">
+ 
+  <!-- <section id="hero" class="clearfix">
     <div class="container d-flex h-100">
       <div class="row justify-content-center align-self-center" data-aos="fade-up">
         <div class="col-md-6 intro-info order-md-first order-last" data-aos="zoom-in" data-aos-delay="100">
@@ -27,12 +27,12 @@ get_header();
       </div>
 
     </div>
-  </section>
+  </section> -->
 
   <main id="main">
 
         <!-- ======= Portfolio Details Section ======= -->
-    <!-- <section id="portfolio-details" class="portfolio-details">
+    <section id="portfolio-details" class="portfolio-details">
       <div class="container-fluid" data-aos="fade-up">
 
         <div class="portfolio-details-container">
@@ -46,7 +46,7 @@ get_header();
         </div>
       
       </div>
-    </section> -->
+    </section>
 
     <!-- ======= Services Section ======= -->
     <section id="services" class="services section-bg">
@@ -389,6 +389,7 @@ get_header();
 
       </div>
     </section><!--  End Call To Action Section -->
+    
 
         <!-- ======= Team Section ======= -->
     <section id="team" class="team">

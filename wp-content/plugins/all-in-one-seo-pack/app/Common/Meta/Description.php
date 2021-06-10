@@ -235,7 +235,13 @@ class Description {
 		}
 
 		$description = aioseo()->helpers->decodeHtmlEntities( $description );
+		$description = aioseo()->helpers->encodeExceptions( $description );
+
 		$description = wp_strip_all_tags( strip_shortcodes( $description ) );
+
+		// Because we encoded the exceptions, we need to decode them again first to prevent double encoding later down the line.
+		$description = aioseo()->helpers->decodeHtmlEntities( $description );
+
 		// Trim both internal and external whitespace.
 		$description = preg_replace( '/[\s]+/u', ' ', trim( $description ) );
 		return aioseo()->helpers->internationalize( $description );

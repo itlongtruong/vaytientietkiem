@@ -676,3 +676,4 @@ function smashing_post_columns( $columns ) {
 }
 
 add_action( 'manage_contact_posts_custom_column', 'smashing_post_column', 10, 2);
+

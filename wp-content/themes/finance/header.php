@@ -63,7 +63,7 @@
 
       <nav class="main-nav d-none d-lg-block">
         <ul>
-		   <?php
+        <?php
 			  $arrMenu  = wp_get_nav_menu_items('main-menu');
 			  $id = 0;
 			  foreach ($arrMenu as $menu) {                                    

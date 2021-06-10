@@ -18,6 +18,15 @@ class Options {
 	use Traits\Options;
 
 	/**
+	 * Whether the options need to be updated.
+	 *
+	 * @since 4.1.1
+	 *
+	 * @var bool
+	 */
+	protected $needsUpdate = false;
+
+	/**
 	 * All the default options.
 	 *
 	 * @since 4.0.0
@@ -47,16 +56,18 @@ class Options {
 			'miscellaneousVerification' => [ 'type' => 'html' ]
 		],
 		'breadcrumbs'      => [
-			'enable'             => [ 'type' => 'boolean' ],
-			'separator'          => [ 'type' => 'string', 'default' => '&raquo;' ],
-			'homepageLink'       => [ 'type' => 'boolean', 'default' => true ],
-			'homepageLabel'      => [ 'type' => 'string', 'default' => 'Home' ],
-			'breadcrumbPrefix'   => [ 'type' => 'string' ],
-			'archiveFormat'      => [ 'type' => 'string', 'default' => 'Archives for %' ],
-			'searchResultFormat' => [ 'type' => 'string', 'default' => 'Search for \'%\'' ],
-			'errorFormat404'     => [ 'type' => 'string', 'default' => '404 Error: page not found' ],
-			'showCurrentItem'    => [ 'type' => 'boolean', 'default' => true ],
-			'linkCurrentItem'    => [ 'type' => 'boolean', 'default' => false ]
+			'enable'                => [ 'type' => 'boolean', 'default' => true ],
+			'separator'             => [ 'type' => 'string', 'default' => '&raquo;' ],
+			'homepageLink'          => [ 'type' => 'boolean', 'default' => true ],
+			'homepageLabel'         => [ 'type' => 'string', 'default' => 'Home' ],
+			'breadcrumbPrefix'      => [ 'type' => 'string' ],
+			'archiveFormat'         => [ 'type' => 'string', 'default' => 'Archives for #breadcrumb_archive_post_type_name' ],
+			'searchResultFormat'    => [ 'type' => 'string', 'default' => 'Search for \'#breadcrumb_search_string\'' ],
+			'errorFormat404'        => [ 'type' => 'string', 'default' => '404 Error: page not found' ],
+			'showCurrentItem'       => [ 'type' => 'boolean', 'default' => true ],
+			'linkCurrentItem'       => [ 'type' => 'boolean', 'default' => false ],
+			'categoryFullHierarchy' => [ 'type' => 'boolean', 'default' => false ],
+			'showBlogHome'          => [ 'type' => 'boolean', 'default' => false ]
 		],
 		'rssContent'       => [
 			'before' => [ 'type' => 'html' ],
@@ -500,268 +511,289 @@ TEMPLATE
 	 * @return void
 	 */
 	public function addDynamicDefaults() {
-		$needsUpdate = false;
+		$this->addDynamicPostTypeDefaults();
+		$this->addDynamicTaxonomyDefaults();
+		$this->addDynamicArchiveDefaults();
 
-		// Bad Bots/Referers.
-		$this->defaults['deprecated']['tools']['blocker']['custom']['bots']['default']    = implode( "\n", aioseo()->badBotBlocker->getBotList() );
-		$this->defaults['deprecated']['tools']['blocker']['custom']['referer']['default'] = implode( "\n", aioseo()->badBotBlocker->getRefererList() );
+		$this->defaults['searchAppearance']['global']['schema']['organizationName']['default'] = aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'name' ) );
+		$this->defaults['deprecated']['tools']['blocker']['custom']['bots']['default']         = implode( "\n", aioseo()->badBotBlocker->getBotList() );
+		$this->defaults['deprecated']['tools']['blocker']['custom']['referer']['default']      = implode( "\n", aioseo()->badBotBlocker->getRefererList() );
 
-		// Post Types.
+		if ( $this->needsUpdate ) {
+			$this->update( $this->getDbOptions() );
+		}
+	}
+
+	/**
+	 * Adds the dynamic defaults for the public post types.
+	 *
+	 * @since 4.1.1
+	 *
+	 * @return void
+	 */
+	protected function addDynamicPostTypeDefaults() {
 		$postTypes = aioseo()->helpers->getPublicPostTypes();
 		foreach ( $postTypes as $postType ) {
 			if ( 'type' === $postType['name'] ) {
 				$postType['name'] = '_aioseo_type';
 			}
 
-			// Search appearance
 			$defaultTitle       = '#post_title #separator_sa #site_title';
 			$defaultDescription = $postType['hasExcerpt'] ? '#post_excerpt' : '#post_content';
 			$defaultSchemaType  = 'WebPage';
 			$defaultWebPageType = 'WebPage';
 			$defaultArticleType = 'BlogPosting';
 
-			if ( 'post' === $postType['name'] ) {
-				$defaultSchemaType = 'Article';
+			switch ( $postType['name'] ) {
+				case 'post':
+					$defaultSchemaType = 'Article';
+					break;
+				case 'attachment':
+					$defaultDescription = '#attachment_caption';
+					$defaultSchemaType  = 'ItemPage';
+					$defaultWebPageType = 'ItemPage';
+					break;
+				case 'product':
+					$defaultSchemaType  = 'WebPage';
+					$defaultWebPageType = 'ItemPage';
+					break;
+				case 'news':
+					$defaultArticleType = 'NewsArticle';
+					break;
+				default:
+					break;
 			}
 
-			if ( 'attachment' === $postType['name'] ) {
-				$defaultDescription = '#attachment_caption';
-				$defaultSchemaType  = 'ItemPage';
-				$defaultWebPageType = 'ItemPage';
-			}
-
-			if ( 'product' === $postType['name'] ) {
-				$defaultSchemaType  = 'WebPage';
-				$defaultWebPageType = 'ItemPage';
-			}
-
-			if ( 'news' === $postType['name'] ) {
-				$defaultArticleType = 'NewsArticle';
-			}
-
-			// phpcs:disable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
-			$options = [
-				'show'            => [ 'type' => 'boolean', 'default' => true ],
-				'title'           => [ 'type' => 'string', 'localized' => true, 'default' => $defaultTitle ],
-				'metaDescription' => [ 'type' => 'string', 'localized' => true, 'default' => $defaultDescription ],
-				'schemaType'      => [ 'type' => 'string', 'default' => $defaultSchemaType ],
-				'webPageType'     => [ 'type' => 'string', 'default' => $defaultWebPageType ],
-				'articleType'     => [ 'type' => 'string', 'default' => $defaultArticleType ],
-				'customFields'    => [ 'type' => 'html' ],
-				'advanced'        => [
-					'robotsMeta'                => [
-						'default'         => [ 'type' => 'boolean', 'default' => true ],
-						'noindex'         => [ 'type' => 'boolean', 'default' => false ],
-						'nofollow'        => [ 'type' => 'boolean', 'default' => false ],
-						'noarchive'       => [ 'type' => 'boolean', 'default' => false ],
-						'noimageindex'    => [ 'type' => 'boolean', 'default' => false ],
-						'notranslate'     => [ 'type' => 'boolean', 'default' => false ],
-						'nosnippet'       => [ 'type' => 'boolean', 'default' => false ],
-						'noodp'           => [ 'type' => 'boolean', 'default' => false ],
-						'maxSnippet'      => [ 'type' => 'number', 'default' => -1 ],
-						'maxVideoPreview' => [ 'type' => 'number', 'default' => -1 ],
-						'maxImagePreview' => [ 'type' => 'string', 'default' => 'large' ]
+			$defaultOptions = array_replace_recursive(
+				$this->getDefaultSearchAppearanceOptions(),
+				[
+					'title'           => [
+						'type'      => 'string',
+						'localized' => true,
+						'default'   => $defaultTitle
 					],
-					'bulkEditing'               => [ 'type' => 'string', 'default' => 'enabled' ],
-					'showDateInGooglePreview'   => [ 'type' => 'boolean', 'default' => true ],
-					'showPostThumbnailInSearch' => [ 'type' => 'boolean', 'default' => true ],
-					'showMetaBox'               => [ 'type' => 'boolean', 'default' => true ]
+					'metaDescription' => [
+						'type'      => 'string',
+						'localized' => true,
+						'default'   => $defaultDescription
+					],
+					'schemaType'      => [
+						'type'    => 'string',
+						'default' => $defaultSchemaType
+					],
+					'webPageType'     => [
+						'type'    => 'string',
+						'default' => $defaultWebPageType
+					],
+					'articleType'     => [
+						'type'    => 'string',
+						'default' => $defaultArticleType
+					],
+					'customFields'    => [ 'type' => 'html' ],
+					'advanced'        => [
+						'bulkEditing' => [
+							'type'    => 'string',
+							'default' => 'enabled'
+						]
+					]
 				]
-			];
+			);
 
 			if ( 'attachment' === $postType['name'] ) {
-				$options['redirectAttachmentUrls'] = [ 'type' => 'string', 'default' => 'attachment' ];
-			}
-			// phpcs:enable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
-
-			// Reset the backup.
-			if ( isset( $this->options['internal']['searchAppearanceDynamicBackup']['postTypes']['value'][ $postType['name'] ] ) ) {
-				$needsUpdate = true;
-				$options = array_replace_recursive( $options, json_decode( $this->options['internal']['searchAppearanceDynamicBackup']['postTypes']['value'][ $postType['name'] ], true ) );
-				unset( $this->options['internal']['searchAppearanceDynamicBackup']['postTypes']['value'][ $postType['name'] ] );
-
-				// Set it back on the options.
-				$this->options['searchAppearance']['dynamic']['postTypes'][ $postType['name'] ] = $options;
-			}
-
-			$this->defaults['searchAppearance']['dynamic']['postTypes'][ $postType['name'] ] = $options;
-
-			// Facebook (open graph).
-			$options = [
-				'objectType' => [
+				$defaultOptions['redirectAttachmentUrls'] = [
 					'type'    => 'string',
-					'default' => 'article'
-				],
-			];
-
-			// Reset the backup.
-			if ( isset( $this->options['internal']['socialFacebookDynamicBackup']['postTypes']['value'][ $postType['name'] ] ) ) {
-				$needsUpdate = true;
-				$options = array_replace_recursive( $options, json_decode( $this->options['internal']['socialFacebookDynamicBackup']['postTypes']['value'][ $postType['name'] ], true ) );
-				unset( $this->options['internal']['socialFacebookDynamicBackup']['postTypes']['value'][ $postType['name'] ] );
-
-				// Set it back on the options.
-				$this->options['social']['facebook']['general']['dynamic']['postTypes'][ $postType['name'] ] = $options;
+					'default' => 'attachment'
+				];
 			}
 
-			$this->defaults['social']['facebook']['general']['dynamic']['postTypes'][ $postType['name'] ] = $options;
-
-			// Sitemap Options.
-			// phpcs:disable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
-			$this->defaults['sitemap']['dynamic']['priority']['postTypes'][ $postType['name'] ] = [
-				'priority'  => [ 'type' => 'string', 'default' => '{"label":"default","value":"default"}' ],
-				'frequency' => [ 'type' => 'string', 'default' => '{"label":"default","value":"default"}' ]
-			];
-			// phpcs:enable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+			$this->setDynamicSearchApperanceOptions( 'postTypes', $postType['name'], $defaultOptions );
+			$this->setDynamicSocialOptions( 'postTypes', $postType['name'] );
+			$this->setDynamicSitemapOptions( 'postTypes', $postType['name'] );
 		}
+	}
 
-		// Taxonomies.
+	/**
+	 * Adds the dynamic defaults for the public taxonomies.
+	 *
+	 * @since 4.1.1
+	 *
+	 * @return void
+	 */
+	protected function addDynamicTaxonomyDefaults() {
 		$taxonomies = aioseo()->helpers->getPublicTaxonomies();
 		foreach ( $taxonomies as $taxonomy ) {
 			if ( 'type' === $taxonomy['name'] ) {
 				$taxonomy['name'] = '_aioseo_type';
 			}
 
-			// phpcs:disable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
-			$options = [
-				'show'            => [ 'type' => 'boolean', 'default' => true ],
-				'title'           => [ 'type' => 'string', 'localized' => true, 'default' => '#taxonomy_title #separator_sa #site_title' ],
-				'metaDescription' => [ 'type' => 'string', 'localized' => true, 'default' => '#taxonomy_description' ],
-				'advanced'        => [
-					'robotsMeta'                => [
-						'default'         => [ 'type' => 'boolean', 'default' => true ],
-						'noindex'         => [ 'type' => 'boolean', 'default' => false ],
-						'nofollow'        => [ 'type' => 'boolean', 'default' => false ],
-						'noarchive'       => [ 'type' => 'boolean', 'default' => false ],
-						'noimageindex'    => [ 'type' => 'boolean', 'default' => false ],
-						'notranslate'     => [ 'type' => 'boolean', 'default' => false ],
-						'nosnippet'       => [ 'type' => 'boolean', 'default' => false ],
-						'noodp'           => [ 'type' => 'boolean', 'default' => false ],
-						'maxSnippet'      => [ 'type' => 'number', 'default' => -1 ],
-						'maxVideoPreview' => [ 'type' => 'number', 'default' => -1 ],
-						'maxImagePreview' => [ 'type' => 'string', 'default' => 'large' ]
+			$defaultOptions = array_replace_recursive(
+				$this->getDefaultSearchAppearanceOptions(),
+				[
+					'title'           => [
+						'type'      => 'string',
+						'localized' => true,
+						'default'   => '#taxonomy_title #separator_sa #site_title'
 					],
-					'showDateInGooglePreview'   => [ 'type' => 'boolean', 'default' => true ],
-					'showPostThumbnailInSearch' => [ 'type' => 'boolean', 'default' => true ],
-					'showMetaBox'               => [ 'type' => 'boolean', 'default' => true ]
+					'metaDescription' => [
+						'type'      => 'string',
+						'localized' => true,
+						'default'   => '#taxonomy_description'
+					],
 				]
-			];
-			// phpcs:enable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+			);
 
-			// Reset the backup.
-			if ( isset( $this->options['internal']['searchAppearanceDynamicBackup']['taxonomies']['value'][ $taxonomy['name'] ] ) ) {
-				$needsUpdate = true;
-				$options = array_replace_recursive( $options, json_decode( $this->options['internal']['searchAppearanceDynamicBackup']['taxonomies']['value'][ $taxonomy['name'] ], true ) );
-				unset( $this->options['internal']['searchAppearanceDynamicBackup']['taxonomies']['value'][ $taxonomy['name'] ] );
-
-				// Set it back on the options.
-				$this->options['searchAppearance']['dynamic']['taxonomies'][ $taxonomy['name'] ] = $options;
-			}
-
-			$this->defaults['searchAppearance']['dynamic']['taxonomies'][ $taxonomy['name'] ] = $options;
-
-			// Facebook (open graph).
-			$options = [
-				'objectType' => [
-					'type'    => 'string',
-					'default' => 'article'
-				],
-			];
-
-			// Reset the backup.
-			if ( isset( $this->options['internal']['socialFacebookDynamicBackup']['taxonomies']['value'][ $taxonomy['name'] ] ) ) {
-				$needsUpdate = true;
-				$options = array_replace_recursive( $options, json_decode( $this->options['internal']['socialFacebookDynamicBackup']['taxonomies']['value'][ $taxonomy['name'] ], true ) );
-				unset( $this->options['internal']['socialFacebookDynamicBackup']['taxonomies']['value'][ $taxonomy['name'] ] );
-
-				// Set it back on the options.
-				$this->options['social']['facebook']['general']['dynamic']['taxonomies'][ $taxonomy['name'] ] = $options;
-			}
-
-			$this->defaults['social']['facebook']['general']['dynamic']['taxonomies'][ $taxonomy['name'] ] = $options;
-
-			// Sitemap Options.
-			// phpcs:disable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
-			$this->defaults['sitemap']['dynamic']['priority']['taxonomies'][ $taxonomy['name'] ] = [
-				'priority'  => [ 'type' => 'string', 'default' => '{"label":"default","value":"default"}' ],
-				'frequency' => [ 'type' => 'string', 'default' => '{"label":"default","value":"default"}' ]
-			];
-			// phpcs:enable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+			$this->setDynamicSearchApperanceOptions( 'taxonomies', $taxonomy['name'], $defaultOptions );
+			$this->setDynamicSocialOptions( 'taxonomies', $taxonomy['name'] );
+			$this->setDynamicSitemapOptions( 'taxonomies', $taxonomy['name'] );
 		}
 
-		// CPT Archives.
+	}
+
+	/**
+	 * Adds the dynamic defaults for the archive pages.
+	 *
+	 * @since 4.1.1
+	 *
+	 * @return void
+	 */
+	protected function addDynamicArchiveDefaults() {
 		$postTypes = aioseo()->helpers->getPublicPostTypes( false, true );
 		foreach ( $postTypes as $postType ) {
 			if ( 'type' === $postType['name'] ) {
 				$postType['name'] = '_aioseo_type';
 			}
 
-			// phpcs:disable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
-			$options = [
-				'show'            => [ 'type' => 'boolean', 'default' => true ],
-				'title'           => [ 'type' => 'string', 'localized' => true, 'default' => '#archive_title #separator_sa #site_title' ],
-				'metaDescription' => [ 'type' => 'string', 'localized' => true, 'default' => '' ],
-				'customFields'    => [ 'type' => 'html' ],
-				'advanced'        => [
-					'robotsMeta'                => [
-						'default'         => [ 'type' => 'boolean', 'default' => true ],
-						'noindex'         => [ 'type' => 'boolean', 'default' => false ],
-						'nofollow'        => [ 'type' => 'boolean', 'default' => false ],
-						'noarchive'       => [ 'type' => 'boolean', 'default' => false ],
-						'noimageindex'    => [ 'type' => 'boolean', 'default' => false ],
-						'notranslate'     => [ 'type' => 'boolean', 'default' => false ],
-						'nosnippet'       => [ 'type' => 'boolean', 'default' => false ],
-						'noodp'           => [ 'type' => 'boolean', 'default' => false ],
-						'maxSnippet'      => [ 'type' => 'number', 'default' => -1 ],
-						'maxVideoPreview' => [ 'type' => 'number', 'default' => -1 ],
-						'maxImagePreview' => [ 'type' => 'string', 'default' => 'large' ]
+			$defaultOptions = array_replace_recursive(
+				$this->getDefaultSearchAppearanceOptions(),
+				[
+					'title'           => [
+						'type'      => 'string',
+						'localized' => true,
+						'default'   => '#archive_title #separator_sa #site_title'
 					],
-					'showDateInGooglePreview'   => [ 'type' => 'boolean', 'default' => true ],
-					'showPostThumbnailInSearch' => [ 'type' => 'boolean', 'default' => true ],
-					'showMetaBox'               => [ 'type' => 'boolean', 'default' => true ],
-					'keywords'                  => [ 'type' => 'string', 'localized' => true ]
+					'metaDescription' => [
+						'type'      => 'string',
+						'localized' => true,
+						'default'   => ''
+					],
+					'customFields'    => [ 'type' => 'html' ],
+					'advanced'        => [
+						'keywords' => [
+							'type'      => 'string',
+							'localized' => true
+						]
+					]
 				]
-			];
-			// phpcs:enable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+			);
 
-			// Reset the backup.
-			if ( isset( $this->options['internal']['searchAppearanceDynamicBackup']['archives']['value'][ $postType['name'] ] ) ) {
-				$needsUpdate = true;
-				$options = array_replace_recursive( $options, json_decode( $this->options['internal']['searchAppearanceDynamicBackup']['archives']['value'][ $postType['name'] ], true ) );
-				unset( $this->options['internal']['searchAppearanceDynamicBackup']['archives']['value'][ $postType['name'] ] );
+			$this->setDynamicSearchApperanceOptions( 'archives', $postType['name'], $defaultOptions );
+			$this->setDynamicSocialOptions( 'archives', $postType['name'] );
+		}
+	}
 
-				// Set it back on the options.
-				$this->options['searchAppearance']['dynamic']['archives'][ $postType['name'] ] = $options;
-			}
-
-			$this->defaults['searchAppearance']['dynamic']['archives'][ $postType['name'] ] = $options;
-
-			// Facebook (open graph).
-			$options = [
-				'objectType' => [
-					'type'    => 'string',
-					'default' => 'article'
+	/**
+	 * Returns the search appearance options for dynamic objects.
+	 *
+	 * @since 4.1.1
+	 *
+	 * @return array The default options.
+	 */
+	protected function getDefaultSearchAppearanceOptions() {
+		// phpcs:disable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+		return [
+			'show'     => [ 'type' => 'boolean', 'default' => true ],
+			'advanced' => [
+				'robotsMeta'                => [
+					'default'         => [ 'type' => 'boolean', 'default' => true ],
+					'noindex'         => [ 'type' => 'boolean', 'default' => false ],
+					'nofollow'        => [ 'type' => 'boolean', 'default' => false ],
+					'noarchive'       => [ 'type' => 'boolean', 'default' => false ],
+					'noimageindex'    => [ 'type' => 'boolean', 'default' => false ],
+					'notranslate'     => [ 'type' => 'boolean', 'default' => false ],
+					'nosnippet'       => [ 'type' => 'boolean', 'default' => false ],
+					'noodp'           => [ 'type' => 'boolean', 'default' => false ],
+					'maxSnippet'      => [ 'type' => 'number', 'default' => -1 ],
+					'maxVideoPreview' => [ 'type' => 'number', 'default' => -1 ],
+					'maxImagePreview' => [ 'type' => 'string', 'default' => 'large' ]
 				],
-			];
+				'showDateInGooglePreview'   => [ 'type' => 'boolean', 'default' => true ],
+				'showPostThumbnailInSearch' => [ 'type' => 'boolean', 'default' => true ],
+				'showMetaBox'               => [ 'type' => 'boolean', 'default' => true ]
+			]
+		];
+		// phpcs:enable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
+	}
 
-			// Reset the backup.
-			if ( isset( aioseo()->internalOptions->internal->socialFacebookDynamicBackup->archives->{ $postType['name'] } ) ) {
-				$needsUpdate = true;
-				$options = array_replace_recursive( $options, json_decode( aioseo()->internalOptions->internal->socialFacebookDynamicBackup->archives->{ $postType['name'] }, true ) );
-				unset( aioseo()->internalOptions->internal->socialFacebookDynamicBackup->archives->{ $postType['name'] } );
+	/**
+	 * Sets the dynamic search appearance settings for a given post type or taxonomy.
+	 *
+	 * @since 4.1.1
+	 *
+	 * @param  string $objectType     Whether the object belongs to the dynamic "postTypes" or "taxonomies".
+	 * @param  string $objectName     The object name.
+	 * @param  array  $defaultOptions The default options for the object.
+	 * @return void
+	 */
+	protected function setDynamicSearchApperanceOptions( $objectType, $objectName, $defaultOptions ) {
+		// Check if dynamic backup needs to be reset.
+		if ( ! empty( $this->options['internal']['searchAppearanceDynamicBackup'][ $objectType ]['value'][ $objectName ] ) ) {
+			$this->needsUpdate = true;
 
-				// Set it back on the options.
-				$this->options['social']['facebook']['general']['dynamic']['archives'][ $postType['name'] ] = $options;
-			}
-
-			$this->defaults['social']['facebook']['general']['dynamic']['archives'][ $postType['name'] ] = $options;
+			$defaultOptions = array_replace_recursive( $defaultOptions, $this->options['internal']['searchAppearanceDynamicBackup'][ $objectType ]['value'][ $objectName ] );
+			unset( $this->options['internal']['searchAppearanceDynamicBackup'][ $objectType ]['value'][ $objectName ] );
 		}
 
-		$this->defaults['searchAppearance']['global']['schema']['organizationName']['default'] = aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'name' ) );
+		$this->defaults['searchAppearance']['dynamic'][ $objectType ][ $objectName ] = $defaultOptions;
+	}
 
-		if ( $needsUpdate ) {
-			$this->update( $this->getDbOptions() );
+	/**
+	 * Sets the dynamic social settings for a given post type or taxonomy.
+	 *
+	 * @since 4.1.1
+	 *
+	 * @param  string $objectType Whether the object belongs to the dynamic "postTypes" or "taxonomies".
+	 * @param  string $objectName The object name.
+	 * @return void
+	 */
+	protected function setDynamicSocialOptions( $objectType, $objectName ) {
+		$defaultOptions = [
+			'objectType' => [
+				'type'    => 'string',
+				'default' => 'article'
+			]
+		];
+
+		// Check if dynamic backup needs to be reset.
+		if ( ! empty( $this->options['internal']['socialFacebookDynamicBackup'][ $objectType ]['value'][ $objectName ] ) ) {
+			$this->needsUpdate = true;
+
+			$defaultOptions = array_replace_recursive( $defaultOptions, $this->options['internal']['socialFacebookDynamicBackup'][ $objectType ]['value'][ $objectName ] );
+			unset( $this->options['internal']['socialFacebookDynamicBackup'][ $objectType ]['value'][ $objectName ] );
 		}
+
+		$this->defaults['social']['facebook']['general']['dynamic'][ $objectType ][ $objectName ] = $defaultOptions;
+	}
+
+	/**
+	 * Sets the dynamic sitemap settings for a given post type or taxonomy.
+	 *
+	 * @since 4.1.1
+	 *
+	 * @param  string $objectType Whether the object belongs to the dynamic "postTypes" or "taxonomies".
+	 * @param  string $objectName The object name.
+	 * @return void
+	 */
+	protected function setDynamicSitemapOptions( $objectType, $objectName ) {
+		$this->defaults['sitemap']['dynamic']['priority'][ $objectType ][ $objectName ] = [
+			'priority'  => [
+				'type'    => 'string',
+				'default' => '{"label":"default","value":"default"}'
+			],
+			'frequency' => [
+				'type'    => 'string',
+				'default' => '{"label":"default","value":"default"}'
+			]
+		];
 	}
 
 	/**
@@ -771,7 +803,7 @@ TEMPLATE
 	 *
 	 * @return void
 	 */
-	protected function translateDefaults() {
+	public function translateDefaults() {
 		$default = sprintf( '{"label":"%1$s","value":"default"}', __( 'default', 'all-in-one-seo-pack' ) );
 		$this->defaults['sitemap']['general']['advancedSettings']['priority']['homePage']['priority']['default']    = $default;
 		$this->defaults['sitemap']['general']['advancedSettings']['priority']['homePage']['frequency']['default']   = $default;
@@ -780,10 +812,11 @@ TEMPLATE
 		$this->defaults['sitemap']['general']['advancedSettings']['priority']['taxonomies']['priority']['default']  = $default;
 		$this->defaults['sitemap']['general']['advancedSettings']['priority']['taxonomies']['frequency']['default'] = $default;
 
-		$this->defaults['breadcrumbs']['homepageLabel']['default']                             = __( 'Home', 'all-in-one-seo-pack' );
-		$this->defaults['breadcrumbs']['archiveFormat']['default']                             = sprintf( '%1$s %%', __( 'Archives for', 'all-in-one-seo-pack' ) );
-		$this->defaults['breadcrumbs']['searchResultFormat']['default']                        = sprintf( '%1$s \'%%\'', __( 'Search for', 'all-in-one-seo-pack' ) );
-		$this->defaults['breadcrumbs']['errorFormat404']['default']                            = __( '404 Error: page not found', 'all-in-one-seo-pack' );
+		$this->defaults['breadcrumbs']['homepageLabel']['default']      = __( 'Home', 'all-in-one-seo-pack' );
+		$this->defaults['breadcrumbs']['archiveFormat']['default']      = sprintf( '%1$s #breadcrumb_archive_post_type_name', __( 'Archives for', 'all-in-one-seo-pack' ) );
+		$this->defaults['breadcrumbs']['searchResultFormat']['default'] = sprintf( '%1$s \'#breadcrumb_search_string\'', __( 'Search for', 'all-in-one-seo-pack' ) );
+		$this->defaults['breadcrumbs']['errorFormat404']['default']     = __( '404 Error: page not found', 'all-in-one-seo-pack' );
+
 		$this->defaults['searchAppearance']['global']['schema']['organizationName']['default'] = aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'name' ) );
 		$this->defaults['searchAppearance']['global']['schema']['organizationLogo']['default'] = aioseo()->helpers->getSiteLogoUrl() ? aioseo()->helpers->getSiteLogoUrl() : '';
 	}
@@ -843,7 +876,7 @@ TEMPLATE
 				}
 			}
 
-			$this->options['internal']['searchAppearanceDynamicBackup']['postTypes']['value'][ $postTypeName ] = wp_json_encode( $postTypeData );
+			$this->options['internal']['searchAppearanceDynamicBackup']['postTypes']['value'][ $postTypeName ] = $postTypeData;
 		}
 		foreach ( $dynamicPostTypeSettingsOG as $postTypeName => $postTypeData ) {
 			foreach ( $postTypes as $postType ) {
@@ -857,7 +890,7 @@ TEMPLATE
 				}
 			}
 
-			$this->options['internal']['socialFacebookDynamicBackup']['postTypes']['value'][ $postTypeName ] = wp_json_encode( $postTypeData );
+			$this->options['internal']['socialFacebookDynamicBackup']['postTypes']['value'][ $postTypeName ] = $postTypeData;
 		}
 
 		// Taxonomies.
@@ -874,7 +907,7 @@ TEMPLATE
 				}
 			}
 
-			$this->options['internal']['searchAppearanceDynamicBackup']['taxonomies']['value'][ $taxonomyName ] = wp_json_encode( $taxonomyData );
+			$this->options['internal']['searchAppearanceDynamicBackup']['taxonomies']['value'][ $taxonomyName ] = $taxonomyData;
 		}
 		foreach ( $dynamicTaxonomiesSettingsOG as $taxonomyName => $taxonomyData ) {
 			foreach ( $taxonomies as $taxonomy ) {
@@ -884,7 +917,7 @@ TEMPLATE
 				}
 			}
 
-			$this->options['internal']['socialFacebookDynamicBackup']['taxonomies']['value'][ $taxonomyName ] = wp_json_encode( $taxonomyData );
+			$this->options['internal']['socialFacebookDynamicBackup']['taxonomies']['value'][ $taxonomyName ] = $taxonomyData;
 		}
 
 		// Archives.
@@ -901,7 +934,7 @@ TEMPLATE
 				}
 			}
 
-			$this->options['internal']['searchAppearanceDynamicBackup']['archives']['value'][ $postTypeName ] = wp_json_encode( $postTypeData );
+			$this->options['internal']['searchAppearanceDynamicBackup']['archives']['value'][ $postTypeName ] = $postTypeData;
 		}
 
 		// The above works for most options, but there are a few that need to be forcibly updated.

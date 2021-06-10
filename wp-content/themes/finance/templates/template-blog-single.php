@@ -10,8 +10,6 @@
 
 get_header();
 ?>
-
-
   <main id="main">
          <!-- ======= Breadcrumbs ======= -->
     <section id="breadcrumbs" class="breadcrumbs">
@@ -112,7 +110,7 @@ get_header();
                 <h4>Jane Smith</h4>
                 <div class="social-links">
                   <a href="https://twitters.com/#"><i class="bi bi-twitter"></i></a>
-                  <a href="https://facebook.com/#"><i class="bi bi-facebook"></i></a>
+                  <a href="https://facebook.com/itlongtruong"><i class="bi bi-facebook"></i></a>
                   <a href="https://instagram.com/#"><i class="biu bi-instagram"></i></a>
                 </div>
                 <p>
@@ -211,23 +209,18 @@ get_header();
                     <form action="">
                       <div class="row">
                           <div class="col-md-6 form-group">
-                            <input name="name" type="text" class="form-control" placeholder="Your Name*">
+                            <input name="name" require type="text" class="form-control" placeholder="Tên của bạn*">
                           </div>
                           <div class="col-md-6 form-group">
-                            <input name="email" type="text" class="form-control" placeholder="Your Email*">
+                            <input name="email" require type="text" class="form-control" placeholder="Email*">
                           </div>
                       </div>
                       <div class="row">
                           <div class="col form-group">
-                            <input name="website" type="text" class="form-control" placeholder="Your Website">
+                            <textarea name="comment" require class="form-control" placeholder="Nội dung*"></textarea>
                           </div>
                       </div>
-                      <div class="row">
-                          <div class="col form-group">
-                            <textarea name="comment" class="form-control" placeholder="Your Comment*"></textarea>
-                          </div>
-                      </div>
-                      <button type="submit" class="btn btn-primary">Post Comment</button>
+                      <button type="submit" class="btn btn-primary">Bình luận</button>
                     </form>
                 </div>
               </div>

@@ -57,7 +57,7 @@ get_header();
                   Et eveniet enim. Qui velit est ea dolorem doloremque deleniti aperiam unde soluta. Est cum et quod quos aut ut et sit sunt. Voluptate porro consequatur assumenda perferendis dolore.
                 </p>
                 <div class="read-more">
-                  <a href="<?php echo home_url(); ?>/blog-single">Read More</a>
+                  <a href="<?php echo home_url(); ?>/blog-single">Xem Thêm</a>
                 </div>
               </div>
 
@@ -87,7 +87,7 @@ get_header();
                   Ad impedit qui officiis est in non aliquid veniam laborum. Id ipsum qui aut. Sit aliquam et quia molestias laboriosam. Tempora nam odit omnis eum corrupti qui aliquid excepturi molestiae. Facilis et sint quos sed voluptas. Maxime sed tempore enim omnis non alias odio quos distinctio.
                 </p>
                 <div class="read-more">
-                  <a href="<?php echo home_url(); ?>/blog-single">Read More</a>
+                  <a href="<?php echo home_url(); ?>/blog-single">Xem Thêm</a>
                 </div>
               </div>
 
@@ -117,7 +117,7 @@ get_header();
                   Doloremque est saepe laborum aut. Ipsa cupiditate ex harum at recusandae nesciunt. Ut dolores velit.
                 </p>
                 <div class="read-more">
-                  <a href="<?php echo home_url(); ?>/blog-single">Read More</a>
+                  <a href="<?php echo home_url(); ?>/blog-single">Xem Thêm</a>
                 </div>
               </div>
 
@@ -147,7 +147,7 @@ get_header();
                   Quia sed sunt. Ea asperiores expedita et et delectus voluptates rerum. Id saepe ut itaque quod qui voluptas nobis porro rerum. Quam quia nesciunt qui aut est non omnis. Inventore occaecati et quaerat magni itaque nam voluptas. Voluptatem ducimus sint id earum ut nesciunt sed corrupti nemo.
                 </p>
                 <div class="read-more">
-                  <a href="<?php echo home_url(); ?>/blog-single">Read More</a>
+                  <a href="<?php echo home_url(); ?>/blog-single">Xem Thêm</a>
                 </div>
               </div>
 
@@ -167,7 +167,7 @@ get_header();
 
             <div class="sidebar">
 
-              <h3 class="sidebar-title">Search</h3>
+              <h3 class="sidebar-title">Tìm Kiếm</h3>
               <div class="sidebar-item search-form">
                 <form action="">
                   <input type="text">
@@ -175,19 +175,18 @@ get_header();
                 </form>
               </div><!-- End sidebar search formn-->
 
-              <h3 class="sidebar-title">Categories</h3>
+              <h3 class="sidebar-title">Danh Mục</h3>
               <div class="sidebar-item categories">
                 <ul>
-                  <li><a href="#">General <span>(25)</span></a></li>
-                  <li><a href="#">Lifestyle <span>(12)</span></a></li>
-                  <li><a href="#">Travel <span>(5)</span></a></li>
-                  <li><a href="#">Design <span>(22)</span></a></li>
-                  <li><a href="#">Creative <span>(8)</span></a></li>
-                  <li><a href="#">Educaion <span>(14)</span></a></li>
+                  <li><a href="#">Vay Tiền Nhanh <span>(25)</span></a></li>
+                  <li><a href="#">Cầm Đồ Online <span>(12)</span></a></li>
+                  <li><a href="#">Ví Điện Tử <span>(5)</span></a></li>
+                  <li><a href="#">Ekyc <span>(22)</span></a></li>
+                  <li><a href="#">Tiền Điện Tử <span>(8)</span></a></li>
                 </ul>
               </div><!-- End sidebar categories-->
 
-              <h3 class="sidebar-title">Recent Posts</h3>
+              <h3 class="sidebar-title">Bài viết gần đây</h3>
               <div class="sidebar-item recent-posts">
                 <div class="post-item clearfix">
                   <img src="<?php echo get_template_directory_uri();?>/assets/img/news/blog-recent-1.jpg" alt="">

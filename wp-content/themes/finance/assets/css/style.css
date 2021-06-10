@@ -1659,7 +1659,7 @@ section {
 }
 
 .blog .entry .entry-title a {
-  color: #012970;
+  color: #50B848;
   transition: 0.3s;
 }
 
@@ -1752,7 +1752,7 @@ section {
   top: 0;
   bottom: 0;
   width: 3px;
-  background-color: #012970;
+  background-color: #50B848;
   margin-top: 20px;
   margin-bottom: 20px;
 }
@@ -1832,7 +1832,7 @@ section {
   font-size: 22px;
   margin-bottom: 0px;
   padding: 0;
-  color: #012970;
+  color: #50B848;
 }
 
 .blog .blog-author .social-links {
@@ -1887,7 +1887,7 @@ section {
 
 .blog .blog-comments .comment h5 .reply {
   padding-left: 10px;
-  color: #012970;
+  color: #50B848;
 }
 
 .blog .blog-comments .comment h5 .reply i {
@@ -1950,7 +1950,7 @@ section {
   border-radius: 4px;
   padding: 10px 20px;
   border: 0;
-  background-color: #012970;
+  background-color: #50B848;
 }
 
 .blog .blog-comments .reply-form .btn-primary:hover {
@@ -1974,7 +1974,7 @@ section {
 }
 
 .blog .blog-pagination li a {
-  color: #012970;
+  color: #50B848;
   padding: 7px 16px;
   display: flex;
   align-items: center;
@@ -2000,7 +2000,7 @@ section {
   font-weight: 700;
   padding: 0 0 0 0;
   margin: 0 0 15px 0;
-  color: #012970;
+  color: #50B848;
   position: relative;
 }
 
@@ -2057,7 +2057,7 @@ section {
 }
 
 .blog .sidebar .categories ul a {
-  color: #012970;
+  color: #50B848;
   transition: 0.3s;
 }
 
@@ -2087,7 +2087,7 @@ section {
 }
 
 .blog .sidebar .recent-posts h4 a {
-  color: #012970;
+  color: #50B848;
   transition: 0.3s;
 }
 
@@ -2117,7 +2117,7 @@ section {
 }
 
 .blog .sidebar .tags ul a {
-  color: #0257ee;
+  color: #50B848;
   font-size: 14px;
   padding: 6px 14px;
   margin: 0 6px 8px 0;
@@ -2160,7 +2160,7 @@ section {
 
 .contact .info-box h3 {
   font-size: 20px;
-  color: #012970;
+  color: #50B848;
   font-weight: 700;
   margin: 20px 0 10px 0;
 }
@@ -2248,7 +2248,7 @@ section {
 }
 
 .contact .php-email-form button[type="submit"]:hover {
-  background: #5969f3;
+  background: #00953B;
 }
 
 @-webkit-keyframes animate-loading {

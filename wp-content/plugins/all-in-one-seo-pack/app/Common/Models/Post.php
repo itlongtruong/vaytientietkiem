@@ -60,59 +60,6 @@ class Post extends Model {
 	];
 
 	/**
-	 * Class constructor.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @param mixed $var This can be the primary key of the resource, or it could be an array of data to manufacture a resource without a database query.
-	 */
-	public function __construct( $var = null ) {
-		parent::__construct( $var );
-
-		// Duplicate Post integration.
-		add_action( 'dp_duplicate_post', [ $this, 'duplicatePostIntegration' ], 10, 3 );
-	}
-
-	/**
-	 * Duplicates the model when duplicate post is triggered.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @param  integer $newPostId    The new Post ID.
-	 * @param  WP_Post $originalPost The original post object.
-	 * @param  string  $status       The status of the post.
-	 * @return void
-	 */
-	public function duplicatePostIntegration( $newPostId, $originalPost, $status ) {
-		$originalAioseoPost = self::getPost( $originalPost->ID );
-		if ( ! $originalAioseoPost->exists() ) {
-			return;
-		}
-
-		$newPost = self::getPost( $newPostId );
-		if ( $newPost->exists() ) {
-			return;
-		}
-
-		$columns = $originalAioseoPost->getColumns();
-		foreach ( $columns as $column => $value ) {
-			// Skip the ID columns.
-			if ( 'id' === $column || 'post_id' === $column ) {
-				continue;
-			}
-
-			if ( 'post_id' === $column ) {
-				$newPost->$column = $newPostId;
-				continue;
-			}
-
-			$newPost->$column = $originalAioseoPost->$column;
-		}
-
-		$newPost->save();
-	}
-
-	/**
 	 * Returns a Post with a given ID.
 	 *
 	 * @since 4.0.0
