@@ -54,6 +54,17 @@ class Schema {
 	];
 
 	/**
+	 * Fields that can be 0 or null, which shouldn't be stripped when cleaning the data.
+	 *
+	 * @since 4.1.2
+	 *
+	 * @var array
+	 */
+	public $nullableFields = [
+		'price' // Needs to be 0 if free for Software Application.
+	];
+
+	/**
 	 * Returns the JSON schema for the requested page.
 	 *
 	 * @since 4.0.0
@@ -251,7 +262,7 @@ class Schema {
 				$v = trim( wp_strip_all_tags( $v ) );
 			}
 
-			if ( empty( $v ) ) {
+			if ( empty( $v ) && ! in_array( $k, $this->nullableFields, true ) ) {
 				unset( $data[ $k ] );
 			} else {
 				$data[ $k ] = $v;

@@ -346,6 +346,22 @@ class Database {
 			case 'UPDATE':
 				$clauses   = [];
 				$clauses[] = "UPDATE $this->table";
+
+				if ( count( $this->join ) > 0 ) {
+					foreach ( (array) $this->join as $join ) {
+						if ( is_array( $join[1] ) ) {
+							$join_on = [];
+							foreach ( (array) $join[1] as $left => $right ) {
+								$join_on[] = "$this->table.`$left` = `{$join[0]}`.`$right`";
+							}
+
+							$clauses[] = "\t" . ( ( 'LEFT' === $join[2] || 'RIGHT' === $join[2] ) ? $join[2] . ' JOIN ' : 'JOIN ' ) . $join[0] . ' ON ' . implode( ' AND ', $join_on );
+						} else {
+							$clauses[] = "\t" . ( ( 'LEFT' === $join[2] || 'RIGHT' === $join[2] ) ? $join[2] . ' JOIN ' : 'JOIN ' ) . "{$join[0]} ON {$join[1]}";
+						}
+					}
+				}
+
 				$clauses[] = 'SET ' . implode( ', ', $this->set );
 
 				if ( count( $this->where ) > 0 ) {

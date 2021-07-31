@@ -560,7 +560,7 @@ class Content {
 		}
 
 		usort( $entries, function( $a, $b ) {
-			return $a['pubDate'] < $b['pubDate'];
+			return $a['pubDate'] < $b['pubDate'] ? 1 : 0;
 		});
 		return apply_filters( 'aioseo_sitemap_rss', $entries );
 	}

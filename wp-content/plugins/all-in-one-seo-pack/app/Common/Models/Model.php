@@ -235,7 +235,7 @@ class Model implements \JsonSerializable {
 		}
 
 		foreach ( $this->jsonFields as $field ) {
-			if ( isset( $data[ $field ] ) && ! empty( $data[ $field ] ) ) {
+			if ( isset( $data[ $field ] ) && ! aioseo()->helpers->isJsonString( $data[ $field ] ) ) {
 				$data[ $field ] = wp_json_encode( $data[ $field ] );
 			}
 		}

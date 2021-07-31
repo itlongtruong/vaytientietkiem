@@ -200,7 +200,7 @@ namespace AIOSEO\Plugin {
 		private function includes() {
 			$dependencies = [
 				'/vendor/autoload.php',
-				'/vendor/woocommerce/action-scheduler/action-scheduler.php',
+				'/vendor/woocommerce/action-scheduler/action-scheduler.php'
 			];
 
 			foreach ( $dependencies as $path ) {
@@ -273,6 +273,7 @@ namespace AIOSEO\Plugin {
 			$this->addons             = $this->pro ? new Pro\Utils\Addons() : new Common\Utils\Addons();
 			$this->tags               = $this->pro ? new Pro\Utils\Tags() : new Common\Utils\Tags();
 			$this->badBotBlocker      = new Common\Tools\BadBotBlocker();
+			$this->headlineAnalyzer   = new Common\HeadlineAnalyzer\HeadlineAnalyzer();
 			$this->breadcrumbs        = $this->pro ? new Pro\Breadcrumbs\Breadcrumbs() : new Common\Breadcrumbs\Breadcrumbs();
 			$this->internalOptions    = $this->pro ? new Pro\Utils\InternalOptions() : new Lite\Utils\InternalOptions();
 			$this->options            = $this->pro ? new Pro\Utils\Options() : new Lite\Utils\Options();

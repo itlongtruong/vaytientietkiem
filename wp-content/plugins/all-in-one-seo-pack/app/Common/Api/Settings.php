@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use AIOSEO\Plugin\Common\Models;
+use AIOSEO\Plugin\Common\Migration;
 
 /**
  * Route class for the API.
@@ -326,15 +327,45 @@ class Settings {
 	}
 
 	/**
-	 * Clears the AIOSEO cache.
+	 * Executes a given administrative task.
 	 *
-	 * @since 4.1.0
+	 * @since 4.1.2
 	 *
 	 * @param  \WP_REST_Request  $request The REST Request
 	 * @return \WP_REST_Response          The response.
 	 */
-	public static function clearCache() {
-		aioseo()->transients->clearCache();
+	public static function doTask( $request ) {
+		$body   = $request->get_json_params();
+		$action = ! empty( $body['action'] ) ? $body['action'] : '';
+
+		switch ( $action ) {
+			case 'clear-cache':
+				aioseo()->transients->clearCache();
+				break;
+			case 'remove-duplicates':
+				aioseo()->updates->removeDuplicateRecords();
+				break;
+			case 'unescape-data':
+				aioseo()->admin->scheduleUnescapeData();
+				break;
+			case 'clear-image-data':
+				aioseo()->sitemap->query->resetImages();
+				break;
+			case 'clear-video-data':
+				$video = aioseo()->sitemap->addons['video'];
+				if ( ! empty( $video ) ) {
+					aioseo()->sitemap->addons['video']['query']->resetVideos();
+				}
+				break;
+			case 'restart-v3-migration':
+				Migration\Helpers::redoMigration();
+				break;
+			default:
+				return new \WP_REST_Response( [
+					'success' => true,
+					'error'   => 'The given action isn\'t defined.'
+				], 400 );
+		}
 
 		return new \WP_REST_Response( [
 			'success' => true

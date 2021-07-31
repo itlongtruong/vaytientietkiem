@@ -1973,7 +1973,7 @@ section {
   transition: 0.3s;
 }
 
-.blog .blog-pagination li a {
+.blog .blog-pagination li a, .blog .blog-pagination li span {
   color: #50B848;
   padding: 7px 16px;
   display: flex;
@@ -1981,11 +1981,11 @@ section {
   justify-content: center;
 }
 
-.blog .blog-pagination li.active, .blog .blog-pagination li:hover {
+.blog .blog-pagination li span,  .blog .blog-pagination li.active, .blog .blog-pagination li:hover {
   background: #50B848;
 }
 
-.blog .blog-pagination li.active a, .blog .blog-pagination li:hover a {
+.blog .blog-pagination li.active a, .blog .blog-pagination li:hover a, .blog .blog-pagination li span {
   color: #fff;
 }
 

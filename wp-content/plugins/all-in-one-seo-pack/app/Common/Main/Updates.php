@@ -43,7 +43,7 @@ class Updates {
 		aioseo()->access->addCapabilities();
 
 		$oldOptions = get_option( 'aioseop_options' );
-		if ( empty( $oldOptions ) && ( ! is_network_admin() || ! isset( $_GET['activate-multi'] ) ) ) {
+		if ( empty( $oldOptions ) && ! is_network_admin() && ! isset( $_GET['activate-multi'] ) ) {
 			// Sets 30 second transient for welcome screen redirect on activation.
 			aioseo()->transients->update( 'activation_redirect', true, 30 );
 		}
@@ -84,6 +84,10 @@ class Updates {
 
 		if ( version_compare( $lastActiveVersion, '4.0.17', '<' ) ) {
 			$this->removeLocationColumn();
+		}
+
+		if ( version_compare( $lastActiveVersion, '4.1.2', '<' ) ) {
+			$this->clearProductImages();
 		}
 
 		do_action( 'aioseo_run_updates', $lastActiveVersion );
@@ -328,5 +332,29 @@ class Updates {
 				DROP location"
 			);
 		}
+	}
+
+	/**
+	 * Clears the image data for WooCommerce Products so that we scan them again and include product gallery images.
+	 *
+	 * @since 4.1.2
+	 *
+	 * @return void
+	 */
+	public function clearProductImages() {
+		if ( ! aioseo()->helpers->isWooCommerceActive() ) {
+			return;
+		}
+
+		aioseo()->db->update( 'aioseo_posts as ap' )
+			->join( 'posts as p', 'ap.post_id = p.ID' )
+			->where( 'p.post_type', 'product' )
+			->set(
+				[
+					'images'          => null,
+					'image_scan_date' => null
+				]
+			)
+			->run();
 	}
 }

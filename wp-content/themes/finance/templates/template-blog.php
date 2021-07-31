@@ -7,244 +7,115 @@
  * @subpackage Finance
  * @since Finance 1.0
  */
-
 get_header();
+$posts_per_page = 1;
+$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+$query = new WP_Query( array(
+    'post_type'        => 'blog',
+    'posts_per_page' => $posts_per_page,
+    'paged' => $paged
+));
+
 ?>
-
-
   <main id="main">
          <!-- ======= Breadcrumbs ======= -->
     <section id="breadcrumbs" class="breadcrumbs">
       <div class="container">
 
         <ol>
-          <li><a href="index.html">Trang Chủ</a></li>
+          <li><a href="<?php echo get_home_url(); ?>">Trang Chủ</a></li>
           <li>Blog</li>
         </ol>
     
       </div>
     </section><!-- End Breadcrumbs -->
 
-    <!-- ======= Blog Section ======= -->
+    <!-- ======= Blog Section ======= -->    
     <section id="blog" class="blog">
       <div class="container" data-aos="fade-up">
 
         <div class="row">
-
+           
           <div class="col-lg-8 entries">
-
+            <?php if ( $query->have_posts() ) : ?>
+            <?php while ( $query->have_posts() ) : $query->the_post();
+              $post_id = get_the_ID();            
+            ?>
             <article class="entry">
 
               <div class="entry-img">
-                <img src="<?php echo get_template_directory_uri();?>/assets/img/news/blog-1.jpg" alt="" class="img-fluid">
+                <img src="<?php echo get_the_post_thumbnail_url($post_id,'full');?>" alt="" class="img-fluid">
               </div>
 
               <h2 class="entry-title">
-                <a href="<?php echo home_url(); ?>/blog-single">Dolorum optio tempore voluptas dignissimos cumque fuga qui quibusdam quia</a>
+                <a href="<?php the_permalink(); ?>"><?php the_title(); ?>></a>
               </h2>
 
               <div class="entry-meta">
                 <ul>
-                  <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="blog-single.html">John Doe</a></li>
-                  <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="blog-single.html"><time datetime="2020-01-01">Jan 1, 2020</time></a></li>
-                  <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="blog-single.html">12 Comments</a></li>
+                  <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="<?php the_permalink(); ?>"> <?php echo get_the_author();?></a></li>
+                  <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="<?php the_permalink(); ?>"><time datetime="<?php echo date('Y-m-d', strtotime($post->post_date))?>"><?php echo date('M j, Y', strtotime($post->post_date))?></time></a></li>
+                  <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="<?php the_permalink(); ?>"><?php echo get_comments_number($post_id)?> bình luận</a></li>
                 </ul>
               </div>
 
               <div class="entry-content">
                 <p>
-                  Similique neque nam consequuntur ad non maxime aliquam quas. Quibusdam animi praesentium. Aliquam et laboriosam eius aut nostrum quidem aliquid dicta.
-                  Et eveniet enim. Qui velit est ea dolorem doloremque deleniti aperiam unde soluta. Est cum et quod quos aut ut et sit sunt. Voluptate porro consequatur assumenda perferendis dolore.
+                <?php the_excerpt();?>
                 </p>
                 <div class="read-more">
-                  <a href="<?php echo home_url(); ?>/blog-single">Xem Thêm</a>
+                  <a href="<?php the_permalink(); ?>">Xem Thêm</a>
                 </div>
               </div>
 
             </article><!-- End blog entry -->
+            <?php endwhile; ?>
+            <!-- end loop -->
 
-            <article class="entry">
+          <div class="blog-pagination">  
+          <?php
+          $big = 999999999; // need an unlikely integer
 
-              <div class="entry-img">
-                <img src="<?php echo get_template_directory_uri();?>/assets/img/news/blog-2.jpg" alt="" class="img-fluid">
-              </div>
-
-              <h2 class="entry-title">
-                <a href="<?php echo home_url(); ?>/blog-single">Nisi magni odit consequatur autem nulla dolorem</a>
-              </h2>
-
-              <div class="entry-meta">
-                <ul>
-                  <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="blog-single.html">John Doe</a></li>
-                  <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="blog-single.html"><time datetime="2020-01-01">Jan 1, 2020</time></a></li>
-                  <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="blog-single.html">12 Comments</a></li>
-                </ul>
-              </div>
-
-              <div class="entry-content">
-                <p>
-                  Incidunt voluptate sit temporibus aperiam. Quia vitae aut sint ullam quis illum voluptatum et. Quo libero rerum voluptatem pariatur nam.
-                  Ad impedit qui officiis est in non aliquid veniam laborum. Id ipsum qui aut. Sit aliquam et quia molestias laboriosam. Tempora nam odit omnis eum corrupti qui aliquid excepturi molestiae. Facilis et sint quos sed voluptas. Maxime sed tempore enim omnis non alias odio quos distinctio.
-                </p>
-                <div class="read-more">
-                  <a href="<?php echo home_url(); ?>/blog-single">Xem Thêm</a>
-                </div>
-              </div>
-
-            </article><!-- End blog entry -->
-
-            <article class="entry">
-
-              <div class="entry-img">
-                <img src="<?php echo get_template_directory_uri();?>/assets/img/news/blog-4.jpg" alt="" class="img-fluid">
-              </div>
-
-              <h2 class="entry-title">
-                <a href="<?php echo home_url(); ?>/blog-single">Possimus soluta ut id suscipit ea ut. In quo quia et soluta libero sit sint.</a>
-              </h2>
-
-              <div class="entry-meta">
-                <ul>
-                  <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="blog-single.html">John Doe</a></li>
-                  <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="blog-single.html"><time datetime="2020-01-01">Jan 1, 2020</time></a></li>
-                  <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="blog-single.html">12 Comments</a></li>
-                </ul>
-              </div>
-
-              <div class="entry-content">
-                <p>
-                  Aut iste neque ut illum qui perspiciatis similique recusandae non. Fugit autem dolorem labore omnis et. Eum temporibus fugiat voluptate enim tenetur sunt omnis.
-                  Doloremque est saepe laborum aut. Ipsa cupiditate ex harum at recusandae nesciunt. Ut dolores velit.
-                </p>
-                <div class="read-more">
-                  <a href="<?php echo home_url(); ?>/blog-single">Xem Thêm</a>
-                </div>
-              </div>
-
-            </article><!-- End blog entry -->
-
-            <article class="entry">
-
-              <div class="entry-img">
-                <img src="<?php echo get_template_directory_uri();?>/assets/img/news/blog-1.jpg" alt="" class="img-fluid">
-              </div>
-
-              <h2 class="entry-title">
-                <a href="<?php echo home_url(); ?>/blog-single">Non rem rerum nam cum quo minus. Dolor distinctio deleniti explicabo eius exercitationem.</a>
-              </h2>
-
-              <div class="entry-meta">
-                <ul>
-                  <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="blog-single.html">John Doe</a></li>
-                  <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="blog-single.html"><time datetime="2020-01-01">Jan 1, 2020</time></a></li>
-                  <li class="d-flex align-items-center"><i class="bi bi-chat-dots"></i> <a href="blog-single.html">12 Comments</a></li>
-                </ul>
-              </div>
-
-              <div class="entry-content">
-                <p>
-                  Aspernatur rerum perferendis et sint. Voluptates cupiditate voluptas atque quae. Rem veritatis rerum enim et autem. Saepe atque cum eligendi eaque iste omnis a qui.
-                  Quia sed sunt. Ea asperiores expedita et et delectus voluptates rerum. Id saepe ut itaque quod qui voluptas nobis porro rerum. Quam quia nesciunt qui aut est non omnis. Inventore occaecati et quaerat magni itaque nam voluptas. Voluptatem ducimus sint id earum ut nesciunt sed corrupti nemo.
-                </p>
-                <div class="read-more">
-                  <a href="<?php echo home_url(); ?>/blog-single">Xem Thêm</a>
-                </div>
-              </div>
-
-            </article><!-- End blog entry -->
-
-            <div class="blog-pagination">
-              <ul class="justify-content-center">
-                <li><a href="#">1</a></li>
-                <li class="active"><a href="#">2</a></li>
-                <li><a href="#">3</a></li>
-              </ul>
-            </div>
-
-          </div><!-- End blog entries list -->
-
+          $pages = paginate_links( array(
+              'base' => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
+              'format' => '?paged=%#%',
+              'current' => max( 1, get_query_var('paged') ),
+              'total' => $query->max_num_pages,
+              'type'  => 'array',
+              'prev_next'   => true,
+              'prev_text'    => __('« Trang Trước'),
+              'next_text'    => __('Trang Sau »'),
+            )
+          );
+        
+          if( is_array( $pages ) ) {
+            $paged = ( get_query_var('paged') == 0 ) ? 1 : get_query_var('paged');
+        
+            $pagination = '<ul class="justify-content-center">';
+        
+            foreach ( $pages as $page ) {
+              $pagination .= "<li>$page</li>";
+            }
+        
+            $pagination .= '</ul>';
+        
+            
+            echo $pagination;
+          }
+          ?>
+          </div>  
+          
+          <?php wp_reset_postdata(); ?>  
+          <?php endif;?>
+          </div><!-- End blog entries list -->          
           <div class="col-lg-4">
-
-            <div class="sidebar">
-
-              <h3 class="sidebar-title">Tìm Kiếm</h3>
-              <div class="sidebar-item search-form">
-                <form action="">
-                  <input type="text">
-                  <button type="submit"><i class="bi bi-search"></i></button>
-                </form>
-              </div><!-- End sidebar search formn-->
-
-              <h3 class="sidebar-title">Danh Mục</h3>
-              <div class="sidebar-item categories">
-                <ul>
-                  <li><a href="#">Vay Tiền Nhanh <span>(25)</span></a></li>
-                  <li><a href="#">Cầm Đồ Online <span>(12)</span></a></li>
-                  <li><a href="#">Ví Điện Tử <span>(5)</span></a></li>
-                  <li><a href="#">Ekyc <span>(22)</span></a></li>
-                  <li><a href="#">Tiền Điện Tử <span>(8)</span></a></li>
-                </ul>
-              </div><!-- End sidebar categories-->
-
-              <h3 class="sidebar-title">Bài viết gần đây</h3>
-              <div class="sidebar-item recent-posts">
-                <div class="post-item clearfix">
-                  <img src="<?php echo get_template_directory_uri();?>/assets/img/news/blog-recent-1.jpg" alt="">
-                  <h4><a href="<?php echo home_url(); ?>/blog-single">Nihil blanditiis at in nihil autem</a></h4>
-                  <time datetime="2020-01-01">Jan 1, 2020</time>
-                </div>
-
-                <div class="post-item clearfix">
-                  <img src="<?php echo get_template_directory_uri();?>/assets/img/news/blog-recent-1.jpg" alt="">
-                  <h4><a href="<?php echo home_url(); ?>/blog-single">Quidem autem et impedit</a></h4>
-                  <time datetime="2020-01-01">Jan 1, 2020</time>
-                </div>
-
-                <div class="post-item clearfix">
-                  <img src="<?php echo get_template_directory_uri();?>/assets/img/news/blog-recent-1.jpg" alt="">
-                  <h4><a href="<?php echo home_url(); ?>/blog-single">Id quia et et ut maxime similique occaecati ut</a></h4>
-                  <time datetime="2020-01-01">Jan 1, 2020</time>
-                </div>
-
-                <div class="post-item clearfix">
-                  <img src="<?php echo get_template_directory_uri();?>/assets/img/news/blog-recent-1.jpg" alt="">
-                  <h4><a href="<?php echo home_url(); ?>/blog-single">Laborum corporis quo dara net para</a></h4>
-                  <time datetime="2020-01-01">Jan 1, 2020</time>
-                </div>
-
-                <div class="post-item clearfix">
-                  <img src="<?php echo get_template_directory_uri();?>/assets/img/news/blog-recent-1.jpg" alt="">
-                  <h4><a href="<?php echo home_url(); ?>/blog-single">Et dolores corrupti quae illo quod dolor</a></h4>
-                  <time datetime="2020-01-01">Jan 1, 2020</time>
-                </div>
-
-              </div><!-- End sidebar recent posts-->
-
-              <h3 class="sidebar-title">Tags</h3>
-              <div class="sidebar-item tags">
-                <ul>
-                  <li><a href="#">App</a></li>
-                  <li><a href="#">IT</a></li>
-                  <li><a href="#">Business</a></li>
-                  <li><a href="#">Mac</a></li>
-                  <li><a href="#">Design</a></li>
-                  <li><a href="#">Office</a></li>
-                  <li><a href="#">Creative</a></li>
-                  <li><a href="#">Studio</a></li>
-                  <li><a href="#">Smart</a></li>
-                  <li><a href="#">Tips</a></li>
-                  <li><a href="#">Marketing</a></li>
-                </ul>
-              </div><!-- End sidebar tags-->
-
-            </div><!-- End sidebar -->
-
+            <?php get_template_part( 'template-parts/sidebar/blog' ); ?>
           </div><!-- End blog sidebar -->
 
         </div>
 
       </div>
-    </section><!-- End Blog Section -->
+    </section><!-- End Blog Section -->    
 
    
   </main><!-- End #main -->

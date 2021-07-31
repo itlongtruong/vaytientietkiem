@@ -446,6 +446,18 @@ trait Options {
 		// Make sure our dynamic options have loaded.
 		$this->init( true );
 
+		// If we don't have a group key set, it means we want to reset everything.
+		if ( empty( $this->groupKey ) ) {
+			$groupKeys = array_keys( $this->options );
+			foreach ( $groupKeys as $groupKey ) {
+				$this->groupKey = $groupKey;
+				$this->reset();
+			}
+
+			// Since we just finished resetting everything, we can return early.
+			return;
+		}
+
 		// If we need to set a sub-group, do that now.
 		$keys     = array_merge( [ $this->groupKey ], $this->subGroups );
 		$defaults = $this->options[ $this->groupKey ];

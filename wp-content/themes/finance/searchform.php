@@ -16,6 +16,10 @@
  * Generate a unique ID for each form and a string containing an aria-label
  * if one was passed to get_search_form() in the args array.
  */
+
+global $wp_query;
+echo '<pre>',print_r($wp_query->query_vars,1),'</pre>';
+die;
 $twentytwentyone_unique_id = wp_unique_id( 'search-form-' );
 
 $twentytwentyone_aria_label = ! empty( $args['aria_label'] ) ? 'aria-label="' . esc_attr( $args['aria_label'] ) . '"' : '';

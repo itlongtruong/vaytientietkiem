@@ -128,31 +128,31 @@ class Image {
 		// Trim both internal and external whitespace.
 		$postContent = preg_replace( '/\s\s+/u', ' ', trim( $postContent ) );
 
-		$urls = $this->extract( $postContent );
+		$images = $this->extract( $postContent );
 
 		if ( has_post_thumbnail( $post ) ) {
-			$urls[] = get_the_post_thumbnail_url( $post );
+			$images[] = get_the_post_thumbnail_url( $post );
 		}
 
-		$urls = $this->filter( $urls );
-		$urls = $this->removeImageDimensions( $urls );
+		$images = $this->filter( $images );
+		$images = $this->removeImageDimensions( $images );
 
-		if ( ! $urls ) {
+		if ( aioseo()->helpers->isWooCommerceActive() && 'product' === $post->post_type ) {
+			$images = array_merge( $images, $this->getProductImages( $post ) );
+		}
+
+		if ( ! $images ) {
 			return $this->updatePost( $post->ID );
 		}
 
-		$ids = [];
-		foreach ( $urls as $url ) {
-			// Get the ID of the image so we can get its meta data. If there's no ID, then it's probably an external image.
-			$id = aioseo()->helpers->attachmentUrlToPostId( $url );
-			if ( $id ) {
-				$ids[] = $id;
-				continue;
-			}
-			$ids[] = $url;
+		$parsedImages = [];
+		foreach ( $images as $image ) {
+			$attachmentId   = is_numeric( $image ) ? $image : aioseo()->helpers->attachmentUrlToPostId( $image );
+			$parsedImages[] = $attachmentId ? $attachmentId : $image;
 		}
 
-		$images = array_slice( $this->buildEntries( $ids ), 0, 1000 );
+		// Limit to a 1,000 URLs, in accordance to Google's specifications.
+		$images = array_slice( $this->buildEntries( $parsedImages ), 0, 1000 );
 		return $this->updatePost( $post->ID, $images );
 	}
 
@@ -174,6 +174,24 @@ class Image {
 			return [];
 		}
 		return $this->buildEntries( [ $id ] );
+	}
+
+	/**
+	 * Gets the gallery images for the given WooCommerce product.
+	 *
+	 * @since 4.1.2
+	 *
+	 * @param  \WP_Post $post The post object.
+	 * @return array          The product gallery images.
+	 */
+	private function getProductImages( $post ) {
+		$productImageIds = get_post_meta( $post->ID, '_product_image_gallery', true );
+		if ( ! $productImageIds ) {
+			return [];
+		}
+
+		$productImageIds = explode( ',', $productImageIds );
+		return is_array( $productImageIds ) ? $productImageIds : [];
 	}
 
 	/**
@@ -277,26 +295,14 @@ class Image {
 	 * @return string          The parsed post content.
 	 */
 	private function doShortcodes( $content ) {
-		$shortcodes = apply_filters( 'aioseo_sitemap_image_galleries', [
+		$shortcodes = apply_filters( 'aioseo_image_sitemap_allowed_shortcodes', [
 			'WordPress Core' => 'gallery',
 			'NextGen #1'     => 'ngg',
 			'NextGen #2'     => 'ngg_images'
 		] );
+		$wildcards  = apply_filters( 'aioseo_image_sitemap_allowed_wildcards', [ 'image', 'img', 'gallery' ] );
 
-		if ( ! count( $shortcodes ) ) {
-			return $content;
-		}
-
-		$matches = [];
-		foreach ( $shortcodes as $k => $v ) {
-			preg_match_all( "#\[.*$v.*]#", $content, $found );
-			$matches = $matches + $found;
-		}
-
-		if ( count( $matches ) ) {
-			$content = do_shortcode( $content );
-		}
-		return $content;
+		return aioseo()->helpers->doAllowedShortcodes( $content, $shortcodes, $wildcards );
 	}
 
 	/**

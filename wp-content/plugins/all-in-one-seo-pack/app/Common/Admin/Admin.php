@@ -57,6 +57,8 @@ class Admin {
 	 * @since 4.0.0
 	 */
 	public function __construct() {
+		add_action( 'aioseo_unslash_escaped_data_posts', [ $this, 'unslashEscapedDataPosts' ] );
+
 		if ( wp_doing_ajax() || wp_doing_cron() ) {
 			return;
 		}
@@ -150,6 +152,7 @@ class Admin {
 		if ( is_admin() ) {
 			// Add the menu to the sidebar.
 			add_action( 'admin_menu', [ $this, 'addMenu' ] );
+			add_action( 'admin_menu', [ $this, 'hideScheduledActionsMenu' ], 99999 );
 			if ( is_multisite() ) {
 				add_action( 'network_admin_menu', [ $this, 'addRobotsMenu' ] );
 			}
@@ -161,6 +164,9 @@ class Admin {
 			add_action( 'post_submitbox_misc_actions', [ $this, 'addPublishScore' ] );
 
 			add_action( 'admin_init', [ $this, 'addPluginScripts' ] );
+
+			// Add redirects messages to trashed posts.
+			add_filter( 'bulk_post_updated_messages', [ $this, 'appendTrashedMessage' ], 10, 2 );
 
 			$this->registerLinkFormatHooks();
 		}
@@ -183,7 +189,7 @@ class Admin {
 		global $wp_version;
 		include_once ABSPATH . 'wp-admin/includes/plugin.php';
 		if ( version_compare( $wp_version, '5.3', '>=' ) || is_plugin_active( 'gutenberg/gutenberg.php' ) ) {
-			add_action( 'admin_init', [ $this, 'addGutenbergLinkFormatScript' ] );
+			add_action( 'current_screen', [ $this, 'addGutenbergLinkFormatScript' ] );
 			add_action( 'enqueue_block_editor_assets', function() {
 				wp_enqueue_script( 'aioseo-link-format' );
 			} );
@@ -265,6 +271,10 @@ class Admin {
 	 * @return void
 	 */
 	public function addGutenbergLinkFormatScript() {
+		if ( ! aioseo()->helpers->isScreenBase( 'post' ) ) {
+			return;
+		}
+
 		$linkFormat = 'block';
 		if ( is_plugin_active( 'gutenberg/gutenberg.php' ) ) {
 			$data = get_plugin_data( ABSPATH . 'wp-content/plugins/gutenberg/gutenberg.php', false, false );
@@ -602,6 +612,32 @@ class Admin {
 			'data:image/svg+xml;base64,' . base64_encode( aioseo()->helpers->logo( 16, 16, '#A0A5AA' ) ),
 			'80.01234567890'
 		);
+	}
+
+	/**
+	 * Hides the Scheduled Actions menu.
+	 *
+	 * @since 4.1.2
+	 *
+	 * @return void
+	 */
+	public function hideScheduledActionsMenu() {
+		if ( ! apply_filters( 'aioseo_hide_action_scheduler_menu', true ) ) {
+			return;
+		}
+
+		global $submenu;
+		if ( ! isset( $submenu['tools.php'] ) ) {
+			return;
+		}
+
+		foreach ( $submenu['tools.php'] as $index => $props ) {
+			if ( ! empty( $props[2] ) && 'action-scheduler' === $props[2] ) {
+				unset( $submenu['tools.php'][ $index ] );
+				return;
+			}
+		}
+
 	}
 
 	/**
@@ -945,7 +981,7 @@ class Admin {
 			$nonce   = wp_create_nonce( "aioseo_meta_{$columnName}_{$postId}" );
 			$posts   = $data['posts'];
 			$thePost = Models\Post::getPost( $postId );
-			$posts[] = [
+			$postData = [
 				'id'                 => $postId,
 				'columnName'         => $columnName,
 				'nonce'              => $nonce,
@@ -960,6 +996,13 @@ class Admin {
 				'isSpecialPage'      => aioseo()->helpers->isSpecialPage( $postId )
 			];
 
+			foreach ( aioseo()->addons->getLoadedAddons() as $loadedAddon ) {
+				if ( isset( $loadedAddon->admin ) && method_exists( $loadedAddon->admin, 'renderColumnData' ) ) {
+					$postData = array_merge( $postData, $loadedAddon->admin->renderColumnData( $columnName, $postId, $postData ) );
+				}
+			}
+
+			$posts[]       = $postData;
 			$data['posts'] = $posts;
 
 			$wp_scripts->add_data( 'aioseo-posts-table', 'data', '' );
@@ -1057,12 +1100,6 @@ class Admin {
 	 * @return void
 	 */
 	protected function checkAdminQueryArgs() {
-		// Migrate the post/term meta manually.
-		if ( isset( $_GET['aioseo-v3-migrate-now'] ) ) {
-			aioseo()->migration->oldOptions = ( new Migration\OldOptions() )->oldOptions;
-			aioseo()->migration->meta->migratePostMeta();
-		}
-
 		// Redo the migration from the beginning.
 		if ( isset( $_GET['aioseo-v3-migration'] ) && 'i-want-to-migrate' === wp_unslash( $_GET['aioseo-v3-migration'] ) ) { // phpcs:ignore HM.Security.ValidatedSanitizedInput.InputNotSanitized
 			Migration\Helpers::redoMigration();
@@ -1073,11 +1110,104 @@ class Admin {
 			aioseo()->transients->clearCache();
 		}
 
+		if ( isset( $_GET['aioseo-remove-duplicates'] ) ) {
+			aioseo()->updates->removeDuplicateRecords();
+		}
+
+		if ( isset( $_GET['aioseo-unslash-escaped-data'] ) ) {
+			$this->scheduleUnescapeData();
+		}
+
 		if ( isset( $_GET['aioseo-image-rescan'] ) ) {
 			aioseo()->sitemap->query->resetImages();
 		}
 
 		$this->updateDeprecatedOptions();
+	}
+
+	/**
+	 * Starts the cleaning procedure to fix escaped, corrupted data.
+	 *
+	 * @since 4.1.2
+	 *
+	 * @return void
+	 */
+	public function scheduleUnescapeData() {
+		aioseo()->transients->update( 'unslash_escaped_data_posts', time(), WEEK_IN_SECONDS );
+		aioseo()->helpers->scheduleSingleAction( 'aioseo_unslash_escaped_data_posts', 120 );
+	}
+
+	/**
+	 * Unlashes corrupted escaped data in posts.
+	 *
+	 * @since 4.1.2
+	 *
+	 * @return void
+	 */
+	public function unslashEscapedDataPosts() {
+		$postsToUnslash = 200;
+		$timeStarted    = gmdate( 'Y-m-d H:i:s', aioseo()->transients->get( 'unslash_escaped_data_posts' ) );
+
+		$posts = aioseo()->db->start( 'aioseo_posts' )
+			->select( '*' )
+			->whereRaw( "updated < '$timeStarted'" )
+			->orderBy( 'updated ASC' )
+			->limit( $postsToUnslash )
+			->run()
+			->result();
+
+		if ( empty( $posts ) ) {
+			aioseo()->transients->delete( 'unslash_escaped_data_posts' );
+			return;
+		}
+
+		aioseo()->helpers->scheduleSingleAction( 'aioseo_unslash_escaped_data_posts', 120 );
+
+		foreach ( $posts as $post ) {
+			$aioseoPost = Models\Post::getPost( $post->post_id );
+			foreach ( $this->getColumnsToUnslash() as $columnName ) {
+				// Remove backslashes but preserve encoded unicode characters in JSON data.
+				$aioseoPost->$columnName = aioseo()->helpers->pregReplace( '/\\\(?![uU][+]?[a-zA-Z0-9]{4})/', '', $post->$columnName );
+			}
+			$aioseoPost->images          = null;
+			$aioseoPost->image_scan_date = null;
+			$aioseoPost->videos          = null;
+			$aioseoPost->video_scan_date = null;
+			$aioseoPost->save();
+		}
+	}
+
+	/**
+	 * Returns a list of names of database columns that should be unslashed when cleaning the corrupted data.
+	 *
+	 * @since 4.1.2
+	 *
+	 * @return array The list of column names.
+	 */
+	protected function getColumnsToUnslash() {
+		return [
+			'title',
+			'description',
+			'keywords',
+			'keyphrases',
+			'page_analysis',
+			'canonical_url',
+			'og_title',
+			'og_description',
+			'og_image_custom_url',
+			'og_image_custom_fields',
+			'og_video',
+			'og_custom_url',
+			'og_article_section',
+			'og_article_tags',
+			'twitter_title',
+			'twitter_description',
+			'twitter_image_custom_url',
+			'twitter_image_custom_fields',
+			'schema_type_options',
+			'local_seo',
+			'tabs'
+		];
 	}
 
 	/**
@@ -1119,5 +1249,53 @@ class Admin {
 				aioseo()->internalOptions->internal->deprecatedOptions = array_values( $deprecatedOptions );
 			}
 		}
+	}
+
+	/**
+	 * Appends a message to the default WordPress "trashed" message.
+	 *
+	 * @since 4.1.2
+	 *
+	 * @param  string $messages The original messages.
+	 * @return string           The modified messages.
+	 */
+	public function appendTrashedMessage( $messages, $counts ) {
+		if ( function_exists( 'aioseoRedirects' ) && aioseoRedirects()->options->monitor->trash ) {
+			return $messages;
+		}
+
+		if ( empty( $_GET['ids'] ) ) {
+			return $messages;
+		}
+
+		$posts = [];
+		$ids     = array_map( 'intval', explode( ',', wp_unslash( $_GET['ids'] ) ) ); // phpcs:ignore HM.Security.ValidatedSanitizedInput.InputNotSanitized
+		foreach ( $ids as $id ) {
+			// We need to clone the post here so we can get a real permalink for the post even if it is not published already.
+			$post              = aioseo()->helpers->getPost( $id );
+			$post->post_status = 'publish';
+			$post->post_name   = sanitize_title(
+				$post->post_name ? $post->post_name : $post->post_title,
+				$post->ID
+			);
+
+			if ( ! empty( $post ) ) {
+				$posts[] = [
+					'id'  => $id,
+					'url' => urlencode( str_replace( aioseo()->helpers->getSiteUrl(), '', str_replace( '__trashed', '', get_permalink( $post ) ) ) )
+				];
+			}
+		}
+
+		if ( empty( $posts ) ) {
+			return $messages;
+		}
+
+		$url         = add_query_arg( 'aioseo-add-urls', base64_encode( wp_json_encode( $posts ) ), admin_url( 'admin.php?page=aioseo-redirects' ) );
+		$addRedirect = _n( 'Add Redirect to improve SEO', 'Add Redirects to improve SEO', count( $posts ), 'all-in-one-seo-pack' );
+
+		$messages['post']['trashed'] = $messages['post']['trashed'] . '&nbsp;<a href="' . $url . '">' . $addRedirect . '</a> |';
+		$messages['page']['trashed'] = $messages['page']['trashed'] . '&nbsp;<a href="' . $url . '">' . $addRedirect . '</a> |';
+		return $messages;
 	}
 }

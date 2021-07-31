@@ -99,7 +99,56 @@ class Notification extends Model {
 	 * @return array An array of active notifications.
 	 */
 	public static function getAllActiveNotifications() {
-		return array_values( json_decode( wp_json_encode( self::getActiveNotifications() ), true ) );
+		$staticNotifications = self::getStaticNotifications();
+		$notifications       = array_values( json_decode( wp_json_encode( self::getActiveNotifications() ), true ) );
+		return ! empty( $staticNotifications ) ? array_merge( $staticNotifications, $notifications ) : $notifications;
+	}
+
+	/**
+	 * Returns all static notifications.
+	 *
+	 * @since 4.1.2
+	 *
+	 * @return array An array of static notifications.
+	 */
+	public static function getStaticNotifications() {
+		$staticNotifications = [];
+		$notifications       = [
+			'notification-review'
+		];
+
+		foreach ( $notifications as $notification ) {
+			switch ( $notification ) {
+				case 'notification-review':
+					// If they intentionally dismissed the main notification, we don't show the repeat one.
+					$originalDismissed = get_user_meta( get_current_user_id(), '_aioseo_plugin_review_dismissed', true );
+					if ( '2' !== $originalDismissed ) {
+						break;
+					}
+
+					$dismissed = get_user_meta( get_current_user_id(), '_aioseo_notification_plugin_review_dismissed', true );
+					if ( '1' === $dismissed ) {
+						break;
+					}
+
+					if ( ! empty( $dismissed ) && $dismissed > time() ) {
+						break;
+					}
+
+					$activated = aioseo()->internalOptions->internal->firstActivated( time() );
+					if ( $activated > strtotime( '-30 days' ) ) {
+						break;
+					}
+
+					$staticNotifications[] = [
+						'slug'      => 'notification-review',
+						'component' => 'core-notification-review'
+					];
+					break;
+			}
+		}
+
+		return $staticNotifications;
 	}
 
 	/**

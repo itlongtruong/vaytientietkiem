@@ -3,145 +3,73 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: babel-plugin-makepot-aioseo\n"
 
-#: src/vue/pages/search-appearance/views/partials/pro/CustomFields.vue:43
-msgid "Custom Fields"
+#: src/vue/pages/local-seo/views/pro/LocalSeoCta.vue:46
+msgid "Enable Local SEO on your Site"
 msgstr ""
 
-#: src/vue/pages/search-appearance/views/partials/pro/CustomFields.vue:44
+#: src/vue/pages/local-seo/views/pro/LocalSeoCta.vue:47
 msgid ""
-"List of custom field names to include in the SEO Page Analysis. Add one per "
-"line."
+"The Local SEO module is a premium feature that enables businesses to tell "
+"Google about their business, including their business name, address and "
+"phone number, opening hours and price range.  This information may be "
+"displayed as a Knowledge Graph card or business carousel in the search "
+"engine sidebar."
 msgstr ""
 
-#: src/vue/pages/search-appearance/views/pro/ImageSeoActivate.vue:123
-msgid "Title Attribute Format"
+#: src/vue/pages/local-seo/views/pro/LocalSeoCta.vue:48
+msgid "Activate Local SEO"
 msgstr ""
 
-#: src/vue/pages/search-appearance/views/pro/ImageSeoActivate.vue:124
-msgid "Strip Punctuation for Title Attributes"
+#: src/vue/pages/local-seo/views/pro/LocalSeoCta.vue:49
+msgid "Learn more about Local SEO"
 msgstr ""
 
-#: src/vue/pages/search-appearance/views/pro/ImageSeoActivate.vue:125
-msgid "Click on the tags below to insert variables into your title attribute."
+#: src/vue/pages/redirects/views/pro/RedirectsActivate.vue:76
+msgid "Activate Redirects"
 msgstr ""
 
-#: src/vue/pages/search-appearance/views/pro/ImageSeoActivate.vue:126
-msgid "Alt Tag Attribute Format"
+#: src/vue/pages/redirects/views/pro/RedirectsActivate.vue:77
+msgid "Enable Redirects on your Site"
 msgstr ""
 
-#: src/vue/pages/search-appearance/views/pro/ImageSeoActivate.vue:127
-msgid "Click on the tags below to insert variables into your alt tag attribute."
-msgstr ""
-
-#: src/vue/pages/search-appearance/views/pro/ImageSeoActivate.vue:128
-msgid "Strip Punctuation for Alt Attributes"
-msgstr ""
-
-#: src/vue/pages/search-appearance/views/pro/ImageSeoActivate.vue:129
-msgid ""
-"The Image SEO module is a premium feature that enables you to globally "
-"control the Title Attribute and Alt Text for attachment pages and images "
-"that are embedded in your content. These can be set based on a specified "
-"format, similar to the Title Format settings in the Global Settings menu."
-msgstr ""
-
-#: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:100
-msgid "Software Application"
-msgstr ""
-
-#: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:106
-msgid "Web Page"
-msgstr ""
-
-#: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:107
-msgid "Collection Page"
-msgstr ""
-
-#: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:108
-msgid "Profile Page"
-msgstr ""
-
-#: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:109
-msgid "Item Page"
-msgstr ""
-
-#: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:110
-msgid "FAQ Page"
-msgstr ""
-
+#: src/vue/pages/post-settings/views/pro/Schema.vue:100
 #: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:111
 msgid "QA Page"
 msgstr ""
 
+#: src/vue/pages/post-settings/views/pro/Schema.vue:101
 #: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:112
 msgid "Real Estate Listing"
 msgstr ""
 
-#: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:116
-msgid "Schema Type"
+#: src/vue/pages/post-settings/views/pro/Schema.vue:136
+#: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:109
+msgid "Item Page"
 msgstr ""
 
-#: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:118
-msgid "Article Type"
-msgstr ""
-
-#: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:119
-msgid "Article"
-msgstr ""
-
-#: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:120
-msgid "Blog Post"
-msgstr ""
-
-#: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:121
-msgid "News Article"
-msgstr ""
-
+#: src/vue/pages/post-settings/views/pro/Schema.vue:139
 #: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:95
 msgid "None"
 msgstr ""
 
+#: src/vue/pages/post-settings/views/pro/Schema.vue:140
+#: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:119
+msgid "Article"
+msgstr ""
+
+#: src/vue/pages/post-settings/views/pro/Schema.vue:142
 #: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:98
 msgid "Product"
 msgstr ""
 
-#: src/vue/pages/search-appearance/views/pro/ImageSeoActivate.vue:122
-msgid "Enable Advanced SEO for Images on your Site"
+#: src/vue/pages/post-settings/views/pro/Schema.vue:144
+#: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:100
+msgid "Software Application"
 msgstr ""
 
-#: src/vue/pages/search-appearance/views/pro/ImageSeoActivate.vue:130
-msgid "Activate Image SEO"
-msgstr ""
-
-#: src/vue/pages/search-appearance/views/pro/ImageSeoActivate.vue:131
-msgid "Learn more about Image SEO"
-msgstr ""
-
-#: src/vue/components/pro/settings/LicenseKey.vue:156
-msgid "An unknown error occurred, please try again later."
-msgstr ""
-
-#: src/vue/components/pro/settings/LicenseKey.vue:162
-msgid ""
-"The license key provided is invalid. Please use a different key to continue "
-"receiving automatic updates."
-msgstr ""
-
-#: src/vue/components/pro/settings/LicenseKey.vue:164
-msgid ""
-"The license key provided is disabled. Please use a different key to "
-"continue receiving automatic updates."
-msgstr ""
-
-#: src/vue/components/pro/settings/LicenseKey.vue:168
-msgid ""
-"This license key has reached the maximum number of activations. Please "
-"deactivate it from another site or purchase a new license to continue "
-"receiving automatic updates."
-msgstr ""
-
-#: src/vue/components/pro/settings/LicenseKey.vue:170
-msgid "There was an error connecting to the licensing API. Please try again later."
+#: src/vue/pages/post-settings/views/pro/Schema.vue:145
+#: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:106
+msgid "Web Page"
 msgstr ""
 
 #: src/vue/pages/post-settings/views/pro/Schema.vue:166
@@ -156,6 +84,27 @@ msgstr ""
 msgid "Contact Page"
 msgstr ""
 
+#: src/vue/pages/post-settings/views/pro/Schema.vue:99
+#: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:110
+msgid "FAQ Page"
+msgstr ""
+
+#: src/vue/pages/post-settings/views/pro/partialsSchema/Recipe.vue:258
+msgid "Name"
+msgstr ""
+
+#: src/vue/pages/post-settings/views/pro/partialsSchema/partialsProduct/GenericProduct.vue:148
+msgid "Description"
+msgstr ""
+
+#: src/vue/pages/post-settings/views/pro/partialsSchema/Course.vue:55
+msgid "Provider"
+msgstr ""
+
+#: src/vue/pages/post-settings/views/pro/partialsSchema/Course.vue:56
+msgid "The organization that publishes the content of the course"
+msgstr ""
+
 #: src/vue/pages/post-settings/views/pro/partialsSchema/FaqPage.vue:18
 msgid "FAQ"
 msgstr ""
@@ -168,12 +117,16 @@ msgstr ""
 msgid "Answer"
 msgstr ""
 
-#: src/vue/pages/post-settings/views/pro/partialsSchema/Recipe.vue:258
-msgid "Name"
+#: src/vue/components/pro/local-business/BusinessContact.vue:36
+msgid "Email Address"
 msgstr ""
 
-#: src/vue/pages/post-settings/views/pro/partialsSchema/partialsProduct/GenericProduct.vue:148
-msgid "Description"
+#: src/vue/components/pro/local-business/BusinessContact.vue:37
+msgid "Phone Number"
+msgstr ""
+
+#: src/vue/components/pro/local-business/BusinessContact.vue:38
+msgid "Fax Number"
 msgstr ""
 
 #: src/vue/pages/post-settings/views/pro/partialsSchema/Recipe.vue:260
@@ -284,69 +237,6 @@ msgstr ""
 msgid "Category"
 msgstr ""
 
-#: src/vue/pages/post-settings/views/pro/partialsSchema/Course.vue:55
-msgid "Provider"
-msgstr ""
-
-#: src/vue/pages/post-settings/views/pro/partialsSchema/Course.vue:56
-msgid "The organization that publishes the content of the course"
-msgstr ""
-
-#: src/vue/pages/post-settings/views/pro/partialsSchema/partialsProduct/GenericProduct.vue:150
-msgid "Brand"
-msgstr ""
-
-#: src/vue/pages/post-settings/views/pro/partialsSchema/partialsProduct/GenericProduct.vue:156
-msgid "Identifier Type"
-msgstr ""
-
-#: src/vue/pages/post-settings/views/pro/partialsSchema/partialsProduct/GenericProduct.vue:158
-msgid "Identifier"
-msgstr ""
-
-# Translators: 1 - The plugin name ("All in One SEO"), 2 - The name of an e-commerce plugin.
-#: src/vue/pages/post-settings/views/pro/partialsSchema/partialsProduct/EddProduct.vue:126
-msgid ""
-"%1$s will automatically pull all other data that is needed for this graph "
-"directly from %2$s. Enjoy!"
-msgstr ""
-
-#: src/vue/pages/post-settings/views/pro/partialsSchema/partialsProduct/GenericProduct.vue:149
-msgid "SKU"
-msgstr ""
-
-#: src/vue/pages/post-settings/views/pro/partialsSchema/partialsProduct/GenericProduct.vue:153
-msgid "Price Valid Until"
-msgstr ""
-
-#: src/vue/pages/post-settings/views/pro/partialsSchema/partialsProduct/GenericProduct.vue:154
-msgid "The date until this pricing lasts (optional)."
-msgstr ""
-
-#: src/vue/pages/post-settings/views/pro/partialsSchema/partialsProduct/GenericProduct.vue:155
-msgid "Availability"
-msgstr ""
-
-#: src/vue/pages/post-settings/views/pro/partialsSchema/partialsProduct/GenericProduct.vue:157
-msgid "The unique global product identifier (optional)."
-msgstr ""
-
-#: src/vue/pages/post-settings/views/pro/partialsSchema/partialsProduct/GenericProduct.vue:159
-msgid "Reviews"
-msgstr ""
-
-#: src/vue/components/pro/local-business/BusinessContact.vue:36
-msgid "Email Address"
-msgstr ""
-
-#: src/vue/components/pro/local-business/BusinessContact.vue:37
-msgid "Phone Number"
-msgstr ""
-
-#: src/vue/components/pro/local-business/BusinessContact.vue:38
-msgid "Fax Number"
-msgstr ""
-
 #: src/vue/components/pro/core/AccessControlOptions.vue:83
 msgid "General SEO Settings:"
 msgstr ""
@@ -399,7 +289,7 @@ msgstr ""
 msgid "Page Analysis"
 msgstr ""
 
-#: src/vue/pages/sitemaps/views/pro/NewsSitemapActivate.vue:134
+#: src/vue/components/pro/core/AccessControlOptions.vue:96
 msgid "Advanced Settings"
 msgstr ""
 
@@ -413,6 +303,49 @@ msgstr ""
 
 #: src/vue/components/pro/core/AccessControlOptions.vue:99
 msgid "Local SEO Settings"
+msgstr ""
+
+#: src/vue/pages/post-settings/views/pro/partialsSchema/partialsProduct/GenericProduct.vue:150
+msgid "Brand"
+msgstr ""
+
+#: src/vue/pages/post-settings/views/pro/partialsSchema/partialsProduct/GenericProduct.vue:156
+msgid "Identifier Type"
+msgstr ""
+
+#: src/vue/pages/post-settings/views/pro/partialsSchema/partialsProduct/GenericProduct.vue:157
+msgid "The unique global product identifier (optional)."
+msgstr ""
+
+#: src/vue/pages/post-settings/views/pro/partialsSchema/partialsProduct/GenericProduct.vue:158
+msgid "Identifier"
+msgstr ""
+
+# Translators: 1 - The plugin name ("All in One SEO"), 2 - The name of an e-commerce plugin.
+#: src/vue/pages/post-settings/views/pro/partialsSchema/partialsProduct/EddProduct.vue:126
+msgid ""
+"%1$s will automatically pull all other data that is needed for this graph "
+"directly from %2$s. Enjoy!"
+msgstr ""
+
+#: src/vue/pages/post-settings/views/pro/partialsSchema/partialsProduct/GenericProduct.vue:153
+msgid "Price Valid Until"
+msgstr ""
+
+#: src/vue/pages/post-settings/views/pro/partialsSchema/partialsProduct/GenericProduct.vue:154
+msgid "The date until this pricing lasts (optional)."
+msgstr ""
+
+#: src/vue/pages/post-settings/views/pro/partialsSchema/partialsProduct/GenericProduct.vue:155
+msgid "Availability"
+msgstr ""
+
+#: src/vue/pages/post-settings/views/pro/partialsSchema/partialsProduct/GenericProduct.vue:159
+msgid "Reviews"
+msgstr ""
+
+#: src/vue/pages/post-settings/views/pro/partialsSchema/partialsProduct/GenericProduct.vue:149
+msgid "SKU"
 msgstr ""
 
 #: src/vue/components/pro/settings/LicenseKey.vue:103
@@ -465,41 +398,91 @@ msgstr ""
 msgid "Your license level is %1$s %2$s"
 msgstr ""
 
-#: src/vue/pages/search-appearance/views/Taxonomies.vue:68
-msgid "Title & Description"
+#: src/vue/pages/setup-wizard/views/LicenseKey.vue:165
+msgid "An unknown error occurred, please try again later."
 msgstr ""
 
-#: src/vue/pages/search-appearance/views/Taxonomies.vue:74
-msgid "Advanced"
-msgstr ""
-
-#: src/vue/pages/redirects/views/pro/RedirectsActivate.vue:74
-msgid "Activate Redirects"
-msgstr ""
-
-#: src/vue/pages/redirects/views/pro/RedirectsActivate.vue:75
-msgid "Enable Redirects on your Site"
-msgstr ""
-
-#: src/vue/pages/local-seo/views/pro/LocalSeoCta.vue:46
-msgid "Enable Local SEO on your Site"
-msgstr ""
-
-#: src/vue/pages/local-seo/views/pro/LocalSeoCta.vue:47
+#: src/vue/pages/setup-wizard/views/LicenseKey.vue:171
 msgid ""
-"The Local SEO module is a premium feature that enables businesses to tell "
-"Google about their business, including their business name, address and "
-"phone number, opening hours and price range.  This information may be "
-"displayed as a Knowledge Graph card or business carousel in the search "
-"engine sidebar."
+"The license key provided is invalid. Please use a different key to continue "
+"receiving automatic updates."
 msgstr ""
 
-#: src/vue/pages/local-seo/views/pro/LocalSeoCta.vue:48
-msgid "Activate Local SEO"
+#: src/vue/pages/setup-wizard/views/LicenseKey.vue:173
+msgid ""
+"The license key provided is disabled. Please use a different key to "
+"continue receiving automatic updates."
 msgstr ""
 
-#: src/vue/pages/local-seo/views/pro/LocalSeoCta.vue:49
-msgid "Learn more about Local SEO"
+#: src/vue/pages/setup-wizard/views/LicenseKey.vue:177
+msgid ""
+"This license key has reached the maximum number of activations. Please "
+"deactivate it from another site or purchase a new license to continue "
+"receiving automatic updates."
+msgstr ""
+
+#: src/vue/pages/setup-wizard/views/LicenseKey.vue:179
+msgid "There was an error connecting to the licensing API. Please try again later."
+msgstr ""
+
+# Translators: 1 - A link to our documentation, 2 - HTML line break tag.
+#: src/vue/pages/settings/views/WebmasterTools.vue:533
+msgid "This enables tracking outbound forms with Google Analytics.%1$s%2$s"
+msgstr ""
+
+# Translators: 1 - A link to our documentation, 2 - HTML line break tag.
+#: src/vue/pages/settings/views/WebmasterTools.vue:547
+msgid "This enables tracking events with Google Analytics.%1$s%2$s"
+msgstr ""
+
+# Translators: 1 - A link to our documentation, 2 - HTML line break tag.
+#: src/vue/pages/settings/views/WebmasterTools.vue:561
+msgid ""
+"This enables tracking URL changes for single pages with Google "
+"Analytics.%1$s%2$s"
+msgstr ""
+
+# Translators: 1 - A link to our documentation, 2 - HTML line break tag.
+#: src/vue/pages/settings/views/WebmasterTools.vue:575
+msgid ""
+"This enables tracking how long pages are in visible state with Google "
+"Analytics.%1$s%2$s"
+msgstr ""
+
+# Translators: 1 - A link to our documentation, 2 - HTML line break tag.
+#: src/vue/pages/settings/views/WebmasterTools.vue:589
+msgid "This enables tracking media queries with Google Analytics.%1$s%2$s"
+msgstr ""
+
+# Translators: 1 - A link to our documentation, 2 - HTML line break tag.
+#: src/vue/pages/settings/views/WebmasterTools.vue:603
+msgid ""
+"This enables tracking when elements are visible within the viewport with "
+"Google Analytics.%1$s%2$s"
+msgstr ""
+
+# Translators: 1 - A link to our documentation, 2 - HTML line break tag.
+#: src/vue/pages/settings/views/WebmasterTools.vue:617
+msgid ""
+"This enables tracking how far down a user scrolls a page with Google "
+"Analytics.%1$s%2$s"
+msgstr ""
+
+# Translators: 1 - A link to our documentation, 2 - HTML line break tag.
+#: src/vue/pages/settings/views/WebmasterTools.vue:631
+msgid ""
+"This enables tracking interactions with the official Facebook and Twitter "
+"widgets with Google Analytics.%1$s%2$s"
+msgstr ""
+
+# Translators: 1 - A link to our documentation, 2 - HTML line break tag.
+#: src/vue/pages/settings/views/WebmasterTools.vue:645
+msgid "This ensures consistency in URL paths reported to Google Analytics.%1$s%2$s"
+msgstr ""
+
+# Translators: 1 - "Google Tag Manager account".
+#: src/vue/pages/settings/views/WebmasterTools.vue:654
+msgid "Google Tag Manager account"
 msgstr ""
 
 #: src/vue/pages/sitemaps/views/pro/VideoSitemapActivate.vue:119
@@ -512,6 +495,62 @@ msgstr ""
 
 #: src/vue/pages/sitemaps/views/pro/VideoSitemapActivate.vue:121
 msgid "Learn more about Video Sitemaps"
+msgstr ""
+
+#: src/vue/pages/sitemaps/views/pro/NewsSitemapActivate.vue:129
+msgid "News Sitemap Settings"
+msgstr ""
+
+#: src/vue/pages/sitemaps/views/pro/NewsSitemapActivate.vue:130
+msgid "Publication Name"
+msgstr ""
+
+#: src/vue/pages/sitemaps/views/pro/VideoSitemap.vue:404
+msgid "Post Types"
+msgstr ""
+
+#: src/vue/pages/sitemaps/views/pro/VideoSitemap.vue:406
+msgid "Include All Post Types"
+msgstr ""
+
+#: src/vue/pages/sitemaps/views/pro/VideoSitemap.vue:407
+msgid "Select which Post Types appear in your sitemap."
+msgstr ""
+
+#: src/vue/pages/sitemaps/views/pro/VideoSitemap.vue:413
+msgid "Exclude Posts / Pages"
+msgstr ""
+
+#: src/vue/pages/sitemaps/views/pro/VideoSitemap.vue:416
+msgid "Priority Score"
+msgstr ""
+
+#: src/vue/pages/sitemaps/views/pro/VideoSitemap.vue:417
+msgid "Type to search..."
+msgstr ""
+
+#: src/vue/pages/sitemaps/views/pro/VideoSitemap.vue:418
+msgid "Begin typing a title or ID to search for a page or post."
+msgstr ""
+
+#: src/vue/pages/sitemaps/views/pro/VideoSitemap.vue:419
+msgid "No pages or posts found with that title or ID. Try again!"
+msgstr ""
+
+#: src/vue/pages/sitemaps/views/pro/VideoSitemap.vue:420
+msgid "Clear"
+msgstr ""
+
+#: src/vue/pages/sitemaps/views/pro/NewsSitemapActivate.vue:126
+msgid "Enable Google News Sitemap on your Site"
+msgstr ""
+
+#: src/vue/pages/sitemaps/views/pro/NewsSitemapActivate.vue:127
+msgid "Activate News Sitemap"
+msgstr ""
+
+#: src/vue/pages/sitemaps/views/pro/NewsSitemapActivate.vue:128
+msgid "Learn more about News Sitemaps"
 msgstr ""
 
 #: src/vue/pages/sitemaps/views/pro/VideoSitemap.vue:397
@@ -530,48 +569,12 @@ msgstr ""
 msgid "Video Sitemap Settings"
 msgstr ""
 
-#: src/vue/pages/sitemaps/views/pro/NewsSitemapActivate.vue:131
-msgid "Post Types"
-msgstr ""
-
-#: src/vue/pages/sitemaps/views/pro/NewsSitemapActivate.vue:132
-msgid "Include All Post Types"
-msgstr ""
-
-#: src/vue/pages/sitemaps/views/pro/NewsSitemapActivate.vue:133
-msgid "Select which Post Types appear in your sitemap."
-msgstr ""
-
 #: src/vue/pages/sitemaps/views/pro/VideoSitemap.vue:410
 msgid "Include Custom Fields"
 msgstr ""
 
 #: src/vue/pages/sitemaps/views/pro/VideoSitemap.vue:411
 msgid "Enable this option to look for videos in custom fields as well."
-msgstr ""
-
-#: src/vue/pages/sitemaps/views/pro/NewsSitemapActivate.vue:135
-msgid "Exclude Posts / Pages"
-msgstr ""
-
-#: src/vue/pages/sitemaps/views/pro/NewsSitemapActivate.vue:136
-msgid "Priority Score"
-msgstr ""
-
-#: src/vue/pages/sitemaps/views/pro/NewsSitemapActivate.vue:137
-msgid "Type to search..."
-msgstr ""
-
-#: src/vue/pages/sitemaps/views/pro/NewsSitemapActivate.vue:138
-msgid "Begin typing a title or ID to search for a page or post."
-msgstr ""
-
-#: src/vue/pages/sitemaps/views/pro/NewsSitemapActivate.vue:139
-msgid "No pages or posts found with that title or ID. Try again!"
-msgstr ""
-
-#: src/vue/pages/sitemaps/views/pro/NewsSitemapActivate.vue:140
-msgid "Clear"
 msgstr ""
 
 #: src/vue/pages/sitemaps/views/pro/VideoSitemap.vue:421
@@ -646,82 +649,88 @@ msgstr ""
 msgid "default"
 msgstr ""
 
-# Translators: 1 - A link to our documentation, 2 - HTML line break tag.
-#: src/vue/pages/settings/views/WebmasterTools.vue:533
-msgid "This enables tracking outbound forms with Google Analytics.%1$s%2$s"
+#: src/vue/pages/search-appearance/views/partials/pro/CustomFields.vue:43
+msgid "Custom Fields"
 msgstr ""
 
-# Translators: 1 - A link to our documentation, 2 - HTML line break tag.
-#: src/vue/pages/settings/views/WebmasterTools.vue:547
-msgid "This enables tracking events with Google Analytics.%1$s%2$s"
-msgstr ""
-
-# Translators: 1 - A link to our documentation, 2 - HTML line break tag.
-#: src/vue/pages/settings/views/WebmasterTools.vue:561
+#: src/vue/pages/search-appearance/views/partials/pro/CustomFields.vue:44
 msgid ""
-"This enables tracking URL changes for single pages with Google "
-"Analytics.%1$s%2$s"
+"List of custom field names to include in the SEO Page Analysis. Add one per "
+"line."
 msgstr ""
 
-# Translators: 1 - A link to our documentation, 2 - HTML line break tag.
-#: src/vue/pages/settings/views/WebmasterTools.vue:575
+#: src/vue/pages/search-appearance/views/pro/ImageSeoActivate.vue:123
+msgid "Title Attribute Format"
+msgstr ""
+
+#: src/vue/pages/search-appearance/views/pro/ImageSeoActivate.vue:124
+msgid "Strip Punctuation for Title Attributes"
+msgstr ""
+
+#: src/vue/pages/search-appearance/views/pro/ImageSeoActivate.vue:125
+msgid "Click on the tags below to insert variables into your title attribute."
+msgstr ""
+
+#: src/vue/pages/search-appearance/views/pro/ImageSeoActivate.vue:126
+msgid "Alt Tag Attribute Format"
+msgstr ""
+
+#: src/vue/pages/search-appearance/views/pro/ImageSeoActivate.vue:127
+msgid "Click on the tags below to insert variables into your alt tag attribute."
+msgstr ""
+
+#: src/vue/pages/search-appearance/views/pro/ImageSeoActivate.vue:128
+msgid "Strip Punctuation for Alt Attributes"
+msgstr ""
+
+#: src/vue/pages/search-appearance/views/pro/ImageSeoActivate.vue:122
+msgid "Enable Advanced SEO for Images on your Site"
+msgstr ""
+
+#: src/vue/pages/search-appearance/views/lite/ImageSeo.vue:119
 msgid ""
-"This enables tracking how long pages are in visible state with Google "
-"Analytics.%1$s%2$s"
+"The Image SEO module is a premium feature that enables you to globally "
+"control the Title Attribute and Alt Text for attachment pages and images "
+"that are embedded in your content. These can be set based on a specified "
+"format, similar to the Title Format settings in the Global Settings menu."
 msgstr ""
 
-# Translators: 1 - A link to our documentation, 2 - HTML line break tag.
-#: src/vue/pages/settings/views/WebmasterTools.vue:589
-msgid "This enables tracking media queries with Google Analytics.%1$s%2$s"
+#: src/vue/pages/search-appearance/views/pro/ImageSeoActivate.vue:130
+msgid "Activate Image SEO"
 msgstr ""
 
-# Translators: 1 - A link to our documentation, 2 - HTML line break tag.
-#: src/vue/pages/settings/views/WebmasterTools.vue:603
-msgid ""
-"This enables tracking when elements are visible within the viewport with "
-"Google Analytics.%1$s%2$s"
+#: src/vue/pages/search-appearance/views/pro/ImageSeoActivate.vue:131
+msgid "Learn more about Image SEO"
 msgstr ""
 
-# Translators: 1 - A link to our documentation, 2 - HTML line break tag.
-#: src/vue/pages/settings/views/WebmasterTools.vue:617
-msgid ""
-"This enables tracking how far down a user scrolls a page with Google "
-"Analytics.%1$s%2$s"
+#: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:107
+msgid "Collection Page"
 msgstr ""
 
-# Translators: 1 - A link to our documentation, 2 - HTML line break tag.
-#: src/vue/pages/settings/views/WebmasterTools.vue:631
-msgid ""
-"This enables tracking interactions with the official Facebook and Twitter "
-"widgets with Google Analytics.%1$s%2$s"
+#: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:108
+msgid "Profile Page"
 msgstr ""
 
-# Translators: 1 - A link to our documentation, 2 - HTML line break tag.
-#: src/vue/pages/settings/views/WebmasterTools.vue:645
-msgid "This ensures consistency in URL paths reported to Google Analytics.%1$s%2$s"
+#: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:116
+msgid "Schema Type"
 msgstr ""
 
-# Translators: 1 - "Google Tag Manager account".
-#: src/vue/pages/settings/views/WebmasterTools.vue:654
-msgid "Google Tag Manager account"
+#: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:118
+msgid "Article Type"
 msgstr ""
 
-#: src/vue/pages/sitemaps/views/pro/NewsSitemapActivate.vue:129
-msgid "News Sitemap Settings"
+#: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:120
+msgid "Blog Post"
 msgstr ""
 
-#: src/vue/pages/sitemaps/views/pro/NewsSitemapActivate.vue:130
-msgid "Publication Name"
+#: src/vue/pages/search-appearance/views/partials/pro/Schema.vue:121
+msgid "News Article"
 msgstr ""
 
-#: src/vue/pages/sitemaps/views/pro/NewsSitemapActivate.vue:126
-msgid "Enable Google News Sitemap on your Site"
+#: src/vue/pages/search-appearance/views/Taxonomies.vue:68
+msgid "Title & Description"
 msgstr ""
 
-#: src/vue/pages/sitemaps/views/pro/NewsSitemapActivate.vue:127
-msgid "Activate News Sitemap"
-msgstr ""
-
-#: src/vue/pages/sitemaps/views/pro/NewsSitemapActivate.vue:128
-msgid "Learn more about News Sitemaps"
+#: src/vue/pages/search-appearance/views/Taxonomies.vue:74
+msgid "Advanced"
 msgstr ""

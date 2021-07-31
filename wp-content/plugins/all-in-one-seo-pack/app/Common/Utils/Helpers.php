@@ -17,8 +17,10 @@ use AIOSEO\Plugin\Common\Traits\Helpers as TraitHelpers;
  */
 class Helpers {
 	use TraitHelpers\ActionScheduler;
-	use TraitHelpers\Strings;
 	use TraitHelpers\Constants;
+	use TraitHelpers\DateTime;
+	use TraitHelpers\Shortcodes;
+	use TraitHelpers\Strings;
 
 	/**
 	 * Whether or not we have a local connection.
@@ -513,8 +515,10 @@ class Helpers {
 					'monsterinsights'  => admin_url( 'admin.php?page=aioseo-monsterinsights' )
 				],
 				'admin'             => [
-					'widgets'        => admin_url( 'widgets.php' ),
-					'optionsReading' => admin_url( 'options-reading.php' )
+					'widgets'          => admin_url( 'widgets.php' ),
+					'optionsReading'   => admin_url( 'options-reading.php' ),
+					'scheduledActions' => admin_url( '/tools.php?page=action-scheduler&status=pending&s=aioseo' ),
+					'generalSettings'  => admin_url( 'options-general.php' )
 				]
 			],
 			'backups'          => [],
@@ -1441,7 +1445,16 @@ class Helpers {
 			return false;
 		}
 
-		return stripos( sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) ), 'nginx' ) !== false;
+		$server = sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) );
+
+		if (
+			stripos( $server, 'Flywheel' ) !== false ||
+			stripos( $server, 'nginx' ) !== false
+		) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -2024,73 +2037,6 @@ class Helpers {
 	}
 
 	/**
-	 * Returns the content with shortcodes replaced.
-	 *
-	 * @since 4.0.5
-	 *
-	 * @param  string $content The post content.
-	 * @return string $content The post content with shortcodes replaced.
-	 */
-	public function doShortcodes( $content ) {
-		if (
-			( is_admin() && ! wp_doing_ajax() && ! wp_doing_cron() ) ||
-			apply_filters( 'aioseo_disable_shortcode_parsing', false )
-		) {
-			return $content;
-		}
-
-		// These are shortcodes that cause conflicts if we process them.
-		$conflictingShortcodes = [
-			'WooCommerce Login'                => '[woocommerce_my_account]',
-			'WooCommerce Checkout'             => '[woocommerce_checkout]',
-			'WooCommerce Order Tracking'       => '[woocommerce_order_tracking]',
-			'WooCommerce Cart'                 => '[woocommerce_cart]',
-			'WooCommerce Registration'         => '[wwp_registration_form]',
-			'WISDM Group Registration'         => '[wdm_group_users]',
-			'WISDM Quiz Reporting'             => '[wdm_quiz_statistics_details]',
-			'WISDM Course Review'              => '[rrf_course_review]',
-			'Simple Membership Login'          => '[swpm_login_form]',
-			'Simple Membership Mini Login'     => '[swpm_mini_login]',
-			'Simple Membership Payment Button' => '[swpm_payment_button]',
-			'Simple Membership Thank You Page' => '[swpm_thank_you_page_registration]',
-			'Simple Membership Registration'   => '[swpm_registration_form]',
-			'Simple Membership Profile'        => '[swpm_profile_form]',
-			'Simple Membership Reset'          => '[swpm_reset_form]',
-			'Simple Membership Update Level'   => '[swpm_update_level_to]',
-			'Simple Membership Member Info'    => '[swpm_show_member_info]'
-
-		];
-
-		$conflictingShortcodes = apply_filters( 'aioseo_conflicting_shortcodes', $conflictingShortcodes );
-
-		global $shortcode_tags;
-		$foundConflictingShortcodes = [];
-		foreach ( $conflictingShortcodes as $shortcode ) {
-			// Second check is needed for shortcodes inside Classic Editor blocks.
-			if ( stripos( $content, $shortcode, 0 ) || 0 === stripos( $content, $shortcode, 0 ) ) {
-				$shortcodeTag = str_replace( [ '[', ']' ], '', $shortcode );
-				if ( array_key_exists( $shortcodeTag, $shortcode_tags ) ) {
-					$foundConflictingShortcodes[ $shortcodeTag ] = $shortcode_tags[ $shortcodeTag ];
-				}
-			}
-		}
-
-		// Remove all conflicting shortcodes before parsing the content.
-		foreach ( $foundConflictingShortcodes as $shortcodeTag => $shortcodeCallback ) {
-			remove_shortcode( $shortcodeTag );
-		}
-
-		$content = do_shortcode( $content );
-
-		// Add back shortcodes as remove_shortcode() disables them site-wide.
-		foreach ( $foundConflictingShortcodes as $shortcodeTag => $shortcodeCallback ) {
-			add_shortcode( $shortcodeTag, $shortcodeCallback );
-		}
-
-		return $content;
-	}
-
-	/**
 	 * Checks whether we're on the given screen.
 	 *
 	 * @since 4.0.7
@@ -2288,5 +2234,38 @@ class Helpers {
 				: @unserialize( $string, [ 'allowed_classes' => false ] ); // phpcs:disable PHPCompatibility.FunctionUse.NewFunctionParameters.unserialize_optionsFound
 		}
 		return $string;
+	}
+
+	/**
+	 * Validates a URL.
+	 *
+	 * @since 4.1.2
+	 *
+	 * @param  string $url The url.
+	 * @return bool        Is it a valid/safe url.
+	 */
+	public function isUrl( $url ) {
+		return esc_url_raw( $url ) === $url;
+	}
+
+	/**
+	 * Returns true if the request is a non-legacy REST API request.
+	 * This function was copied from WooCommerce and improved.
+	 *
+	 * @since 4.1.2
+	 *
+	 * @return bool True if this is a REST API request.
+	 */
+	public function isRestApiRequest() {
+		if ( empty( $_SERVER['REQUEST_URI'] ) ) {
+			return false;
+		}
+
+		$restUrl = wp_parse_url( get_rest_url() );
+		$restUrl = $restUrl['path'] . ( ! empty( $restUrl['query'] ) ? '?' . $restUrl['query'] : '' );
+
+		$isRestApiRequest = ( 0 === strpos( $_SERVER['REQUEST_URI'], $restUrl ) );
+
+		return apply_filters( 'aioseo_is_rest_api_request', $isRestApiRequest );
 	}
 }

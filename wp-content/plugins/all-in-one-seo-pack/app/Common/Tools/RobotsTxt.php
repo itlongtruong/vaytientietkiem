@@ -84,95 +84,9 @@ class RobotsTxt {
 				continue;
 			}
 
-			foreach ( $rules['allow'] as $index1 => $path ) {
-				$index2 = array_search( $path, $rules1[ $userAgent ]['disallow'], true );
-				if ( false !== $index2 && ! $allowDuplicates ) {
-					if ( $allowOverride ) {
-						unset( $rules1[ $userAgent ]['disallow'][ $index2 ] );
-					} else {
-						unset( $rules2[ $userAgent ]['allow'][ $index1 ] );
-					}
-				}
+			list( $rules1, $rules2 ) = $this->mergeRulesHelper( 'allow', $userAgent, $rules, $rules1, $rules2, $allowDuplicates, $allowOverride );
 
-				$pattern = '^' . str_replace(
-					[
-						'.',
-						'/',
-						'*',
-						'?'
-					],
-					[
-						'\.',
-						'\/',
-						'(.*)',
-						'\?'
-					],
-					$path
-				) . '$';
-
-				foreach ( $rules1[ $userAgent ]['allow'] as $p ) {
-					$matches = [];
-					preg_match( "/{$pattern}/", $p, $matches );
-				}
-
-				if ( ! empty( $matches ) && ! $allowDuplicates ) {
-					unset( $rules2[ $userAgent ]['allow'][ $index1 ] );
-				}
-
-				foreach ( $rules1[ $userAgent ]['disallow'] as $p ) {
-					$matches = [];
-					preg_match( "/{$pattern}/", $p, $matches );
-				}
-
-				if ( ! empty( $matches ) && ! $allowDuplicates ) {
-					unset( $rules2[ $userAgent ]['allow'][ $index1 ] );
-				}
-			}
-
-			foreach ( $rules['disallow'] as $index1 => $path ) {
-				$index2 = array_search( $path, $rules1[ $userAgent ]['allow'], true );
-				if ( false !== $index2 && ! $allowDuplicates ) {
-					if ( $allowOverride ) {
-						unset( $rules1[ $userAgent ]['allow'][ $index2 ] );
-					} else {
-						unset( $rules2[ $userAgent ]['disallow'][ $index1 ] );
-					}
-				}
-
-				$pattern = '^' . str_replace(
-					[
-						'.',
-						'/',
-						'*',
-						'?'
-					],
-					[
-						'\.',
-						'\/',
-						'(.*)',
-						'\?'
-					],
-					$path
-				) . '$';
-
-				foreach ( $rules1[ $userAgent ]['disallow'] as $p ) {
-					$matches = [];
-					preg_match( "/{$pattern}/", $p, $matches );
-				}
-
-				if ( ! empty( $matches ) && ! $allowDuplicates ) {
-					unset( $rules2[ $userAgent ]['disallow'][ $index1 ] );
-				}
-
-				foreach ( $rules1[ $userAgent ]['allow'] as $p ) {
-					$matches = [];
-					preg_match( "/{$pattern}/", $p, $matches );
-				}
-
-				if ( ! empty( $matches ) && ! $allowDuplicates ) {
-					unset( $rules2[ $userAgent ]['disallow'][ $index1 ] );
-				}
-			}
+			list( $rules1, $rules2 ) = $this->mergeRulesHelper( 'disallow', $userAgent, $rules, $rules1, $rules2, $allowDuplicates, $allowOverride );
 
 			$allow = array_merge(
 				array_values( $rules1[ $userAgent ]['allow'] ),
@@ -185,10 +99,73 @@ class RobotsTxt {
 				array_values( $rules2[ $userAgent ]['disallow'] )
 			);
 			$rules1[ $userAgent ]['disallow'] = array_unique( $disallow );
-
 		}
 
 		return $rules1;
+	}
+
+	/**
+	 * Helper function for mergeRules().
+	 *
+	 * @since 4.1.2
+	 *
+	 * @param  string $directive       The directive (allow/disallow).
+	 * @param  string $userAgent       The user agent.
+	 * @param  array  $rules           The rules.
+	 * @param  array  $rules1          The original rules.
+	 * @param  array  $rules2          The extra rules.
+	 * @param  bool   $allowDuplicates Whether duplicates should be allowed
+	 * @param  bool   $allowOverride   Whether the extra rules can override the original ones.
+	 * @return array                   The original and extra rules.
+	 */
+	private function mergeRulesHelper( $directive, $userAgent, $rules, $rules1, $rules2, $allowDuplicates, $allowOverride ) {
+		$otherDirective = ( 'allow' === $directive ) ? 'disallow' : 'allow';
+
+		foreach ( $rules[ $directive ] as $index1 => $path ) {
+			$index2 = array_search( $path, $rules1[ $userAgent ][ $otherDirective ], true );
+			if ( false !== $index2 && ! $allowDuplicates ) {
+				if ( $allowOverride ) {
+					unset( $rules1[ $userAgent ][ $otherDirective ][ $index2 ] );
+				} else {
+					unset( $rules2[ $userAgent ][ $directive ][ $index1 ] );
+				}
+			}
+
+			$pattern = '^' . str_replace(
+				[
+					'.',
+					'/',
+					'*',
+					'?'
+				],
+				[
+					'\.',
+					'\/',
+					'(.*)',
+					'\?'
+				],
+				$path
+			) . '$';
+
+			foreach ( $rules1[ $userAgent ][ $directive ] as $p ) {
+				$matches = [];
+				preg_match( "/{$pattern}/", $p, $matches );
+			}
+
+			if ( ! empty( $matches ) && ! $allowDuplicates ) {
+				unset( $rules2[ $userAgent ][ $directive ][ $index1 ] );
+			}
+
+			foreach ( $rules1[ $userAgent ][ $otherDirective ] as $p ) {
+				$matches = [];
+				preg_match( "/{$pattern}/", $p, $matches );
+			}
+
+			if ( ! empty( $matches ) && ! $allowDuplicates ) {
+				unset( $rules2[ $userAgent ][ $directive ][ $index1 ] );
+			}
+		}
+		return [ $rules1, $rules2 ];
 	}
 
 	/**
