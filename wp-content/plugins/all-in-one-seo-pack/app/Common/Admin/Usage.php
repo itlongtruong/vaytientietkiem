@@ -11,7 +11,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 4.0.0
  */
-class Usage {
+abstract class Usage {
+	/**
+	 * Returns the current plugin version type ("lite" or "pro").
+	 *
+	 * @since 4.1.3
+	 *
+	 * @return string The version type.
+	 */
+	abstract public function getType();
+
 	/**
 	 * Source of notifications content.
 	 *

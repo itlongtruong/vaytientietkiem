@@ -3,7 +3,7 @@ Contributors: aioseo, smub, benjaminprojas
 Tags: SEO, Google Search Console, XML Sitemap, meta description, schema, meta title, rich snippets, woocommerce seo, local seo, open graph, google news sitemap, video sitemap, robots.txt, seo audit, content analysis, seo plugin, redirection
 Requires at least: 4.9
 Tested up to: 5.8
-Stable tag: 4.1.2.2
+Stable tag: 4.1.3.1
 License: GPLv2 or later
 Requires PHP: 5.4
 
@@ -201,6 +201,31 @@ Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeg
 
 == Changelog ==
 
+**New in version 4.1.3.1 – Released on August 4, 2021**
+
+* Updated: Added caching to Access Control and the options to improve performance.
+* Fixed: HTML Sitemap widget options not always saving correctly.
+* Fixed: Links not appearing under Quick Links cards in the Dashboard.
+
+**New in version 4.1.3 – Released on July 28, 2021**
+
+* New: HTML sitemap using blocks, widgets or shortcodes.
+* Updated: Added support for custom roles to Access Control, along with various other improvements and bug fixes.
+* Updated: WooCommerce Cart, Checkout and Cart pages are now noindexed by default by AIOSEO for new users.
+* Updated: Image Sitemap now includes external URLs.
+* Updated: Posts/terms can now also be excluded from the sitemap by ID/slug.
+* Updated: Added a filter hook to exclude posts from the sitemap by ID.
+* Updated: Added various filter hooks to control the output of our visual breadcrumbs.
+* Updated: Added a filter hook to filter the output of our JSON schema.
+* Updated: Additional compatibility with third-party multi-lingual plugins.
+* Updated: Schema.org URLs for Opening Hours now use the HTTPS instead of the HTTP protocol.
+* Updated: Reordered currencies list so most traded currencies appear on top; others appear in alphabetical order.
+* Updated: Restoring/deleting a backup now first opens a modal that asks for confirmation.
+* Fixed: AggregateRating is now output for WooCommerce Products with new reviews disabled if they already have existing reviews.
+* Fixed: Added a line break underneath our robots.txt content to prevent conflicts with other plugins that filter the robots.txt file.
+* Fixed: Image Sitemap now includes large downscaled images.
+* Fixed: Social Network settings can now be exported.
+
 **New in version 4.1.2.2 – Released on July 14, 2021**
 
 * Updated: Compatibility with WordPress 5.8.
@@ -245,11 +270,279 @@ Visit <a href="http://www.wpbeginner.com/" rel="friend" title="WPBeginner">WPBeg
 * Updated: Added support to control the business type for each Location
 * Fixed: TruSEO score shown on All Posts/Pages screen when metabox is disabled
 * Fixed: V3 migration now also stores migrated data as localized post/term data for WPML
-* Fixed: Phone/fax numbers in Local Business schema weren’t stripped of formatting
+* Fixed: Phone/fax numbers in Local Business schema weren't stripped of formatting
 * Fixed: JavaScript console error when editing an ACF field group
 * Fixed: JavaScript console error when adding a Focus Keyphrase when there is no post content yet
 * Fixed: Text heart emoji stripped from title/description
 * Fixed: Missing server redirects notification is now automatically dismissed after adding the redirect files to the server configuration
+
+**New in version 4.1.0.2 – Released on April 27, 2021**
+
+* Updated: UI enhancements for Redirection Manager
+* Updated: Added support for searching for posts by slug when adding a redirect
+* Updated: Timestamps for redirect/404 hits are now localized to user's timezone
+* Updated: Added more caching for title/description
+* Updated: Added some security hardening recommended by Vincent Michel
+* Fixed: Redirect tables and Local SEO posts/terms not dropped when plugin is uninstalled
+* Fixed: Hide server exports when using PHP redirects
+* Fixed: All Posts/Pages screens time out when user has high post display count
+* Fixed: Conflicting REST API header
+* Fixed: Deleting redirect in paginated results refreshes back to first page
+* Fixed: Plugin sends requests to Semrush after user denied authorization
+* Fixed: Incorrect “plugin is already on the latest version” notice when bulk updating plugins
+
+**New in version 4.1.0.1 – Released on April 9, 2021**
+
+* Fixed: Redirection Manager strips double slashes from URLs
+* Fixed: AMP for WP pages trigger fatal error
+* Fixed: PHP notice when editing a private post type in the Classic Editor
+* Fixed: Social meta not output on term pages
+
+**New in version 4.1.0 – Released on April 6, 2021**
+
+* New: Redirection Manager to create and manage redirects for 404s or modified posts
+* Updated: Smoother UX when editing fields with smart tags
+* Updated: Added filter to disable shortcode parsing for title/description
+* Fixed: Twitter meta tags now use “name” attribute
+* Fixed: Titles for custom terms not always imported during v3 migration
+* Fixed: Metadata not always being output for “AMP for WP” homepage
+* Fixed: Incorrect autogenerated URL for Wikipedia social profile + LinkedIn group/school URLs flagged as invalid
+* Fixed: Setup wizard sometimes reappearing after exiting
+* Fixed: Software Application graph not outputting review headline and content
+* Fixed: Trailing slashes not removed for sitemap indexes with two or more digits
+* Fixed: Translated variants (WMPL) of static homepage not shown as alternative links in sitemap
+
+**New in version 4.0.17 – Released on March 11, 2021**
+
+* New: Support for noindexing RSS feed pages
+* Updated: Schema now uses author's public display name instead of first & last name
+* Fixed: Noindexed custom post archives are no longer included in the sitemap
+* Fixed: Default title/description format sometimes not populated on post/term creation
+* Fixed: Post Excerpt tag no longer is blank in the preview snippet
+* Fixed: Addons sometimes can't be installed after installing Pro
+* Fixed: Social Meta profile URLs fields sometimes show warning when valid URL is entered
+* Fixed: Social Meta profile URLs sometimes don't save
+* Fixed: Invalid data in v3 .ini export file stops entire import
+
+**New in version 4.0.16 – Released on February 25, 2021**
+
+* New: Semrush integration for keyphrase suggestions
+* Updated: Refactored TruSEO content analysis for performance
+* Updated: Change default meta description to Post Excerpt for post types that support it
+* Updated: Added support for importing CPT archive settings from competitor plugins
+* Updated: Output brand graph instead of plain text for Product schema
+* Updated: Added filter to disable our custom link format attributes
+* Updated: Added filter to prevent output buffering conflicts
+* Updated: Disabled new wp_robots filter in WP Core 5.7
+* Fixed: Paged format repeated in meta description
+* Fixed: Incorrect language code in multilingual WPML post sitemap
+* Fixed: Post descriptions not imported from competitor plugins
+* Fixed: Sitelinks schema markup output on other pages besides the homepage
+* Fixed: Organization logo not output in schema if set to an external URL
+* Fixed: RSS sitemap settings sometimes not saving correctly
+* Fixed: Deleting default title/description sometimes failed
+* Fixed: Dollar symbols in post titles not migrating correctly
+* Fixed: FAQ Page and Recipe textarea blocks not expanding in height
+* Fixed: Schema dropdown menu in editor sidebar opening in wrong direction
+
+**New in version 4.0.15 – Released on February 3, 2021**
+
+* Updated: Performance enhancements for sitemap integration with WooCommerce
+
+**New in version 4.0.14 – Released on February 1, 2021**
+
+* Fixed: PHP notices caused by plugin conflicts
+
+**New in version 4.0.13 – Released on January 28, 2021**
+
+* New: Schema Pro updates to include support for Products, FAQ Pages, Courses, Recipes and more!
+* New: Added a filter for schema aioseo_schema_graphs
+* Updated: Minimum capabilities on certain admin notices
+* Updated: Moved filter hook for title rewrites to wp to allow for accessing the query
+* Updated: Cache all references to attachment_url_to_postid functions
+* Updated: Refactored image scan interval for performance
+* Updated: Refactored the sitemap query to include post type
+* Updated: Add dismissible option to robots.txt alert
+* Fixed: Exporting settings including unnecessary data
+* Fixed: Transients not always being set correctly
+* Fixed: AIOSEO details column appearing on private post types/taxonomies
+* Fixed: Admin notice conflicts with plugins that disable admin notices
+* Fixed: Bug with title rewrites when multiple head tags exist in the page
+* Fixed: Unnecessary div element being added to the front-end of the site
+* Fixed: Issue with duplicate post records being inserted into custom tables
+* Fixed: Adding null entries to the custom tables
+* Fixed: Missing space in page format appended to titles/descriptions
+* Fixed: Output broken for keywords using languages that have multibyte characters
+* Fixed: Default settings for paged home pages not being set to noindex
+* Fixed: Shortcodes not being properly parsed on titles and descriptions
+* Fixed: Boolean values in database not being added in strict MySQL environments
+* Fixed: Breadcrumb labels for authors, archives, search, and 404 pages
+* Fixed: Adding additional pages now work even when we don't output a sitemap index by default
+* Fixed: rel=”next” links not always working
+* Fixed: Use fullsize image for OG image with filter to modify aioseo_thumbnail_size
+* Fixed: Remove OG HTML attribute if OG is disabled
+* Fixed: Default OG object type for home page is now ‘website' instead of ‘article'
+* Fixed: Undefined index error in apache in regards to $_SERVER[‘REMOTE_ADDR']
+* Fixed: Conflict with custom permalinks plugin
+* Fixed: Sitemap adding language=”” when not needed
+* Fixed: Page titles not always migrating properly
+* Fixed: Keywords not always migrating properly
+
+**New in version 4.0.12 – Released on January 6, 2021**
+
+* New: Add support for dashes in custom field names
+* Update: aioseo_disable filter now disables title rewrites
+* Fixed: Completely remove auto updates wrapper to let WordPress handle updates
+* Fixed: Refactor sitemap rewrite rules to account for WordPress sitemaps
+* Fixed: Support for taxonomies and custom post types that use ‘type' as the slug
+* Fixed: Options backup not always working for custom post types
+* Fixed: Console error related to WooCommerce tags
+* Fixed: Additional plugin conflicts
+
+**New in version 4.0.11 – Released on December 26, 2020**
+
+* Fixed: Issue with additional sitemap indexes returning 404
+
+**New in version 4.0.10 – Released on December 26, 2020**
+
+* New: Added task to cleanup all unnecessary action scheduler items to keep the DB trim
+* New: Filter to modify the home page schema breadcrumbs title aioseo_schema_breadcrumbs_home
+* Updated: Link to documentation for filters and hooks
+* Updated: Documentation regarding schema still being output for unlicensed users
+* Fixed: Performance issues when using TruSEO analysis on very long posts
+* Fixed: Event Espresso compatibility which didn't allow AIOSEO settings to load
+* Fixed: Suppressed continued errors with the WP FileSystem
+* Fixed: Schema breadcrumbs not using the proper post titles
+* Fixed: PHP error when install routine has not finished running
+* Fixed: Stripping of sitemap URL's in robots.txt
+* Fixed: Issue where static sitemaps were always being regenerated on save
+* Fixed: Issue where non-latin characters would cause the meta box to grow wider
+
+**New in version 4.0.9 – Released on December 22, 2020**
+
+* New: Added a filter to disable title rewrites via aioseo_disable_title_rewrites
+* New: Added a filter to modify the social network meta tags via aioseo_social_meta_tags
+* Updated: Performance enhancements for the V3 migration to prevent large sites from slowing down
+* Updated: Performance enhancements when loading any AIOSEO settings page as well as the post editor
+* Updated: The display of the archive title when on a CPT
+* Fixed: Bug that prevented editors and authors from editing SEO titles and descriptions
+* Fixed: TruSEO support in the classic editor URL not fully working on extra long URLs
+* Fixed: Issue where the closing head tag did not always display
+* Fixed: Issue on a few remaining sites where the title tag would strip out a $ and any numbers after it
+* Fixed: PHP error related to missing array during the migration
+* Fixed: Issue where AIOSEO would not remove the trailing /amp from canonical URLs
+* Fixed: Issue where notices would appear in the log when trying to access our log file
+* Fixed: Conflict with WP Shop plugin
+
+**New in version 4.0.8 – Released on December 21, 2020**
+
+* New: Added filter to allow altering meta box priority
+* Updated: Default options for auto updates
+* Fixed: Issue with regex escaping smart tags incorrectly
+* Fixed: CSS conflict with Revive Old Posts plugin
+
+**New in version 4.0.7 – Released on December 21, 2020**
+
+* New: Added aioseo_keywords filter
+* Fixed: Issue with a CSS file returning a 404
+* Fixed: Issue where not all GA scripts were being output to the page
+* Fixed: Conflict with Avada when using the Slider shortcode
+* Fixed: PHP Fatal error that affected a small subset of users during migration from version 3
+
+**New in version 4.0.6 – Released December 20, 2020**
+
+* New: integration with MonsterInsights for Google Analytics
+* New: Added Default Title/Description Meta for display in Page/Posts
+* New: Notice to inform users when title formats were broken in V3 after a migration
+* New: Smart tags (Categories, Parent Title, WooCommerce SKU/Price/Brand)
+* New: Option to display additional twitter meta (written by/reading time)
+* New: Dismissible notice to let inform users where they can find meta keywords
+* New: Notice to let give users info on adding keyphrases
+* Updated: Twitter meta does not default Open Graph any more
+* Updated: TruSEO tests to give more valuable information
+* Updated: Added “SEO” to test names in TruSEO to avoid confusion with Page Title
+* Updated: Added locale to TruSEO tests
+* Updated: SEO Analyzer error messages to give more helpful information
+* Fixed: Custom tables not always being created
+* Fixed: Invalid help docs URL
+* Fixed: Scheduled actions not always completing when importing from other SEO plugins
+* Fixed: Incorrect TruSEO test logic
+* Fixed: WooCommerce Products page only showing the shop page title/desc for all Products
+* Fixed: PHP errors on home page when no images are set
+* Fixed: GTM script not always being output in the source code
+* Fixed: Parsing of meta tag in the Pinterest section of the social networks page
+
+**New in version 4.0.5 – Released on December 15, 2020**
+
+* New: Added helpful notices when description format is used incorrectly
+* New: Added support for pasting in a string of keywords to automatically parse
+* New: Allow pasting in the entire meta tag in Webmaster Tools for Google/Bing/etc.
+* New: Post Excerpt Only smart tag
+* Updated: Improved UX when importing settings from other SEO plugins
+* Updated: Improved sitemap scanning of images with caching to increase performance
+* Updated: Competitor Site Analysis results content
+* Updated: Truncate post content in meta descriptions to WordPress default lengths
+* Updated: Allow other TLD's in social network URL's
+* Fixed: Performance issues on sites with millions of WordPress user accounts
+* Fixed: Setting SEO titles/descriptions from the all posts page not consistently working
+* Fixed: Sitemap compatibility issues with GoDaddy CDN
+* Fixed: Performance issues with static sitemaps being generated on large sites
+* Fixed: Static sitemap generating even when disabled
+* Fixed: Home Page Open Graph/Twitter images revert to the defaults if not set
+* Fixed: Properly display errors when an addon is not installed correctly
+* Fixed: Text editor in the Classic Editor now works with TruSEO
+* Fixed: URL's switching to http in Competitor Site Analysis
+* Fixed: PHP error when loading the help modal in the settings pages
+* Fixed: Missing import fields from other SEO plugins
+* Fixed: Page titles not displaying properly when themes hardcode titles
+* Fixed: White screen in settings when SSL is not configured properly on specific hosts
+* Fixed: Swapped options on the system status page
+* Fixed: Conflict with shortcodes that break meta description parsing
+* Fixed: Conflict with plugins and themes that reset the WP Query
+* Fixed: Issue with person graph not being displayed in the schema
+
+**New in version 4.0.4 – Released on November 22, 2020**
+
+* Fixed: Title formats not always migrating correctly
+
+**New in version 4.0.3 – Released on November 21, 2020**
+
+* Updated: Moved all action scheduler items into the aioseo group
+* Fixed: SEO data occasionally not saving while using the Classic Editor in Pages/Posts/Terms
+* Fixed: Migrations not fully completing when upgrading from V3
+* Fixed: Weglot injecting language switcher into sitemap stylesheets
+* Fixed: Genesis Theme outputting duplicate SEO data
+* Fixed: Paged numbers appearing in the AIOSEO Details column when navigating through the posts table
+* Fixed: Post/page titles not migrating with the proper format
+* Fixed: Social profile urls failing when they are valid
+* Fixed: Twitter and Facebook images not displaying in the preview
+* Fixed: Focus keywords not being added when first creating a page
+* Fixed: AIOSEO Settings section not always displaying on Edit Post screen in classic editor in WP 4.9 – 5.1
+
+**New in version 4.0.2 – Released on November 17, 2020**
+
+* Fixed: Display of Titles and Descriptions while migration is running
+* Fixed: Post/Term meta not always saving because of using PUT requests instead of POST
+* Fixed: Social Profile urls not validating with subdomains or trailing slashes
+* Fixed: Social Profile urls were not all being output if some were using the same username
+* Fixed: Memory leak on certain sites with thousands of transients
+* Fixed: PHP 5.2/5.3 notice compatibility
+
+**New in version 4.0.1 – Released on November 14, 2020**
+
+* Fixed: Issue with sites using different database engines
+
+**New in version 4.0.0 – Released on November 14, 2020**
+
+* NEW – Complete rebuild of the plugin for better performance and SEO enhancements
+* NEW – Onboarding wizard to streamline SEO setup for your site
+* NEW – Centralized dashboard to provide you with your current SEO status
+* NEW – TruSEO Analysis for posts and pages
+* NEW – SEO Analyzer with competitor site analysis
+* NEW – Customizable access control
+* NEW – Internal settings backup and restore
+* NEW – 100+ enhancements and bug fixes
+* Updated – Minimum PHP version compatibility to 5.4
 
 **See our <a href="https://aioseo.com/changelog/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin" target="_blank">changelog</a> for previous releases.**
 
@@ -310,6 +603,6 @@ AIOSEO is the original WordPress SEO plugin, and it's trusted by over 2 million 
 
 == Upgrade Notice ==
 
-= 4.1.2.2 =
+= 4.1.3.1 =
 
 This update adds major improvements and bugfixes.

@@ -132,10 +132,7 @@ class Settings {
 
 		return new \WP_REST_Response( [
 			'success'       => true,
-			'notifications' => [
-				'active'    => Models\Notification::getAllActiveNotifications(),
-				'dismissed' => Models\Notification::getAllDismissedNotifications()
-			],
+			'notifications' => Models\Notification::getNotifications(),
 			'redirection'   => aioseo()->options->getRedirection()
 		], 200 );
 	}
@@ -152,45 +149,30 @@ class Settings {
 		$body     = $request->get_json_params();
 		$settings = ! empty( $body['settings'] ) ? $body['settings'] : [];
 
+		$notAllowedOptions = aioseo()->access->getNotAllowedOptions();
+
 		foreach ( $settings as $setting ) {
+			$option = in_array( $setting, [ 'robots', 'blocker' ], true ) ? 'tools' : aioseo()->helpers->dashesToCamelCase( $setting );
+
+			if ( in_array( $option, $notAllowedOptions, true ) ) {
+				continue;
+			}
+
 			switch ( $setting ) {
-				case 'webmaster-tools':
-					aioseo()->options->webmasterTools->reset();
-					break;
-				case 'rss-content':
-					aioseo()->options->rssContent->reset();
-					break;
-				case 'search-appearance':
-					aioseo()->options->searchAppearance->reset();
-					break;
-				case 'access-control':
-					aioseo()->options->accessControl->reset();
-					aioseo()->access->addCapabilities();
-					break;
-				case 'advanced':
-					aioseo()->options->advanced->reset();
-					break;
-				case 'social-networks':
-					aioseo()->options->social->reset();
-					break;
-				case 'sitemaps':
-					aioseo()->options->sitemap->reset();
-					break;
-				case 'local-business-seo':
-					aioseo()->options->localBusiness->reset();
-					break;
-				case 'robots-txt':
+				case 'robots':
 					aioseo()->options->tools->robots->reset();
 					break;
-				case 'bad-bot-blocker':
+				case 'blocker':
 					aioseo()->options->deprecated->tools->blocker->reset();
 					break;
-				case 'image-seo':
-					aioseo()->options->image->reset();
-					break;
-				case 'breadcrumbs':
-					aioseo()->options->breadcrumbs->reset();
-					break;
+				default:
+					if ( aioseo()->options->has( $option ) ) {
+						aioseo()->options->$option->reset();
+					}
+			}
+
+			if ( 'access-control' === $setting ) {
+				aioseo()->access->addCapabilities();
 			}
 		}
 
@@ -222,15 +204,25 @@ class Settings {
 			}
 
 			if ( ! empty( $contents['settings'] ) ) {
+				// Clean up the array removing options the user should not manage.
+				$notAllowedOptions    = aioseo()->access->getNotAllowedOptions();
+				$contents['settings'] = array_diff_key( $contents['settings'], $notAllowedOptions );
+				if ( ! empty( $contents['settings']['deprecated'] ) ) {
+					$contents['settings']['deprecated'] = array_diff_key( $contents['settings']['deprecated'], $notAllowedOptions );
+				}
+
 				aioseo()->options->sanitizeAndSave( $contents['settings'] );
 			}
 
 			if ( ! empty( $contents['postOptions'] ) ) {
+				$notAllowedFields = aioseo()->access->getNotAllowedPageFields();
 				foreach ( $contents['postOptions'] as $postType => $postData ) {
 					// Posts.
 					if ( ! empty( $postData['posts'] ) ) {
 						foreach ( $postData['posts'] as $post ) {
 							unset( $post['id'] );
+							// Clean up the array removing fields the user should not manage.
+							$post    = array_diff_key( $post, $notAllowedFields );
 							$thePost = Models\Post::getPost( $post['post_id'] );
 							$thePost->set( $post );
 							$thePost->save();
@@ -273,9 +265,10 @@ class Settings {
 		];
 
 		if ( ! empty( $settings ) ) {
-			$options = aioseo()->options->noConflict();
+			$options           = aioseo()->options->noConflict();
+			$notAllowedOptions = aioseo()->access->getNotAllowedOptions();
 			foreach ( $settings as $setting ) {
-				if ( $options->has( $setting ) ) {
+				if ( ! in_array( $setting, $notAllowedOptions, true ) && $options->has( $setting ) ) {
 					$allSettings['settings'][ $setting ] = $options->$setting->all();
 
 					// It there is a related deprecated $setting, include it.
@@ -287,15 +280,22 @@ class Settings {
 		}
 
 		if ( ! empty( $postOptions ) ) {
+			$notAllowedFields = aioseo()->access->getNotAllowedPageFields();
 			foreach ( $postOptions as $postType ) {
-				$allSettings['postOptions'][ $postType ] = [
-					'posts' => aioseo()->db->start( 'aioseo_posts as ap' )
-						->select( 'ap.*' )
-						->join( 'posts as p', 'ap.post_id = p.ID' )
-						->where( 'p.post_type', $postType )
-						->run()
-						->result()
-				];
+				$posts = aioseo()->db->start( 'aioseo_posts as ap' )
+					->select( 'ap.*' )
+					->join( 'posts as p', 'ap.post_id = p.ID' )
+					->where( 'p.post_type', $postType )
+					->run()
+					->result();
+
+				foreach ( $posts as $post ) {
+					// Clean up the array removing fields the user should not manage.
+					$post = array_diff_key( (array) $post, $notAllowedFields );
+					if ( count( $post ) > 2 ) {
+						$allSettings['postOptions'][ $postType ]['posts'][] = $post;
+					}
+				}
 			}
 		}
 

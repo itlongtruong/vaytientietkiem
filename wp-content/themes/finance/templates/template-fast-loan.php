@@ -19,13 +19,8 @@ get_header();
           <li><a href="index.html">Trang Chủ</a></li>
           <li>Vay Tiền Nhanh</li>
         </ol>
-        <h2>Vay Tiền Nhanh</h2>
-
       </div>
-      
     </section><!-- End Breadcrumbs -->
-
-    
     <?php get_template_part( 'template-parts/content/partner-loan' ); ?>
 
       <!-- ======= Services Section ======= -->

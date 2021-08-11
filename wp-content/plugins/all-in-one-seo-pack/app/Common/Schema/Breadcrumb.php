@@ -56,7 +56,7 @@ class Breadcrumb {
 					'name'        => $post->post_title,
 					'description' => aioseo()->meta->description->getDescription( $post ),
 					'url'         => get_permalink( $post ),
-					'type'        => aioseo()->helpers->isWooCommerceShopPage() || is_home() ? 'CollectionPage' : $this->getPostGraph()
+					'type'        => aioseo()->helpers->isWooCommerceShopPage( $post->ID ) || is_home() ? 'CollectionPage' : $this->getPostGraph()
 				]
 			);
 

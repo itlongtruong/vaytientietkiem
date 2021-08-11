@@ -35,16 +35,7 @@ class Options {
 	 */
 	protected $defaults = [
 		// phpcs:disable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
-		'internal'         => [
-			'searchAppearanceDynamicBackup' => [
-				'postTypes'  => [ 'type' => 'array', 'default' => [] ],
-				'taxonomies' => [ 'type' => 'array', 'default' => [] ]
-			],
-			'socialFacebookDynamicBackup'   => [
-				'postTypes'  => [ 'type' => 'array', 'default' => [] ],
-				'taxonomies' => [ 'type' => 'array', 'default' => [] ]
-			],
-		],
+		'internal'         => [],
 		'webmasterTools'   => [
 			'google'                    => [ 'type' => 'string' ],
 			'bing'                      => [ 'type' => 'string' ],
@@ -61,9 +52,9 @@ class Options {
 			'homepageLink'          => [ 'type' => 'boolean', 'default' => true ],
 			'homepageLabel'         => [ 'type' => 'string', 'default' => 'Home' ],
 			'breadcrumbPrefix'      => [ 'type' => 'string' ],
-			'archiveFormat'         => [ 'type' => 'string', 'default' => 'Archives for #breadcrumb_archive_post_type_name' ],
-			'searchResultFormat'    => [ 'type' => 'string', 'default' => 'Search for \'#breadcrumb_search_string\'' ],
-			'errorFormat404'        => [ 'type' => 'string', 'default' => '404 Error: page not found' ],
+			'archiveFormat'         => [ 'type' => 'string', 'default' => 'Archives for #breadcrumb_archive_post_type_name', 'localized' => true ],
+			'searchResultFormat'    => [ 'type' => 'string', 'default' => 'Search for \'#breadcrumb_search_string\'', 'localized' => true ],
+			'errorFormat404'        => [ 'type' => 'string', 'default' => '404 Error: page not found', 'localized' => true ],
 			'showCurrentItem'       => [ 'type' => 'boolean', 'default' => true ],
 			'linkCurrentItem'       => [ 'type' => 'boolean', 'default' => false ],
 			'categoryFullHierarchy' => [ 'type' => 'boolean', 'default' => false ],
@@ -154,6 +145,28 @@ TEMPLATE
 				'postTypes'     => [
 					'all'      => [ 'type' => 'boolean', 'default' => true ],
 					'included' => [ 'type' => 'array', 'default' => [ 'post', 'page', 'product' ] ],
+				]
+			],
+			'html'    => [
+				'enable'           => [ 'type' => 'boolean', 'default' => true ],
+				'pageUrl'          => [ 'type' => 'string', 'default' => '' ],
+				'postTypes'        => [
+					'all'      => [ 'type' => 'boolean', 'default' => true ],
+					'included' => [ 'type' => 'array', 'default' => [ 'post', 'page', 'product' ] ],
+				],
+				'taxonomies'       => [
+					'all'      => [ 'type' => 'boolean', 'default' => true ],
+					'included' => [ 'type' => 'array', 'default' => [ 'category', 'post_tag', 'product_cat', 'product_tag' ] ],
+				],
+				'sortOrder'        => [ 'type' => 'string', 'default' => 'publish_date' ],
+				'sortDirection'    => [ 'type' => 'string', 'default' => 'asc' ],
+				'publicationDate'  => [ 'type' => 'boolean', 'default' => true ],
+				'compactArchives'  => [ 'type' => 'boolean', 'default' => false ],
+				'advancedSettings' => [
+					'enable'        => [ 'type' => 'boolean', 'default' => false ],
+					'nofollowLinks' => [ 'type' => 'boolean', 'default' => false ],
+					'excludePosts'  => [ 'type' => 'array', 'default' => [] ],
+					'excludeTerms'  => [ 'type' => 'array', 'default' => [] ]
 				]
 			],
 			'dynamic' => [
@@ -283,7 +296,7 @@ TEMPLATE
 				'useCategoriesForMetaKeywords' => [ 'type' => 'boolean', 'default' => false ],
 				'useTagsForMetaKeywords'       => [ 'type' => 'boolean', 'default' => false ],
 				'dynamicallyGenerateKeywords'  => [ 'type' => 'boolean', 'default' => false ],
-				'pagedFormat'                  => [ 'type' => 'string', 'default' => '- Page #page_number' ]
+				'pagedFormat'                  => [ 'type' => 'string', 'default' => '- Page #page_number', 'localized' => true ]
 			],
 			'archives' => [
 				'author' => [
@@ -608,7 +621,7 @@ TEMPLATE
 				];
 			}
 
-			$this->setDynamicSearchAppearanceOptions( 'postTypes', $postType['name'], $defaultOptions );
+			$this->defaults['searchAppearance']['dynamic']['postTypes'][ $postType['name'] ] = $defaultOptions;
 			$this->setDynamicSocialOptions( 'postTypes', $postType['name'] );
 			$this->setDynamicSitemapOptions( 'postTypes', $postType['name'] );
 		}
@@ -644,7 +657,7 @@ TEMPLATE
 				]
 			);
 
-			$this->setDynamicSearchAppearanceOptions( 'taxonomies', $taxonomy['name'], $defaultOptions );
+			$this->defaults['searchAppearance']['dynamic']['taxonomies'][ $taxonomy['name'] ] = $defaultOptions;
 			$this->setDynamicSocialOptions( 'taxonomies', $taxonomy['name'] );
 			$this->setDynamicSitemapOptions( 'taxonomies', $taxonomy['name'] );
 		}
@@ -688,7 +701,7 @@ TEMPLATE
 				]
 			);
 
-			$this->setDynamicSearchAppearanceOptions( 'archives', $postType['name'], $defaultOptions );
+			$this->defaults['searchAppearance']['dynamic']['archives'][ $postType['name'] ] = $defaultOptions;
 			$this->setDynamicSocialOptions( 'archives', $postType['name'] );
 		}
 	}
@@ -727,36 +740,6 @@ TEMPLATE
 	}
 
 	/**
-	 * Sets the dynamic search appearance settings for a given post type or taxonomy.
-	 *
-	 * @since 4.1.1
-	 *
-	 * @param  string $objectType     Whether the object belongs to the dynamic "postTypes" or "taxonomies".
-	 * @param  string $objectName     The object name.
-	 * @param  array  $defaultOptions The default options for the object.
-	 * @return void
-	 */
-	protected function setDynamicSearchAppearanceOptions( $objectType, $objectName, $defaultOptions ) {
-		// Check if dynamic backup needs to be reset.
-		if ( ! empty( $this->options['internal']['searchAppearanceDynamicBackup'][ $objectType ]['value'][ $objectName ] ) ) {
-			$this->needsUpdate = true;
-
-			// If the backup is double-encoded, decode it again first. This code is to support versions before 4.1.2 and can be removed at some point in the future.
-			$value = $this->options['internal']['searchAppearanceDynamicBackup'][ $objectType ]['value'][ $objectName ];
-			if ( is_string( $value ) ) {
-				$value = json_decode( $value, true ) ? json_decode( $value, true ) : $value;
-			}
-
-			unset( $this->options['internal']['searchAppearanceDynamicBackup'][ $objectType ]['value'][ $objectName ] );
-			if ( is_array( $value ) && ! empty( $value ) ) {
-				$defaultOptions = array_replace_recursive( $defaultOptions, $value );
-			}
-		}
-
-		$this->defaults['searchAppearance']['dynamic'][ $objectType ][ $objectName ] = $defaultOptions;
-	}
-
-	/**
 	 * Sets the dynamic social settings for a given post type or taxonomy.
 	 *
 	 * @since 4.1.1
@@ -772,22 +755,6 @@ TEMPLATE
 				'default' => 'article'
 			]
 		];
-
-		// Check if dynamic backup needs to be reset.
-		if ( ! empty( $this->options['internal']['socialFacebookDynamicBackup'][ $objectType ]['value'][ $objectName ] ) ) {
-			$this->needsUpdate = true;
-
-			// If the backup is double-encoded, decode it again first. This code is to support versions before 4.1.2 and can be removed at some point in the future.
-			$value = $this->options['internal']['socialFacebookDynamicBackup'][ $objectType ]['value'][ $objectName ];
-			if ( is_string( $value ) ) {
-				$value = json_decode( $value, true ) ? json_decode( $value, true ) : $value;
-			}
-
-			unset( $this->options['internal']['socialFacebookDynamicBackup'][ $objectType ]['value'][ $objectName ] );
-			if ( is_array( $value ) && ! empty( $value ) ) {
-				$defaultOptions = array_replace_recursive( $defaultOptions, $value );
-			}
-		}
 
 		$this->defaults['social']['facebook']['general']['dynamic'][ $objectType ][ $objectName ] = $defaultOptions;
 	}
@@ -848,7 +815,7 @@ TEMPLATE
 	 * @return void
 	 */
 	public function sanitizeAndSave( $options ) {
-		$sitemapOptions           = ! empty( $options['sitemap'] ) && ! empty( $options['sitemap']['general'] ) ? $options['sitemap']['general'] : null;
+		$sitemapOptions           = ! empty( $options['sitemap']['general'] ) ? $options['sitemap']['general'] : null;
 		$oldSitemapOptions        = aioseo()->options->sitemap->general->all();
 		$deprecatedSitemapOptions = ! empty( $options['deprecated']['sitemap']['general'] )
 				? $options['deprecated']['sitemap']['general']
@@ -858,6 +825,7 @@ TEMPLATE
 		$phoneNumberOptions          = isset( $options['searchAppearance']['global']['schema']['phone'] )
 				? $options['searchAppearance']['global']['schema']['phone']
 				: null;
+		$oldHtmlSitemapUrl = $this->sitemap->html->pageUrl;
 
 		$options = $this->maybeRemoveUnfilteredHtmlFields( $options );
 
@@ -867,93 +835,13 @@ TEMPLATE
 			return;
 		}
 
-		// Get the settings from the options being passed in.
-		$dynamicPostTypeSettings     = $this->options['searchAppearance']['dynamic']['postTypes'];
-		$dynamicPostTypeSettingsOG   = $this->options['social']['facebook']['general']['dynamic']['postTypes'];
-		$dynamicTaxonomiesSettings   = $this->options['searchAppearance']['dynamic']['taxonomies'];
-		$dynamicTaxonomiesSettingsOG = $this->options['social']['facebook']['general']['dynamic']['taxonomies'];
-		$dynamicArchiveSettings      = $this->options['searchAppearance']['dynamic']['archives'];
-
 		// Refactor options.
 		$this->options = array_replace_recursive(
 			$this->options,
 			$this->addValueToValuesArray( $this->options, $options, [], true )
 		);
 
-		// Post Types.
-		$postTypes = aioseo()->helpers->getPublicPostTypes();
-		foreach ( $dynamicPostTypeSettings as $postTypeName => $postTypeData ) {
-			foreach ( $postTypes as $postType ) {
-				if ( 'type' === $postType['name'] ) {
-					$postType['name'] = '_aioseo_type';
-				}
-
-				// If the option has disappeared, we want to save the settings manually.
-				if ( $postTypeName === $postType['name'] ) {
-					continue 2;
-				}
-			}
-
-			$this->options['internal']['searchAppearanceDynamicBackup']['postTypes']['value'][ $postTypeName ] = $postTypeData;
-		}
-		foreach ( $dynamicPostTypeSettingsOG as $postTypeName => $postTypeData ) {
-			foreach ( $postTypes as $postType ) {
-				if ( 'type' === $postType['name'] ) {
-					$postType['name'] = '_aioseo_type';
-				}
-
-				// If the option has disappeared, we want to save the settings manually.
-				if ( $postTypeName === $postType['name'] ) {
-					continue 2;
-				}
-			}
-
-			$this->options['internal']['socialFacebookDynamicBackup']['postTypes']['value'][ $postTypeName ] = $postTypeData;
-		}
-
-		// Taxonomies.
-		$taxonomies = aioseo()->helpers->getPublicTaxonomies();
-		foreach ( $dynamicTaxonomiesSettings as $taxonomyName => $taxonomyData ) {
-			foreach ( $taxonomies as $taxonomy ) {
-				if ( 'type' === $taxonomy['name'] ) {
-					$taxonomy['name'] = '_aioseo_type';
-				}
-
-				// If the option has disappeared, we want to save the settings manually.
-				if ( $taxonomyName === $taxonomy['name'] ) {
-					continue 2;
-				}
-			}
-
-			$this->options['internal']['searchAppearanceDynamicBackup']['taxonomies']['value'][ $taxonomyName ] = $taxonomyData;
-		}
-		foreach ( $dynamicTaxonomiesSettingsOG as $taxonomyName => $taxonomyData ) {
-			foreach ( $taxonomies as $taxonomy ) {
-				// If the option has disappeared, we want to save the settings manually.
-				if ( $taxonomyName === $taxonomy['name'] ) {
-					continue 2;
-				}
-			}
-
-			$this->options['internal']['socialFacebookDynamicBackup']['taxonomies']['value'][ $taxonomyName ] = $taxonomyData;
-		}
-
-		// Archives.
-		$postTypes = aioseo()->helpers->getPublicPostTypes( false, true );
-		foreach ( $dynamicArchiveSettings as $archiveName => $archiveData ) {
-			foreach ( $postTypes as $postType ) {
-				if ( 'type' === $postType['name'] ) {
-					$postType['name'] = '_aioseo_type';
-				}
-
-				// If the option has disappeared, we want to save the settings manually.
-				if ( $archiveName === $postType['name'] ) {
-					continue 2;
-				}
-			}
-
-			$this->options['internal']['searchAppearanceDynamicBackup']['archives']['value'][ $postTypeName ] = $postTypeData;
-		}
+		aioseo()->dynamicBackup->maybeBackup( $this->options );
 
 		// The above works for most options, but there are a few that need to be forcibly updated.
 		if ( $sitemapOptions ) {
@@ -963,6 +851,10 @@ TEMPLATE
 			$this->options['sitemap']['general']['advancedSettings']['excludePosts']['value'] = $this->sanitizeField( $options['sitemap']['general']['advancedSettings']['excludePosts'], 'array' );
 			$this->options['sitemap']['general']['advancedSettings']['excludeTerms']['value'] = $this->sanitizeField( $options['sitemap']['general']['advancedSettings']['excludeTerms'], 'array' );
 			$this->options['sitemap']['rss']['postTypes']['included']['value']                = $this->sanitizeField( $options['sitemap']['rss']['postTypes']['included'], 'array' );
+			$this->options['sitemap']['html']['postTypes']['included']['value']               = $this->sanitizeField( $options['sitemap']['html']['postTypes']['included'], 'array' );
+			$this->options['sitemap']['html']['taxonomies']['included']['value']              = $this->sanitizeField( $options['sitemap']['html']['taxonomies']['included'], 'array' );
+			$this->options['sitemap']['html']['advancedSettings']['excludePosts']['value']    = $this->sanitizeField( $options['sitemap']['html']['advancedSettings']['excludePosts'], 'array' );
+			$this->options['sitemap']['html']['advancedSettings']['excludeTerms']['value']    = $this->sanitizeField( $options['sitemap']['html']['advancedSettings']['excludeTerms'], 'array' );
 		}
 
 		// Advanced options.
@@ -1001,6 +893,20 @@ TEMPLATE
 		// Social networks.
 		if ( isset( $options['social']['profiles']['sameUsername']['included'] ) ) {
 			$this->options['social']['profiles']['sameUsername']['included']['value'] = $this->sanitizeField( $options['social']['profiles']['sameUsername']['included'], 'array' );
+		}
+
+		if ( $this->sitemap->html->enable ) {
+			$newOptions = ! empty( $options['sitemap']['html'] ) ? $options['sitemap']['html'] : null;
+
+			$pageUrl = wp_parse_url( $newOptions['pageUrl'] );
+			$path    = ! empty( $pageUrl['path'] ) ? untrailingslashit( $pageUrl['path'] ) : '';
+			if ( $path ) {
+				$existingPage = get_page_by_path( $path, OBJECT );
+				if ( is_object( $existingPage ) ) {
+					// If the page exists, don't override the previous URL.
+					$options['sitemap']['html']['pageUrl'] = $oldHtmlSitemapUrl;
+				}
+			}
 		}
 
 		// Update localized options.

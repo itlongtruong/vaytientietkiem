@@ -275,6 +275,7 @@ namespace AIOSEO\Plugin {
 			$this->badBotBlocker      = new Common\Tools\BadBotBlocker();
 			$this->headlineAnalyzer   = new Common\HeadlineAnalyzer\HeadlineAnalyzer();
 			$this->breadcrumbs        = $this->pro ? new Pro\Breadcrumbs\Breadcrumbs() : new Common\Breadcrumbs\Breadcrumbs();
+			$this->dynamicBackup      = $this->pro ? new Pro\Utils\DynamicBackup() : new Common\Utils\DynamicBackup();
 			$this->internalOptions    = $this->pro ? new Pro\Utils\InternalOptions() : new Lite\Utils\InternalOptions();
 			$this->options            = $this->pro ? new Pro\Utils\Options() : new Lite\Utils\Options();
 			$this->backup             = new Common\Utils\Backup();
@@ -295,6 +296,7 @@ namespace AIOSEO\Plugin {
 			$this->migration          = $this->pro ? new Pro\Migration\Migration() : new Common\Migration\Migration();
 			$this->importExport       = $this->pro ? new Pro\ImportExport\ImportExport() : new Common\ImportExport\ImportExport();
 			$this->sitemap            = $this->pro ? new Pro\Sitemap\Sitemap() : new Common\Sitemap\Sitemap();
+			$this->htmlSitemap        = new Common\Sitemap\Html\Sitemap();
 			$this->templates          = new Common\Utils\Templates();
 
 			if ( ! wp_doing_ajax() && ! wp_doing_cron() ) {

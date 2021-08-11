@@ -527,8 +527,17 @@ trait Options {
 			$optionOrGroup = '_aioseo_type';
 		}
 
+		static $hasInitialized = false;
+
 		// Make sure our dynamic options have loaded.
-		$this->init( true );
+		if ( ! $hasInitialized ) {
+			foreach ( $this->subGroups as $subGroup ) {
+				if ( 'dynamic' === $subGroup ) {
+					$hasInitialized = true;
+					$this->init( true );
+				}
+			}
+		}
 
 		// If we need to set a sub-group, do that now.
 		$defaults = $this->groupKey ? $this->options[ $this->groupKey ] : $this->options;
@@ -628,6 +637,17 @@ trait Options {
 		return isset( $defaults[ $name ]['default'] )
 			? $defaults[ $name ]['default']
 			: null;
+	}
+
+	/**
+	 * Gets the defaults options.
+	 *
+	 * @since 4.1.3
+	 *
+	 * @return array An array of dafults.
+	 */
+	public function getDefaults() {
+		return $this->defaults;
 	}
 
 	/**

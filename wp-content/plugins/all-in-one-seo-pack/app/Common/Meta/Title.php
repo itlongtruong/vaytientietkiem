@@ -119,13 +119,13 @@ class Title {
 			$title = $this->helpers->prepare( $metaData->title, $post->ID );
 		}
 
+		if ( ! $title ) {
+			$title = $this->helpers->prepare( $this->getPostTypeTitle( $post->post_type ), $post->ID, $default );
+		}
+
 		// If this post is the static home page and we have no title, let's reset to the site name.
 		if ( empty( $title ) && 'page' === get_option( 'show_on_front' ) && (int) get_option( 'page_on_front' ) === $post->ID ) {
 			$title = aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'name' ) );
-		}
-
-		if ( ! $title ) {
-			$title = $this->helpers->prepare( $this->getPostTypeTitle( $post->post_type ), $post->ID, $default );
 		}
 
 		$posts[ $post->ID ] = $title;

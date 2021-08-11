@@ -113,15 +113,18 @@ class Image {
 		}
 
 		if ( ! empty( $post->post_password ) ) {
-			return $this->updatePost( $post->ID );
+			$this->updatePost( $post->ID );
+			return;
 		}
 
 		if ( 'attachment' === $post->post_type ) {
 			if ( ! wp_attachment_is( 'image', $post ) ) {
-				return $this->updatePost( $post->ID );
+				$this->updatePost( $post->ID );
+				return;
 			}
 			$image = $this->buildEntries( [ $post->ID ] );
-			return $this->updatePost( $post->ID, $image );
+			$this->updatePost( $post->ID, $image );
+			return;
 		}
 
 		$postContent = $this->doShortcodes( $post->post_content );
@@ -134,7 +137,6 @@ class Image {
 			$images[] = get_the_post_thumbnail_url( $post );
 		}
 
-		$images = $this->filter( $images );
 		$images = $this->removeImageDimensions( $images );
 
 		if ( aioseo()->helpers->isWooCommerceActive() && 'product' === $post->post_type ) {
@@ -142,18 +144,15 @@ class Image {
 		}
 
 		if ( ! $images ) {
-			return $this->updatePost( $post->ID );
+			$this->updatePost( $post->ID );
+			return;
 		}
 
-		$parsedImages = [];
-		foreach ( $images as $image ) {
-			$attachmentId   = is_numeric( $image ) ? $image : aioseo()->helpers->attachmentUrlToPostId( $image );
-			$parsedImages[] = $attachmentId ? $attachmentId : $image;
-		}
+		$images = apply_filters( 'aioseo_sitemap_images', $images );
 
 		// Limit to a 1,000 URLs, in accordance to Google's specifications.
-		$images = array_slice( $this->buildEntries( $parsedImages ), 0, 1000 );
-		return $this->updatePost( $post->ID, $images );
+		$images = array_slice( $images, 0, 1000 );
+		$this->updatePost( $post->ID, $this->buildEntries( $images ) );
 	}
 
 	/**
@@ -199,12 +198,13 @@ class Image {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  array $ids Either a numeric post ID or the image URL if the ID of the image couldn't be found.
-	 * @return array      The image entries.
+	 * @param  array $images The images, consisting of attachment IDs or external URLs.
+	 * @return array         The image entries.
 	 */
-	private function buildEntries( $ids ) {
+	private function buildEntries( $images ) {
 		$entries = [];
-		foreach ( $ids as $id ) {
+		foreach ( $images as $image ) {
+			$id = $this->getImageId( $image );
 			if ( ! is_numeric( $id ) ) {
 				$entries[] = [ 'image:loc' => aioseo()->sitemap->helpers->formatUrl( $id ) ];
 				continue;
@@ -217,6 +217,27 @@ class Image {
 			];
 		}
 		return $entries;
+	}
+
+	/**
+	 * Returns the ID of the image if it's hosted on the site. Otherwise it returns the external URL.
+	 *
+	 * @since 4.1.3
+	 *
+	 * @param  int|string $image The attachment ID or URL.
+	 * @return int|string        The attachment ID or URL.
+	 */
+	private function getImageId( $image ) {
+		if ( is_numeric( $image ) ) {
+			return $image;
+		}
+
+		$attachmentId = false;
+		if ( aioseo()->helpers->isValidAttachment( $image ) ) {
+			$attachmentId = aioseo()->helpers->attachmentUrlToPostId( $image );
+		}
+
+		return $attachmentId ? $attachmentId : $image;
 	}
 
 	/**
@@ -238,36 +259,6 @@ class Image {
 			$urls[] = aioseo()->helpers->makeUrlAbsolute( $url );
 		}
 		return array_unique( $urls );
-	}
-
-	/**
-	 * Removes all URLs that aren't on our domain whitelist.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @param  array $urls The image URLs.
-	 * @return array       The remaining image URLs.
-	 */
-	private function filter( $urls ) {
-		$allowedDomains = apply_filters( 'aioseo_sitemap_image_domains', [
-			aioseo()->helpers->localizedUrl( '/' ),
-			'wp.com'
-		] );
-
-		if ( ! count( $allowedDomains ) ) {
-			return [];
-		}
-
-		$remainingUrls = [];
-		foreach ( $urls as $url ) {
-			foreach ( $allowedDomains as $domain ) {
-				if ( preg_match( "#.*$domain.*#", $url ) ) {
-					$remainingUrls[] = $url;
-					continue;
-				}
-			}
-		}
-		return $remainingUrls;
 	}
 
 	/**

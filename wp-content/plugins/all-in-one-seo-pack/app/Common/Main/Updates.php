@@ -1,6 +1,8 @@
 <?php
 namespace AIOSEO\Plugin\Common\Main;
 
+use \AIOSEO\Plugin\Common\Models;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -88,6 +90,12 @@ class Updates {
 
 		if ( version_compare( $lastActiveVersion, '4.1.2', '<' ) ) {
 			$this->clearProductImages();
+		}
+
+		if ( version_compare( $lastActiveVersion, '4.1.3', '<' ) ) {
+			$this->addNotificationsNewColumn();
+			$this->noindexWooCommercePages();
+			$this->accessControlNewCapabilities();
 		}
 
 		do_action( 'aioseo_run_updates', $lastActiveVersion );
@@ -356,5 +364,78 @@ class Updates {
 				]
 			)
 			->run();
+	}
+
+	/**
+	 * Adds the new flag to the notifications table.
+	 *
+	 * @since 4.1.3
+	 *
+	 * @return void
+	 */
+	public function addNotificationsNewColumn() {
+		if ( ! aioseo()->db->columnExists( 'aioseo_notifications', 'new' ) ) {
+			$tableName = aioseo()->db->db->prefix . 'aioseo_notifications';
+			aioseo()->db->execute(
+				"ALTER TABLE {$tableName}
+				ADD new tinyint(1) NOT NULL DEFAULT 1 AFTER dismissed"
+			);
+
+			aioseo()->db
+				->update( 'aioseo_notifications' )
+				->where( 'new', 1 )
+				->set( 'new', 0 )
+				->run();
+		}
+	}
+
+	/**
+	 * Noindexes the WooCommerce cart, checkout and account pages.
+	 *
+	 * @since 4.1.3
+	 *
+	 * @return void
+	 */
+	public function noindexWooCommercePages() {
+		if ( ! aioseo()->helpers->isWooCommerceActive() ) {
+			return;
+		}
+
+		$cartId     = (int) get_option( 'woocommerce_cart_page_id' );
+		$checkoutId = (int) get_option( 'woocommerce_checkout_page_id' );
+		$accountId  = (int) get_option( 'woocommerce_myaccount_page_id' );
+
+		$cartPage     = Models\Post::getPost( $cartId );
+		$checkoutPage = Models\Post::getPost( $checkoutId );
+		$accountPage  = Models\Post::getPost( $accountId );
+
+		$newMeta = [
+			'robots_default' => false,
+			'robots_noindex' => true
+		];
+
+		if ( $cartPage->exists() ) {
+			$cartPage->set( $newMeta );
+			$cartPage->save();
+		}
+		if ( $checkoutPage->exists() ) {
+			$checkoutPage->set( $newMeta );
+			$checkoutPage->save();
+		}
+		if ( $accountPage->exists() ) {
+			$accountPage->set( $newMeta );
+			$accountPage->save();
+		}
+	}
+
+	/**
+	 * Adds the new capabilities for all the roles.
+	 *
+	 * @since 4.1.3
+	 *
+	 * @return void
+	 */
+	public function accessControlNewCapabilities() {
+		aioseo()->access->addCapabilities();
 	}
 }

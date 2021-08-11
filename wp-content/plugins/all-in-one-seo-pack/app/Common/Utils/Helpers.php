@@ -19,6 +19,7 @@ class Helpers {
 	use TraitHelpers\ActionScheduler;
 	use TraitHelpers\Constants;
 	use TraitHelpers\DateTime;
+	use TraitHelpers\ECommerce;
 	use TraitHelpers\Shortcodes;
 	use TraitHelpers\Strings;
 
@@ -226,33 +227,6 @@ class Helpers {
 	 */
 	public function isStaticPostsPage() {
 		return is_home() && ( 0 !== (int) get_option( 'page_for_posts' ) );
-	}
-
-	/**
-	 * Checks whether WooCommerce is active.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @return boolean Whether WooCommerce is active.
-	 */
-	public function isWooCommerceActive() {
-		return class_exists( 'woocommerce' );
-	}
-
-	/**
-	 * Checks whether the queried object is the WooCommerce shop page.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @return boolean
-	 */
-	public function isWooCommerceShopPage() {
-		$screenCheck = true;
-		if ( is_admin() && function_exists( 'get_current_screen' ) ) {
-			$screen      = get_current_screen();
-			$screenCheck = 'edit' !== $screen->base;
-		}
-		return $this->isWooCommerceActive() && function_exists( 'is_shop' ) && is_shop() && $screenCheck;
 	}
 
 	/**
@@ -472,7 +446,6 @@ class Helpers {
 		$staticHomePage   = intval( get_option( 'page_on_front' ) );
 		$data = [
 			'page'             => $page,
-			'translations'     => $this->getJedLocaleData( 'all-in-one-seo-pack' ),
 			'screen'           => [
 				'base'        => $screen->base,
 				'postType'    => $screen->post_type,
@@ -548,11 +521,14 @@ class Helpers {
 				'staticHomePage'      => $isStaticHomePage ? $staticHomePage : false,
 				'staticBlogPage'      => $this->getBlogPageId(),
 				'staticBlogPageTitle' => get_the_title( $this->getBlogPageId() ),
-				'isDev'               => $this->isDev()
+				'isDev'               => $this->isDev(),
+				'isSsl'               => is_ssl()
 			],
 			'user'             => [
 				'email'          => wp_get_current_user()->user_email,
 				'roles'          => $this->getUserRoles(),
+				'customRoles'    => $this->getCustomRoles(),
+				'canManage'      => current_user_can( apply_filters( 'aioseo_manage_seo', 'aioseo_manage_seo' ) ),
 				'capabilities'   => aioseo()->access->getAllCapabilities(),
 				'unfilteredHtml' => current_user_can( 'unfiltered_html' ),
 				'locale'         => function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale()
@@ -563,10 +539,7 @@ class Helpers {
 				'taxonomies' => $this->getPublicTaxonomies( false, true ),
 				'archives'   => $this->getPublicPostTypes( false, true, true )
 			],
-			'notifications'    => [
-				'active'    => Models\Notification::getAllActiveNotifications(),
-				'dismissed' => Models\Notification::getAllDismissedNotifications()
-			],
+			'notifications'    => Models\Notification::getNotifications( false ),
 			'addons'           => aioseo()->addons->getAddons(),
 			'version'          => AIOSEO_VERSION,
 			'helpPanel'        => json_decode( aioseo()->help->getDocs() ),
@@ -675,8 +648,6 @@ class Helpers {
 			}
 		}
 
-		// @TODO: Contextualize all data attributes above to only show on pages that they are used on.
-
 		if ( 'sitemaps' === $page ) {
 			try {
 				if ( as_next_scheduled_action( 'aioseo_static_sitemap_regeneration' ) ) {
@@ -755,12 +726,42 @@ class Helpers {
 	public function getUserRoles() {
 		global $wp_roles;
 		if ( ! isset( $wp_roles ) ) {
-			$wp_roles = new WP_Roles();
+			$wp_roles = new \WP_Roles();
 		}
 		$roleNames = $wp_roles->get_names();
 		asort( $roleNames );
 
 		return $roleNames;
+	}
+
+	/**
+	 * Returns the custom roles in the current WP install.
+	 *
+	 * @since 4.1.3
+	 *
+	 * @return array An array of custom roles.
+	 */
+	public function getCustomRoles() {
+		$allRoles    = $this->getUserRoles();
+		$customRoles = [];
+
+		$toSkip = array_merge(
+			// Default WordPress roles.
+			[ 'superadmin', 'administrator', 'editor', 'author', 'contributor', 'subscriber' ],
+			// Default AIOSEO roles.
+			[ 'aioseo_manager', 'aioseo_editor' ]
+		);
+
+		foreach ( $allRoles as $roleName => $role ) {
+			// Skip default roles.
+			if ( in_array( $roleName, $toSkip, true ) ) {
+				continue;
+			}
+
+			$customRoles[ $roleName ] = $role;
+		}
+
+		return $customRoles;
 	}
 
 	/**
@@ -777,12 +778,13 @@ class Helpers {
 		$plugins = [];
 		foreach ( $pluginUpgrader->pluginSlugs as $key => $slug ) {
 			$plugins[ $key ] = [
-				'basename'   => $slug,
-				'installed'  => in_array( $slug, $installedPlugins, true ),
-				'activated'  => is_plugin_active( $slug ),
-				'adminUrl'   => admin_url( $pluginUpgrader->pluginAdminUrls[ $key ] ),
-				'canInstall' => aioseo()->addons->canInstall(),
-				'wpLink'     => ! empty( $pluginUpgrader->wpPluginLinks[ $key ] ) ? $pluginUpgrader->wpPluginLinks[ $key ] : null
+				'basename'    => $slug,
+				'installed'   => in_array( $slug, $installedPlugins, true ),
+				'activated'   => is_plugin_active( $slug ),
+				'adminUrl'    => admin_url( $pluginUpgrader->pluginAdminUrls[ $key ] ),
+				'canInstall'  => aioseo()->addons->canInstall(),
+				'canActivate' => aioseo()->addons->canActivate(),
+				'wpLink'      => ! empty( $pluginUpgrader->wpPluginLinks[ $key ] ) ? $pluginUpgrader->wpPluginLinks[ $key ] : null
 			];
 		}
 
@@ -935,6 +937,24 @@ class Helpers {
 	public function isPostTypeNoindexed( $postType ) {
 		$noindexedPostTypes = $this->getNoindexedPostTypes();
 		return in_array( $postType, $noindexedPostTypes, true );
+	}
+
+	/**
+	 * Normalize Post Type or Taxonomy names to work properly with AIOSEO.
+	 *
+	 * @since 4.1.3
+	 *
+	 * @param  array $items Array of items to normalize.
+	 * @return array        Array of items normalized.
+	 */
+	public function normalizePostTypeTaxonomyNames( $items ) {
+		foreach ( $items as &$item ) {
+			if ( 'type' === $item['name'] ) {
+				$item['name'] = '_aioseo_type';
+			}
+		}
+
+		return $items;
 	}
 
 	/**
@@ -1558,7 +1578,9 @@ class Helpers {
 		static $pageOnFront  = null;
 		static $pageForPosts = null;
 
-		if ( aioseo()->helpers->isWooCommerceShopPage() ) {
+		$postId = is_a( $postId, 'WP_Post' ) ? $postId->ID : $postId;
+
+		if ( aioseo()->helpers->isWooCommerceShopPage( $postId ) ) {
 			return get_post( wc_get_page_id( 'shop' ) );
 		}
 
@@ -2267,5 +2289,16 @@ class Helpers {
 		$isRestApiRequest = ( 0 === strpos( $_SERVER['REQUEST_URI'], $restUrl ) );
 
 		return apply_filters( 'aioseo_is_rest_api_request', $isRestApiRequest );
+	}
+
+	/**
+	 * Checks whether the current request is an AJAX, CRON or REST request.
+	 *
+	 * @since 4.1.3
+	 *
+	 * @return bool Wether the request is an AJAX, CRON or REST request.
+	 */
+	public function isAjaxCronRest() {
+		return wp_doing_ajax() || wp_doing_cron() || $this->isRestApiRequest();
 	}
 }

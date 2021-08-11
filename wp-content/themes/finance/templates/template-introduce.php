@@ -106,6 +106,16 @@ get_header();
 
           </div>
 
+
+
+          <div class="col-lg-6">
+            
+            <?php
+            echo do_shortcode('[contact-form-7 id="190" title="Form Liên Hệ"]');
+            ?>
+            
+          </div>
+         <!--
           <div class="col-lg-6">
             <form action="forms/contact.php" method="post" class="php-email-form">
               <div class="row gy-4">
@@ -128,7 +138,7 @@ get_header();
 
                 <div class="col-md-12 text-center">
                   <div class="loading">Loading</div>
-                  <!-- <div class="error-message"></div> -->
+                 <div class="error-message"></div>
                   <div class="sent-message">Your message has been sent. Thank you!</div>
 
                   <button type="submit">Gửi</button>
@@ -138,6 +148,8 @@ get_header();
             </form>
 
           </div>
+          -->
+
 
         </div>
 

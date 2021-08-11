@@ -65,9 +65,9 @@ $data = get_posts( $args );
                   <li class="list-group-item"><?php echo $do_tuoi_cam['value'];?></li>
                   <li class="list-group-item"><?php echo $thoi_gian_cam['value'];?></li>
                   <li class="list-group-item"><?php echo $thoi_gian_giai_ngan['value'];?></li>
-                  <li class="list-group-item"><a href="<?php the_permalink(); ?>">Xem thêm</a></li>
+                  <li class="list-group-item"><a href="<?php echo $link_dang_ky['value'];?>">Xem thêm</a></li>
                 </ul>
-                <a href="<?php echo $link_dang_ky['value'];?>" target="_blank" class="btn">Đăng ký vay ngay</a>
+                <a href="<?php echo $link_dang_ky['value'];?>" target="_blank" class="btn">Đăng ký ngay</a>
               </div>
             </div>
           </div>

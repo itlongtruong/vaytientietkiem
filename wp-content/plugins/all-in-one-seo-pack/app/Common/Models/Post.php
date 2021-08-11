@@ -68,11 +68,25 @@ class Post extends Model {
 	 * @return Post         The Post object.
 	 */
 	public static function getPost( $postId ) {
-		return aioseo()->db
+		$post = aioseo()->db
 			->start( 'aioseo_posts' )
 			->where( 'post_id', $postId )
 			->run()
 			->model( 'AIOSEO\\Plugin\\Common\\Models\\Post' );
+
+		if (
+			! $post->exists() &&
+			'page' === get_post_type( $postId ) && // This check cannot be deleted and is required to prevent errors after WordPress cleans up the attachment it creates when a plugin is updated.
+			(
+				aioseo()->helpers->isWooCommerceCheckoutPage( $postId ) ||
+				aioseo()->helpers->isWooCommerceCartPage( $postId ) ||
+				aioseo()->helpers->isWooCommerceAccountPage( $postId )
+			)
+		) {
+			$post->robots_default = false;
+			$post->robots_noindex = true;
+		}
+		return $post;
 	}
 
 	/**
@@ -80,16 +94,12 @@ class Post extends Model {
 	 *
 	 * @since 4.0.3
 	 *
-	 * @param  int   $postId         The Post ID.
-	 * @param  array $data           The post data to save.
-	 * @return bool|WP_REST_Response True if post saved or Response Error.
+	 * @param  int                    $postId The Post ID.
+	 * @param  array                  $data   The post data to save.
+	 * @return bool|\WP_REST_Response         True if post data was saved or error response.
 	 */
 	public static function savePost( $postId, $data ) {
-		$thePost = aioseo()->db
-			->start( 'aioseo_posts' )
-			->where( 'post_id', $postId )
-			->run()
-			->model( 'AIOSEO\\Plugin\\Common\\Models\\Post' );
+		$thePost = self::getPost( $postId );
 
 		$post = aioseo()->helpers->getPost( $postId );
 
@@ -155,6 +165,7 @@ class Post extends Model {
 		if ( ! $thePost->exists() ) {
 			$thePost->created = gmdate( 'Y-m-d H:i:s' );
 		}
+
 		$thePost->save();
 		$thePost->reset();
 
@@ -179,7 +190,7 @@ class Post extends Model {
 			return $lastError;
 		}
 
-		return null;
+		return true;
 	}
 
 	/**

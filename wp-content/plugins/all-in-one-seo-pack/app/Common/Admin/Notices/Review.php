@@ -137,6 +137,7 @@ class Review {
 	 * Print the script for dismissing the notice.
 	 *
 	 * @since 4.0.13
+	 *
 	 * @return void
 	 */
 	public function printScript() {

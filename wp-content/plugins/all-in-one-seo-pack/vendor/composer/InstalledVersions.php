@@ -27,24 +27,24 @@ class InstalledVersions
 private static $installed = array (
   'root' => 
   array (
-    'pretty_version' => 'dev-master',
-    'version' => 'dev-master',
+    'pretty_version' => 'dev-develop',
+    'version' => 'dev-develop',
     'aliases' => 
     array (
     ),
-    'reference' => '5d6ec9b90f6f756e808c2a20542404d627dd323c',
+    'reference' => '305b003c1f54de637836d74ed50e97e30fe5511d',
     'name' => 'awesomemotive/all-in-one-seo-pack-pro',
   ),
   'versions' => 
   array (
     'awesomemotive/all-in-one-seo-pack-pro' => 
     array (
-      'pretty_version' => 'dev-master',
-      'version' => 'dev-master',
+      'pretty_version' => 'dev-develop',
+      'version' => 'dev-develop',
       'aliases' => 
       array (
       ),
-      'reference' => '5d6ec9b90f6f756e808c2a20542404d627dd323c',
+      'reference' => '305b003c1f54de637836d74ed50e97e30fe5511d',
     ),
     'jwhennessey/phpinsight' => 
     array (

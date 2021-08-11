@@ -85,7 +85,6 @@ class Api {
 						'aioseo_search_appearance_settings',
 						'aioseo_social_networks_settings',
 						'aioseo_sitemap_settings',
-						'aioseo_internal_links_settings',
 						'aioseo_redirects_settings',
 						'aioseo_seo_analysis_settings',
 						'aioseo_tools_settings',
@@ -106,6 +105,7 @@ class Api {
 			'settings/do-task'                                    => [ 'callback' => [ 'Settings', 'doTask' ], 'access' => 'aioseo_tools_settings' ],
 			'sitemap/deactivate-conflicting-plugins'              => [ 'callback' => [ 'Sitemaps', 'deactivateConflictingPlugins' ] ],
 			'sitemap/delete-static-files'                         => [ 'callback' => [ 'Sitemaps', 'deleteStaticFiles' ] ],
+			'sitemap/validate-html-sitemap-slug'                  => [ 'callback' => [ 'Sitemaps', 'validateHtmlSitemapSlug' ] ],
 			'tools/delete-robots-txt'                             => [ 'callback' => [ 'Tools', 'deleteRobotsTxt' ], 'access' => 'aioseo_tools_settings' ],
 			'tools/import-robots-txt'                             => [ 'callback' => [ 'Tools', 'importRobotsTxt' ], 'access' => 'aioseo_tools_settings' ],
 			'wizard'                                              => [ 'callback' => [ 'Wizard', 'saveWizard' ], 'access' => 'aioseo_setup_wizard' ],
@@ -224,7 +224,7 @@ class Api {
 	 * @param  \WP_REST_Request $request The REST Request.
 	 * @return bool                      True if validated, false if not.
 	 */
-	private function validateAccess( $request ) {
+	public function validateAccess( $request ) {
 		$route     = str_replace( '/' . $this->namespace . '/', '', $request->get_route() );
 		$routeData = isset( $this->getRoutes()[ $request->get_method() ][ $route ] ) ? $this->getRoutes()[ $request->get_method() ][ $route ] : [];
 
@@ -240,6 +240,10 @@ class Api {
 			if ( current_user_can( $access ) ) {
 				return true;
 			}
+		}
+
+		if ( current_user_can( apply_filters( 'aioseo_manage_seo', 'aioseo_manage_seo' ) ) ) {
+			return true;
 		}
 
 		return false;

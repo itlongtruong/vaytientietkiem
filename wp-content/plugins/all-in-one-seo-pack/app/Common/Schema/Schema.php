@@ -104,6 +104,7 @@ class Schema {
 			}
 		}
 
+		$schema['@graph'] = apply_filters( 'aioseo_schema_output', $schema['@graph'] );
 		$schema['@graph'] = array_values( $this->cleanData( $schema['@graph'] ) );
 
 		return isset( $_GET['aioseo-dev'] ) ? wp_json_encode( $schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) : wp_json_encode( $schema );

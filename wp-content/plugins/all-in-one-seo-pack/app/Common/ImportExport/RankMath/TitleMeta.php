@@ -413,7 +413,7 @@ class TitleMeta extends ImportExport\SearchAppearance {
 				'type'              => 'warning',
 				'level'             => [ 'all' ],
 				'button1_label'     => __( 'Fix Now', 'all-in-one-seo-pack' ),
-				'button1_action'    => 'http://route#aioseo-search-appearance:schema-markup',
+				'button1_action'    => 'http://route#aioseo-search-appearance&aioseo-scroll=schema-graph-phone&aioseo-highlight=schema-graph-phone:schema-markup',
 				'button2_label'     => __( 'Remind Me Later', 'all-in-one-seo-pack' ),
 				'button2_action'    => 'http://action#notification/v3-migration-schema-number-reminder',
 				'start'             => gmdate( 'Y-m-d H:i:s' )

@@ -891,26 +891,6 @@ class Database {
 	}
 
 	/**
-	 * Enable/disable HTML stripping.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @param boolean   $value Whether or not to enable/disable HTML stripping.
-	 * @return Database        Returns the Database class which can be method chained for more query building.
-	 */
-	public function setStripTags( $value ) {
-		$options = $this->getEscapeOptions();
-		if ( $value ) {
-			$options = $options | DatabaseConnection::ESCAPE_STRIP_HTML;
-		} else {
-			$options = $options & ~DatabaseConnection::ESCAPE_STRIP_HTML;
-		}
-
-		$this->setEscapeOptions( $options );
-		return $this;
-	}
-
-	/**
 	 * Set the output for the query.
 	 *
 	 * @since 4.0.0
@@ -1147,13 +1127,14 @@ class Database {
 				$value = wp_strip_all_tags( $value );
 			}
 
-			if ( ( $options & self::ESCAPE_FORCE ) !== 0 || php_sapi_name() === 'cli' ) {
-				$value = $this->db->_real_escape( $value );
-			}
-
-			if ( ( $options & self::ESCAPE_QUOTE ) !== 0 && ! is_integer( $value ) ) {
-				$value = addslashes( $value );
-				$value = "'$value'";
+			if (
+				( ( $options & self::ESCAPE_FORCE ) !== 0 || php_sapi_name() === 'cli' ) ||
+				( ( $options & self::ESCAPE_QUOTE ) !== 0 && ! is_integer( $value ) )
+			) {
+				$value = esc_sql( $value );
+				if ( ! is_integer( $value ) ) {
+					$value = "'$value'";
+				}
 			}
 
 			return $value;

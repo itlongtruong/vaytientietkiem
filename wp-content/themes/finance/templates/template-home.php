@@ -11,43 +11,13 @@
 get_header();
 ?>
  
-  <!-- <section id="hero" class="clearfix">
-    <div class="container d-flex h-100">
-      <div class="row justify-content-center align-self-center" data-aos="fade-up">
-        <div class="col-md-6 intro-info order-md-first order-last" data-aos="zoom-in" data-aos-delay="100">
-          <h2>Vay Tiền Online<br><span>Sự lựa chọn thông minh</span> của bạn</h2>
-          <div>
-            <a href="#about" class="btn-get-started scrollto">Đăng ký tư vấn ngay</a>
-          </div>
-        </div>
-
-        <div class="col-md-6 intro-img order-md-last order-first" data-aos="zoom-out" data-aos-delay="200">
-          <img src="<?php echo get_template_directory_uri();?>/assets/img/intro-img.svg" alt="" class="img-fluid">
-        </div>
-      </div>
-
-    </div>
-  </section> -->
+   <section id="hero" class="clearfix">
+   <?php
+        echo do_shortcode('[smartslider3 slider="2"]');
+    ?>
+  </section>
 
   <main id="main">
-
-        <!-- ======= Portfolio Details Section ======= -->
-    <section id="portfolio-details" class="portfolio-details">
-      <div class="container-fluid" data-aos="fade-up">
-
-        <div class="portfolio-details-container">
-
-          <div class="owl-carousel portfolio-details-carousel">
-            <img src="<?php echo get_template_directory_uri();?>/assets/img/portfolio/portfolio-details-1.jpg" class="img-fluid" alt="">
-            <img src="<?php echo get_template_directory_uri();?>/assets/img/portfolio/portfolio-details-2.jpg" class="img-fluid" alt="">
-            <img src="<?php echo get_template_directory_uri();?>/assets/img/portfolio/portfolio-details-3.jpg" class="img-fluid" alt="">
-          </div>
-
-        </div>
-      
-      </div>
-    </section>
-
     <!-- ======= Services Section ======= -->
     <section id="services" class="services section-bg">
       <div class="container" data-aos="fade-up">
@@ -71,20 +41,26 @@ get_header();
               <h4 class="title"><a href="javascript:void(0)">Cầm đồ</a></h4>           
             </div>
           </div>
+          <div class="col-md-6 col-lg-4 wow" data-aos="zoom-in" data-aos-delay="100">
+            <div class="box">
+              <div class="icon"><img  src="<?php echo get_template_directory_uri();?>/assets/img/icon/the-tin-dung-1.png" style="width:60px"></div>
+              <h4 class="title"><a href="javascript:void(0)">Ví điện tử</a></h4>
+            </div>
+          </div>
 
-          <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="300">
+          <!-- <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="300">
             <div class="box">
               <div class="icon"><img  src="<?php echo get_template_directory_uri();?>/assets/img/icon/vay-tin-chap-1.png" style="width:60px"></i></div>
               <h4 class="title"><a href="javascript:void(0)">Vay tín chấp</a></h4>
-            </div>
+            </div> 
           </div>
           <div class="col-md-6 col-lg-4 wow" data-aos="zoom-in" data-aos-delay="100">
             <div class="box">
               <div class="icon"><img  src="<?php echo get_template_directory_uri();?>/assets/img/icon/the-tin-dung-1.png" style="width:60px"></div>
-              <h4 class="title"><a href="javascript:void(0)">Thẻ tín dụng</a></h4>
+              <h4 class="title"><a href="javascript:void(0)">Ví điện tử</a></h4>
             </div>
-          </div>
-
+          </div>-->
+<!-- 
           <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="200"">
 	        <div class=" box">
 	            <div class="icon"><img  src="<?php echo get_template_directory_uri();?>/assets/img/icon/vay-mua-xe-1.png" style="width:60px"></div>
@@ -96,7 +72,7 @@ get_header();
 	            <div class="icon" ><img  src="<?php echo get_template_directory_uri();?>/assets/img/icon/vay-mua-nha-1.png" style="width:60px"></div>
 	            <h4 class="title"><a href="javascript:void(0)">Vay mua nhà</a></h4>     
 	          </div>
-	        </div>
+	        </div> -->
         </div>
       </div>
     </section><!-- End Services Section -->
@@ -119,7 +95,7 @@ get_header();
              </div>
               <h6>Bước 1</h6>
               <h4 class="title"><a href="javascript:void(0)">Tìm kiếm</a></h4>
-			  <p>Chọn sản phẩm vay online bạn muốn tìm kiếm như <span style='color: #50b848;'><a href='https://vaytienonline.vn/vay-tien-nhanh/' style='color: #50b848;'>vay nhanh</a></span>, <span style='color: #50b848;'><a href='https://vaytienonline.vn/vay-tin-chap/' style='color: #50b848;'>vay tín chấp</a></span>,
+			        <p>Chọn sản phẩm vay online bạn muốn tìm kiếm như <span style='color: #50b848;'><a href='https://vaytienonline.vn/vay-tien-nhanh/' style='color: #50b848;'>Vay tiền nhanh</a></span>, <span style='color: #50b848;'><a href='https://vaytienonline.vn/' style='color: #50b848;'>Cầm đồ online</a></span>,
 				                                vay mua xe, vay mua nhà..</p>              
             </div>
           </div>
@@ -361,88 +337,12 @@ get_header();
         </div>
     </section>
     <!-- ======= Testimonials Section ======= -->
-    <section id="testimonials" class="testimonials">
-      <div class="container" data-aos="zoom-in">
-
-        <header class="section-header">
-          <h3>Khách hàng nói gì về <span style="font-size: 115%; color: #50b848;">Vay tiền Online</span></h3>
-        </header>
-
-        <div class="row justify-content-center">
-          <div class="col-lg-12">
-
-            <div class="owl-carousel testimonials-carousel">
-
-              <div class="testimonial-item">
-                <img src="<?php echo get_template_directory_uri();?>/assets/img/testimonial-1.jpg" class="testimonial-img" alt="">
-                <div class="star-rating"><span style="width:100%"><strong class="rating"></strong></span></div>
-                <h3>Saul Goodman</h3>
-                <h4>Ceo &amp; Founder</h4>
-                <p>
-                  Proin iaculis purus consequat sem cure digni ssim donec porttitora entum suscipit rhoncus. Accusantium quam, ultricies eget id, aliquam eget nibh et. Maecen aliquam, risus at semper.
-                </p>
-              </div>
-
-              <div class="testimonial-item">
-                <img src="<?php echo get_template_directory_uri();?>/assets/img/testimonial-2.jpg" class="testimonial-img" alt="">
-                <div class="star-rating"><span style="width:100%"><strong class="rating"></strong></span></div>
-                <h3>Sara Wilsson</h3>
-                <h4>Designer</h4>
-                <p>
-                  Export tempor illum tamen malis malis eram quae irure esse labore quem cillum quid cillum eram malis quorum velit fore eram velit sunt aliqua noster fugiat irure amet legam anim culpa.
-                </p>
-              </div>
-
-              <div class="testimonial-item">
-                <img src="<?php echo get_template_directory_uri();?>/assets/img/testimonial-3.jpg" class="testimonial-img" alt="">
-                <div class="star-rating"><span style="width:100%"><strong class="rating"></strong></span></div>
-                <h3>Jena Karlis</h3>
-                <h4>Store Owner</h4>
-                <p>
-                  Enim nisi quem export duis labore cillum quae magna enim sint quorum nulla quem veniam duis minim tempor labore quem eram duis noster aute amet eram fore quis sint minim.
-                </p>
-              </div>
-
-              <div class="testimonial-item">
-                <img src="<?php echo get_template_directory_uri();?>/assets/img/testimonial-4.jpg" class="testimonial-img" alt="">
-                <div class="star-rating"><span style="width:100%"><strong class="rating"></strong></span></div>
-                <h3>Matt Brandon</h3>
-                <h4>Freelancer</h4>
-                <p>
-                  Fugiat enim eram quae cillum dolore dolor amet nulla culpa multos export minim fugiat minim velit minim dolor enim duis veniam ipsum anim magna sunt elit fore quem dolore labore illum veniam.
-                </p>
-              </div>
-
-            </div>
-
-          </div>
-        </div>
-
-      </div>
-    </section><!-- End Testimonials Section -->
+    <?php get_template_part( 'template-parts/content/partner-review' ); ?>
 
 
     <!-- ======= Clients Section ======= -->
-    <section id="clients" class="clients">
-      <div class="container" data-aos="zoom-in">
-
-        <header class="section-header">
-          <h3>Ngân hàng liên kết</h3>
-        </header>
-
-        <div class="owl-carousel clients-carousel">
-          <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/vpbank.jpg" alt="">
-          <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/vib.jpg" alt="">
-          <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/vpbank.jpg" alt="">
-          <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/vib.jpg" alt="">
-          <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/vpbank.jpg" alt="">
-          <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/vib.jpg" alt="">
-          <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/vpbank.jpg" alt="">
-          <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/vib.jpg" alt="">
-        </div>
-
-      </div>
-    </section><!-- End Clients Section -->
+    <?php get_template_part( 'template-parts/content/partner-bank' ); ?>
+    
     
   </main><!-- End #main -->
 

@@ -8,7 +8,7 @@
  * @since Finance 1.0
  */
 get_header();
-$posts_per_page = 1;
+$posts_per_page = 2;
 $paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
 $query = new WP_Query( array(
     'post_type'        => 'blog',

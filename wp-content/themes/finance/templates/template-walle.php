@@ -191,29 +191,7 @@ get_header();
         </ul>
       </div>
     </section><!-- End F.A.Q Section -->
-
-    <!-- ======= Clients Section ======= -->
-    <section id="clients" class="clients">
-      <div class="container" data-aos="zoom-in">
-
-        <header class="section-header">
-          <h3>Ngân hàng liên kết</h3>
-        </header>
-
-        <div class="owl-carousel clients-carousel">
-          <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/vpbank.jpg" alt="">
-          <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/vib.jpg" alt="">
-          <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/vpbank.jpg" alt="">
-          <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/vib.jpg" alt="">
-          <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/vpbank.jpg" alt="">
-          <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/vib.jpg" alt="">
-          <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/vpbank.jpg" alt="">
-          <img src="<?php echo get_template_directory_uri();?>/assets/img/clients/vib.jpg" alt="">
-        </div>
-
-      </div>
-    </section><!-- End Clients Section -->
-    
+        
   </main><!-- End #main -->
 
 <?php get_footer(); ?>
