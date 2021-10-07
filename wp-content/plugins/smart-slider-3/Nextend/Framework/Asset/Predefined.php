@@ -29,9 +29,6 @@ class Predefined {
         Js::addGlobalInline('_N2._jQueryFallback=\'' . $jQueryFallback . '\';');
 
         $family = n2_x('Montserrat', 'Default Google font family for admin');
-        foreach (explode(',', n2_x('latin', 'Default Google font charset for admin')) as $subset) {
-            Google::addSubset($subset);
-        }
         Google::addFont($family);
 
         Js::addFirstCode("_N2.r(['AjaxHelper'],function(){_N2.AjaxHelper.addAjaxArray(" . json_encode(Form::tokenizeUrl()) . ");});");

@@ -18,7 +18,8 @@ get_header();
 
         <ol>
           <li><a href="<?php echo get_home_url(); ?>">Trang Chủ</a></li>
-          <li>Blog Single</li>
+          <li><a href="<?php echo get_home_url(); ?>/kien-thuc">Kiến Thức</a></li>
+          <li><?php the_title();?></li>
         </ol>
       </div>
     </section><!-- End Breadcrumbs -->
@@ -34,11 +35,11 @@ get_header();
             <article class="entry">
 
               <div class="entry-img">
-                <img src="<?php echo get_template_directory_uri();?>/assets/img/news/blog-1.jpg" alt="" class="img-fluid">
+                <img src="<?php echo get_the_post_thumbnail_url();?>" alt="" class="img-fluid">
               </div>
 
               <h2 class="entry-title">
-                <a href="blog-single.html"><?php the_title();?></a>
+                <a href="<?php the_permalink(); ?>"><?php the_title();?></a>
               </h2>
 
               <div class="entry-meta">
@@ -52,23 +53,21 @@ get_header();
               <div class="entry-content">
                     <?php the_content();?>
               </div>
-
+              
               <div class="entry-footer">
                 <i class="bi bi-folder"></i>
                 <ul class="cats">
-                  <li><a href="#">Business</a></li>
+                  <li style="margin-left: -40px;"><?php the_category();?></li>
                 </ul>
 
                 <i class="bi bi-tags"></i>
                 <ul class="tags">
-                  <li><a href="#">Creative</a></li>
-                  <li><a href="#">Tips</a></li>
-                  <li><a href="#">Marketing</a></li>
+                  <li><?php the_tags('');?></li>
                 </ul>
               </div>
             </article><!-- End blog entry -->
 
-            <div class="blog-author d-flex align-items-center">
+           <!-- <div class="blog-author d-flex align-items-center">
               <img src="<?php echo get_template_directory_uri();?>/assets/img/blog/blog-author.jpg" class="rounded-circle float-left" alt="">
               <div>
                 <h4>Jane Smith</h4>
@@ -81,9 +80,9 @@ get_header();
                   Itaque quidem optio quia voluptatibus dolorem dolor. Modi eum sed possimus accusantium. Quas repellat voluptatem officia numquam sint aspernatur voluptas. Esse et accusantium ut unde voluptas.
                 </p>
               </div>
-            </div><!-- End blog author bio -->
+            </div> End blog author bio -->
             
-                          <div class="blog-comments">
+                <div class="blog-comments">
                 <h4 class="comments-count">8 Comments</h4>
                 <div id="comment-1" class="comment">
                     <div class="d-flex">
@@ -123,7 +122,7 @@ get_header();
                             </p>
                           </div>
                       </div>
-                      <div id="comment-reply-2" class="comment comment-reply">
+                      <!-- <div id="comment-reply-2" class="comment comment-reply">
                           <div class="d-flex">
                             <div class="comment-img"><img src="<?php echo get_template_directory_uri();?>/assets/img/blog/comments-4.jpg" alt=""></div>
                             <div>
@@ -134,13 +133,13 @@ get_header();
                                 </p>
                             </div>
                           </div>
-                      </div>
+                      </div> -->
                       <!-- End comment reply #2-->
                     </div>
                     <!-- End comment reply #1-->
                 </div>
                 <!-- End comment #2-->
-                <div id="comment-3" class="comment">
+                <!-- <div id="comment-3" class="comment">
                     <div class="d-flex">
                       <div class="comment-img"><img src="<?php echo get_template_directory_uri();?>/assets/img/blog/comments-5.jpg" alt=""></div>
                       <div>
@@ -152,9 +151,9 @@ get_header();
                           </p>
                       </div>
                     </div>
-                </div>
+                </div> -->
                 <!-- End comment #3 -->
-                <div id="comment-4" class="comment">
+                <!-- <div id="comment-4" class="comment">
                     <div class="d-flex">
                       <div class="comment-img"><img src="<?php echo get_template_directory_uri();?>/assets/img/blog/comments-6.jpg" alt=""></div>
                       <div>
@@ -165,9 +164,9 @@ get_header();
                           </p>
                       </div>
                     </div>
-                </div>
+                </div> -->
                 <!-- End comment #4 -->
-                <div class="reply-form">
+                <!-- <div class="reply-form">
                     <h4>Leave a Reply</h4>
                     <p>Your email address will not be published. Required fields are marked * </p>
                     <form action="">
@@ -186,7 +185,7 @@ get_header();
                       </div>
                       <button type="submit" class="btn btn-primary">Bình luận</button>
                     </form>
-                </div>
+                </div> -->
               </div>
           </div><!-- End blog entries list -->
           <div class="col-lg-4">

@@ -226,7 +226,7 @@ h1, h2, h3, h4, h5, h6 {
 .main-nav a {
   display: block;
   position: relative;
-  color: #08993C;
+  color: #696592;
   padding: 10px 0;
   transition: 0.3s;
   font-size: 14px;
@@ -235,7 +235,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
 }
 
-.main-nav a:hover, .main-nav .active > a, .main-nav li:hover > a {
+.main-nav a:hover, .main-nav .current-menu-item > a, .main-nav li:hover > a {
   color: #50B848;
   text-decoration: none;
 }
@@ -600,7 +600,7 @@ section {
 /* Services Section
 --------------------------------*/
 #services {
-  padding: 60px 0 40px 0;
+  padding: 40px 0 0 0;
 }
 
 #services .box {
@@ -641,7 +641,7 @@ section {
 }
 
 #services .title a {
-  color: #111;
+  color: #555186;
 }
 
 #services .box:hover .title a {
@@ -893,7 +893,7 @@ section {
 /* Testimonials Section
 --------------------------------*/
 #testimonials {
-  padding: 60px 0;
+  padding: 10px 0;
 }
 
 #testimonials .section-header {
@@ -973,7 +973,7 @@ section {
 /* Team Section
 --------------------------------*/
 #team {
-  padding: 60px 0;
+  padding: 40px 0;
 }
 
 #team .member {
@@ -998,7 +998,7 @@ section {
 
 #team .member .member-info-content {
   transition: margin 0.2s;
-  height: 40px;
+  height: 60px;
   transition: height 0.4s;
 }
 
@@ -1045,7 +1045,7 @@ section {
 /* Clients Section
 --------------------------------*/
 #clients {
-  padding: 60px 0;
+  padding: 10px 0;
 }
 
 #clients img {
@@ -1080,7 +1080,7 @@ section {
 /* Pricing Section
 --------------------------------*/
 #pricing {
-  padding: 80px 0;
+  padding: 40px 0;
 }
 
 @media (max-width: 991px) {
@@ -1193,7 +1193,7 @@ section {
 /* Frequently Asked Questions Section
 --------------------------------*/
 #faq {
-  padding: 60px 0;
+  padding: 10px 0;
   overflow: hidden;
 }
 
@@ -1659,7 +1659,7 @@ section {
 }
 
 .blog .entry .entry-title a {
-  color: #50B848;
+  color: #696592;
   transition: 0.3s;
 }
 
@@ -2000,12 +2000,16 @@ section {
   font-weight: 700;
   padding: 0 0 0 0;
   margin: 0 0 15px 0;
-  color: #50B848;
+  color: #000;
   position: relative;
 }
 
 .blog .sidebar .sidebar-item {
   margin-bottom: 30px;
+}
+
+.blog .sidebar .sidebar-item>ul>li .active {
+  color: #50B848;
 }
 
 .blog .sidebar .search-form form {
@@ -2057,7 +2061,7 @@ section {
 }
 
 .blog .sidebar .categories ul a {
-  color: #50B848;
+  color: #696592;;
   transition: 0.3s;
 }
 
@@ -2087,7 +2091,7 @@ section {
 }
 
 .blog .sidebar .recent-posts h4 a {
-  color: #50B848;
+  color: #696592;
   transition: 0.3s;
 }
 
@@ -2117,7 +2121,7 @@ section {
 }
 
 .blog .sidebar .tags ul a {
-  color: #50B848;
+  color: #696592;
   font-size: 14px;
   padding: 6px 14px;
   margin: 0 6px 8px 0;

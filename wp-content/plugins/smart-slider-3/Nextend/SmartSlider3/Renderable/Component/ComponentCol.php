@@ -157,7 +157,7 @@ class ComponentCol extends AbstractComponent {
                 $width[1] = 2;
                 $this->data->set('colwidth', '1/2');
             }
-            $width = round($width[0] / $width[1] * 100, 1);
+            $width = floor($width[0] / $width[1] * 1000) / 10;
         } else {
             $width = 100;
         }
@@ -169,8 +169,8 @@ class ComponentCol extends AbstractComponent {
         }
     }
 
-    public function setWidth($device) {
-        $this->style->add($device, '', 'width:' . $this->width . '%');
+    public function setWidth($device, $gutter) {
+        $this->style->add($device, '', 'width:calc(' . $this->width . '% - ' . $gutter . 'px)');
     }
 
     public function setWidthAuto($device) {

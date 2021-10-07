@@ -16,7 +16,7 @@ get_header();
       <div class="container">
 
         <ol>
-          <li><a href="index.html">Trang Chủ</a></li>
+          <li><a href="<?php echo home_url(); ?>/">Trang Chủ</a></li>
           <li>Vay Tiền Nhanh</li>
         </ol>
       </div>
@@ -77,76 +77,10 @@ get_header();
       </div>
     </section><!-- End Services Section -->
 
-    <section id="team" class="team">
-      <div class="container" data-aos="fade-up">
-        <header class="section-header">
-          <h3>Hướng dẫn vay tiền nhanh online</h3>
-        </header>
+    <?php get_template_part( 'template-parts/content/partner-news-fast-loan' ); ?>
+   
 
-        <div class="row">
-
-          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
-            <div class="member">
-              <a href="#">
-	              <img src="<?php echo get_template_directory_uri();?>/assets/img/news/1.png" width="225" height="179"  class="img-fluid" alt="">
-	              <div class="member-info">
-	                <div class="member-info-content">
-	                  <h4>Tiền Ơi – Hướng dẫn vay 10 triệu tại Tienoi.com.vn chỉ cần CMND</h4>
-	                </div>
-	              </div>
-              </a>
-            </div>
-          </div>
-
-          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
-            <div class="member">
-              <a href="#">
-	              <img src="<?php echo get_template_directory_uri();?>/assets/img/news/3.jpg" width="225" height="179" alt="">
-	              <div class="member-info">
-	                <div class="member-info-content">
-	                  <h4>Takomo – Vay 10 triệu online 0% lãi suất bằng CMND</h4>                  
-	                </div>
-	              </div>
-              </a>
-            </div>
-          </div>
-
-          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
-            <div class="member">
-              <a href="#">
-	              <img src="<?php echo get_template_directory_uri();?>/assets/img/news/vay-online-2-trieu.jpg" width="225" height="179"  alt="">
-	              <div class="member-info">
-	                <div class="member-info-content">
-	                  <h4>MoneyCat – vay tiền nhanh online tới 10 triệu 0% lãi suất chỉ với CMND</h4>                 
-	                </div>
-	              </div>
-	           </a>   
-            </div>
-          </div>
-
-          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
-            <div class="member">
-              <a href="#">            	
-	              <img src="<?php echo get_template_directory_uri();?>/assets/img/news/no-nan-chong-chat.jpg" width="225" height="179"  alt="">
-	              <div class="member-info">
-	                <div class="member-info-content">
-	                  <h4>ATM Online : Vay online 3-10 triệu chỉ cần CMND, nhận tiền trong ngày</h4>                 
-	                </div>
-	              </div>
-	           </a>   
-            </div>
-          </div>
-
-        </div>
-
-        <div class="row block-more">
-        	<div class="col-xs-12 col-lg-12" data-aos="fade-up" data-aos-delay="300">
-        	  <a href="#" class="btn-more">Xem thêm</a>
-            </div>
-        </div>
-
-      </div>
-    </section>
+    <?php get_template_part( 'template-parts/content/partner-review-fast-loan' ); ?>
     
     <!-- ======= F.A.Q Section ======= -->
     <section id="faq" class="faq">

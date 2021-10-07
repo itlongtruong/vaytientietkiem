@@ -60,22 +60,17 @@
       <!-- <h1 class="logo mr-auto"><a href="index.html">Rapid</a></h1> -->
       <!-- Uncomment below if you prefer to use an image logo -->
        <a href="<?php echo home_url(); ?>/" class="logo mr-auto"><img src="<?php echo get_template_directory_uri();?>/assets/img/logo.png" alt="" class="img-fluid"></a>
-
-      <nav class="main-nav d-none d-lg-block">
-        <ul>
-        <?php
-			  $arrMenu  = wp_get_nav_menu_items('main-menu');
-			  $id = 0;
-			  foreach ($arrMenu as $menu) {                                    
-			?>
-			<?php  if($menu->menu_item_parent == 0){ ?> 
-			 <li><a href="<?php echo $menu->url; ?>"><?php echo $menu->title;?></a></li>
-			<?php  }else{ ?> 
-			
-			<?php  } ?>
-         
-		  <?php  } ?>
-        </ul>
+      <nav  class="main-nav d-none d-lg-block">
+	  
+		<?php wp_nav_menu( 
+		array( 
+			'theme_location' => 'header-menu', 
+			'container' => 'false', 
+			'menu_id' => 'header-menu', 
+			'menu_class' => 'menu'
+		) 
+		); ?>
+	
       </nav><!-- .main-nav-->
 
     </div>

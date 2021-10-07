@@ -185,7 +185,6 @@
 
     .nextend-thumbnail-previous {
       left: 10px;
-      transform: rotateZ(-90deg);
     }
 
     &[data-has-previous="0"] .nextend-thumbnail-previous {
@@ -195,7 +194,6 @@
 
     .nextend-thumbnail-next {
       right: 10px;
-      transform: rotateZ(-90deg);
     }
 
     &[data-has-next="0"] .nextend-thumbnail-next {

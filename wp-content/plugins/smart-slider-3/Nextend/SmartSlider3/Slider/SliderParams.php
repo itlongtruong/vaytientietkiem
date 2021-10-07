@@ -70,6 +70,8 @@ class SliderParams extends Data {
 
         $this->upgradeShowcaseSideSpacing();
 
+        $this->upgradeShowcaseCarouselSideSpacingWithCustomSize();
+
         if ($this->has('optimize-background-image-width')) {
             /**
              * This setting was available only before version 3.5 so, if we end up here then it is an old slider.
@@ -326,4 +328,75 @@ class SliderParams extends Data {
             }
         }
     }
+
+    private function upgradeShowcaseCarouselSideSpacingWithCustomSize() {
+        if ($this->sliderType == 'showcase' || $this->sliderType == 'carousel') {
+            /**
+             * Showcase and Carousel slider types no longer have Custom size option.
+             * If earlier there was a custom slider size set, then we need to add top and bottom side spacings
+             */
+            $customSliderSizeEnabled = intval($this->get('slider-size-override'));
+            if ($customSliderSizeEnabled) {
+                $sliderHeight = intval($this->get('height'));
+                $slideHeight  = intval($this->get('slide-height'));
+
+                $customTabletSizeEnabled = intval($this->get('slider-size-override-tablet-portrait'));
+                if ($customTabletSizeEnabled) {
+                    $customTabletSliderHeight    = intval($this->get('tablet-portrait-height'));
+                    $tabletSideSpacingDifference = 0;
+                    if ($customTabletSliderHeight > 0) {
+                        if (($slideHeight >= $sliderHeight && $slideHeight < $customTabletSliderHeight) || ($slideHeight < $sliderHeight && $sliderHeight >= $customTabletSliderHeight)) {
+                            $tabletSideSpacingDifference = round(($customTabletSliderHeight - $slideHeight) / 2);
+                        }
+                        if ($slideHeight < $sliderHeight && $sliderHeight < $customTabletSliderHeight) {
+                            $tabletSideSpacingDifference = round((($customTabletSliderHeight - $sliderHeight) / 2) + (($sliderHeight - $slideHeight) / 2));
+                        }
+
+                        if ($slideHeight >= $customTabletSliderHeight) {
+                            $tabletSideSpacingDifference = 0;
+                        }
+                    }
+
+                    if ($tabletSideSpacingDifference > 0) {
+                        if ($this->get('side-spacing-tablet-enable', 0)) {
+                            $tabletSideSpacing = array_pad(array_map('intval', explode('|*|', $this->get('side-spacing-tablet'))), 4, 0);
+                            $this->set('side-spacing-tablet', ($tabletSideSpacing[0] + $tabletSideSpacingDifference) . '|*|' . $tabletSideSpacing[1] . '|*|' . ($tabletSideSpacing[2] + $tabletSideSpacingDifference) . '|*|' . $tabletSideSpacing[3]);
+                        } else {
+                            $this->set('side-spacing-tablet-enable', 1);
+                            $this->set('side-spacing-tablet', $tabletSideSpacingDifference . '|*|0|*|' . $tabletSideSpacingDifference . '|*|0');
+                        }
+                    }
+                }
+
+                $customMobileSizeEnabled = intval($this->get('slider-size-override-mobile-portrait'));
+                if ($customMobileSizeEnabled) {
+                    $customMobileSliderHeight    = intval($this->get('mobile-portrait-height'));
+                    $mobileSideSpacingDifference = 0;
+                    if ($customMobileSliderHeight > 0) {
+                        if (($slideHeight >= $sliderHeight && $slideHeight < $customMobileSliderHeight) || ($slideHeight < $sliderHeight && $sliderHeight >= $customMobileSliderHeight)) {
+                            $mobileSideSpacingDifference = round(($customMobileSliderHeight - $slideHeight) / 2);
+                        }
+                        if ($slideHeight < $sliderHeight && $sliderHeight < $customMobileSliderHeight) {
+                            $mobileSideSpacingDifference = round((($customMobileSliderHeight - $sliderHeight) / 2) + (($sliderHeight - $slideHeight) / 2));
+                        }
+
+                        if ($slideHeight >= $customMobileSliderHeight) {
+                            $mobileSideSpacingDifference = 0;
+                        }
+                    }
+
+                    if ($mobileSideSpacingDifference > 0) {
+                        if ($this->get('side-spacing-mobile-enable', 0)) {
+                            $mobileSideSpacing = array_pad(array_map('intval', explode('|*|', $this->get('side-spacing-mobile'))), 4, 0);
+                            $this->set('side-spacing-mobile', ($mobileSideSpacing[0] + $mobileSideSpacingDifference) . '|*|' . $mobileSideSpacing[1] . '|*|' . ($mobileSideSpacing[2] + $mobileSideSpacingDifference) . '|*|' . $mobileSideSpacing[3]);
+                        } else {
+                            $this->set('side-spacing-mobile-enable', 1);
+                            $this->set('side-spacing-mobile', $mobileSideSpacingDifference . '|*|0|*|' . $mobileSideSpacingDifference . '|*|0');
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }

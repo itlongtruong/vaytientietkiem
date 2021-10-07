@@ -48,7 +48,11 @@ class ImageEdit {
             }
 
             $pathInfo  = pathinfo(parse_url($imageUrl, PHP_URL_PATH));
-            $extension = self::validateGDExtension($pathInfo['extension']);
+            $extension = false;
+            if (isset($pathInfo['extension'])) {
+                $extension = self::validateGDExtension($pathInfo['extension']);
+            }
+
             if (!$extension) {
                 return $originalImageUrl;
             }
@@ -235,7 +239,11 @@ class ImageEdit {
             }
 
             $pathInfo  = pathinfo(parse_url($imageUrl, PHP_URL_PATH));
-            $extension = self::validateGDExtension($pathInfo['extension']);
+            $extension = false;
+            if (isset($pathInfo['extension'])) {
+                $extension = self::validateGDExtension($pathInfo['extension']);
+            }
+
             if (!$extension) {
                 return $originalImageUrl;
             }
@@ -508,8 +516,13 @@ class ImageEdit {
                 return $originalImageUrl;
             }
 
-            $pathInfo  = pathinfo(parse_url($imageUrl, PHP_URL_PATH));
-            $extension = self::validateGDExtension($pathInfo['extension']);
+            $pathInfo = pathinfo(parse_url($imageUrl, PHP_URL_PATH));
+
+            $extension = false;
+            if (isset($pathInfo['extension'])) {
+                $extension = self::validateGDExtension($pathInfo['extension']);
+            }
+
             if (!$extension) {
                 return $originalImageUrl;
             }

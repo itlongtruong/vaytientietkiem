@@ -338,7 +338,16 @@ class Slide extends AbstractRenderableOwner {
 
             $mainContainer = new ComponentSlide($this, $this->slide);
 
-            $this->html = '<div tabindex="-1" class="n2-ss-slide--focus" role="note">' . $this->getTitle() . '</div>';
+            $attributes = array(
+                'role'  => 'note',
+                'class' => 'n2-ss-slide--focus'
+            );
+
+            if (isset($this->linkAttributes['role']) && $this->linkAttributes['role'] != 'button') {
+                $attributes['tabindex'] = '-1';
+            }
+
+            $this->html = Html::tag('div', $attributes, $this->getTitle());
             $this->html .= Html::tag('div', $this->containerAttributes, $mainContainer->render($this->sliderObject->isAdmin));
         }
     }
@@ -843,7 +852,7 @@ class Slide extends AbstractRenderableOwner {
         $attributes['src'] = $imageUrl;
         $this->addImage($imageUrl);
 
-        return Html::tag('img', $attributes);
+        return Html::tag('img', $attributes, false);
     }
 
     public function getThumbnailType() {

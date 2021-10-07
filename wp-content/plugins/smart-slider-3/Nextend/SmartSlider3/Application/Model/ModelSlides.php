@@ -411,7 +411,7 @@ class ModelSlides extends AbstractModelTable {
             $row['slider'] = $targetSliderId;
 
             if (!$maintainOrdering) {
-                unset($row['ordering']);
+                $row['ordering'] = 0;
             }
         }
 

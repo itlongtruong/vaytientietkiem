@@ -302,13 +302,13 @@ class SlideBackground {
                     $sources[] = HTML::tag('source', Html::addExcludeLazyLoadAttributes(array(
                         'srcset' => $backgroundImageDesktopRetina,
                         'media'  => implode($mediaQueryMinPixelRatio . ',', $mediaQueries['desktopportrait']) . $mediaQueryMinPixelRatio
-                    )));
+                    )), false, false);
                 }
                 if (!empty($mediaQueries['desktopLandscape'])) {
                     $sources[] = HTML::tag('source', Html::addExcludeLazyLoadAttributes(array(
                         'srcset' => $backgroundImageDesktopRetina,
                         'media'  => implode($mediaQueryMinPixelRatio . ',', $mediaQueries['desktopLandscape']) . $mediaQueryMinPixelRatio
-                    )));
+                    )), false, false);
                 }
 
             }
@@ -323,13 +323,13 @@ class SlideBackground {
                     $sources[] = HTML::tag('source', Html::addExcludeLazyLoadAttributes(array(
                         'srcset' => $backgroundImageMobileUrl,
                         'media'  => implode(',', $mediaQueries['mobileportrait'])
-                    )));
+                    )), false, false);
                 }
                 if (!empty($mediaQueries['mobilelandscape'])) {
                     $sources[] = HTML::tag('source', Html::addExcludeLazyLoadAttributes(array(
                         'srcset' => $backgroundImageMobileUrl,
                         'media'  => implode(',', $mediaQueries['mobilelandscape'])
-                    )));
+                    )), false, false);
                 }
             }
 
@@ -343,13 +343,13 @@ class SlideBackground {
                     $sources[] = HTML::tag('source', Html::addExcludeLazyLoadAttributes(array(
                         'srcset' => $backgroundImageTabletUrl,
                         'media'  => implode(',', $mediaQueries['tabletportrait'])
-                    )));
+                    )), false, false);
                 }
                 if (!empty($mediaQueries['tabletlandscape'])) {
                     $sources[] = HTML::tag('source', Html::addExcludeLazyLoadAttributes(array(
                         'srcset' => $backgroundImageTabletUrl,
                         'media'  => implode(',', $mediaQueries['tabletlandscape'])
-                    )));
+                    )), false, false);
                 }
             }
         }

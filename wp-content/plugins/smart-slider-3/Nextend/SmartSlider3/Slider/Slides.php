@@ -140,7 +140,7 @@ class Slides {
             }
         }
 
-        if (count($slides) == 1 && $this->slider->params->get('loop-single-slide', 0)) {
+        if (count($slides) == 1 && $this->slider->params->get('autoplay', 0) && $this->slider->data->get('type') === 'simple') {
             $slides[1] = clone $slides[0];
         }
 

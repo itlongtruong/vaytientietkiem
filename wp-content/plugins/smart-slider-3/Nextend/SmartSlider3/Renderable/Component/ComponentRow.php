@@ -137,7 +137,7 @@ class ComponentRow extends AbstractComponent {
             } else {
                 if ($fullWidth) {
                     foreach ($columns as $column) {
-                        $column->setWidth($device);
+                        $column->setWidth($device, $gutter);
                     }
                 } else {
                     foreach ($columns as $column) {

@@ -191,17 +191,12 @@ class Font {
     public function loadFont($families) {
         preg_match_all("/google\(.*?family=(.*?)\);\)/", $families, $out, PREG_SET_ORDER);
         foreach ($out as $f) {
-            preg_match('/(.*?)(:(.*?))?(&subset=(.*))?$/', $f[1], $g);
+            preg_match('/(.*?)(:(.*?))?$/', $f[1], $g);
             $family = str_replace('+', ' ', $g[1]);
             $styles = 400;
             if (isset($g[3]) && !empty($g[3])) {
                 $styles = $g[3];
             }
-            $subset = 'latin';
-            if (isset($g[5])) {
-                $subset = $g[5];
-            }
-            Google::addSubset($subset);
             foreach (explode(',', $styles) as $style) {
                 Google::addFont($family, $style);
             }

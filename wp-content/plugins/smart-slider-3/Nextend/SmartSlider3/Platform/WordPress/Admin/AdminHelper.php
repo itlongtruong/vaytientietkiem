@@ -120,7 +120,13 @@ class AdminHelper {
     private function checkForCap() {
 
         if (!current_user_can('unfiltered_html')) {
-            wp_die(sprintf('<div class="error">%s</div>', wpautop(sprintf('Smart Slider allows you to place many things on your slider, so only users with the %s capability have can access to it. You do not have this capability and only the administrator of your website can grant it to you.', '<i>unfiltered_html</i>'))));
+            if (is_multisite()) {
+                $documentationUrl = 'https://smartslider.helpscoutdocs.com/article/1983-how-to-give-access-to-smart-slider-for-non-admin-users#multisite';
+            } else {
+                $documentationUrl = 'https://smartslider.helpscoutdocs.com/article/1983-how-to-give-access-to-smart-slider-for-non-admin-users#wordpress';
+            }
+
+            wp_die(sprintf('<div class="error">%s</div>', wpautop(sprintf('Smart Slider allows you to place many things on your slider, so only users with the %s capability can have access to it. You do not have this capability and only %s.', '<i>unfiltered_html</i>', sprintf('<a href="%s" target="_blank">%s</a>', $documentationUrl, 'the administrator of your website can grant it to you')))));
         }
     }
 

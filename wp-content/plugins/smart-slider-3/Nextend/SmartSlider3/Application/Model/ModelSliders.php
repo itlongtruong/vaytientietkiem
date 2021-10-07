@@ -8,6 +8,7 @@ use Exception;
 use Nextend\Framework\Cache\AbstractCache;
 use Nextend\Framework\Data\Data;
 use Nextend\Framework\Database\Database;
+use Nextend\Framework\Misc\Str;
 use Nextend\Framework\Model\AbstractModelTable;
 use Nextend\Framework\Notification\Notification;
 use Nextend\Framework\Platform\Platform;
@@ -22,6 +23,8 @@ class ModelSliders extends AbstractModelTable {
      * @var ModelSlidersXRef
      */
     private $xref;
+
+    private $sliderTitleLength = 200;
 
     protected function createConnectorTable() {
 
@@ -242,6 +245,10 @@ class ModelSliders extends AbstractModelTable {
         if (!isset($slider['title'])) return false;
         if ($slider['title'] == '') $slider['title'] = n2_('New slider');
 
+        if (Str::strlen($slider['title']) > $this->sliderTitleLength) {
+            $slider['title'] = Str::substr($slider['title'], 0, $this->sliderTitleLength);
+        }
+
         $title = $slider['title'];
         unset($slider['title']);
         $type = $slider['type'];
@@ -282,6 +289,10 @@ class ModelSliders extends AbstractModelTable {
 
         if (empty($title)) $title = n2_('New slider');
 
+        if (Str::strlen($title) > $this->sliderTitleLength) {
+            $title = Str::substr($title, 0, $this->sliderTitleLength);
+        }
+
         $this->table->update(array(
             'title'  => $title,
             'params' => json_encode($params)
@@ -301,6 +312,10 @@ class ModelSliders extends AbstractModelTable {
 
         $title = $slider['title'];
         unset($slider['title']);
+        if (Str::strlen($title) > $this->sliderTitleLength) {
+            $title = Str::substr($title, 0, $this->sliderTitleLength);
+        }
+
         $alias = $slider['alias'];
         unset($slider['alias']);
         $type = $slider['type'];
@@ -415,6 +430,10 @@ class ModelSliders extends AbstractModelTable {
     }
 
     public function setTitle($id, $title) {
+
+        if (Str::strlen($title) > $this->sliderTitleLength) {
+            $title = Str::substr($title, 0, $this->sliderTitleLength);
+        }
 
         $this->table->update(array(
             'title' => $title
@@ -585,7 +604,12 @@ class ModelSliders extends AbstractModelTable {
         unset($slider['id']);
 
         $slider['title'] .= ' - ' . n2_('Copy');
-        $slider['time']  = date('Y-m-d H:i:s', Platform::getTimestamp());
+
+        if (Str::strlen($slider['title']) > $this->sliderTitleLength) {
+            $slider['title'] = Str::substr($slider['title'], 0, $this->sliderTitleLength);
+        }
+
+        $slider['time'] = date('Y-m-d H:i:s', Platform::getTimestamp());
 
         /**
          * Remove alias to prevent override

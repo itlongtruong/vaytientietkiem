@@ -45,6 +45,15 @@ class SliderDeveloper extends AbstractSliderTab {
 
         $row1 = $table->createRow('developer-1');
 
+        /**
+         * Used for field removal: /developer/developer/developer-1/controlsBlockCarouselInteraction
+         */
+        new OnOff($row1, 'controlsBlockCarouselInteraction', n2_('Block carousel'), 1, array(
+            'tipLabel'       => n2_('Block carousel'),
+            'tipDescription' => n2_('Stops the carousel at the last slide when the source of interaction is vertical touch, vertical pointer, mouse wheel or vertical keyboard.'),
+            'tipLink'        => 'https://smartslider.helpscoutdocs.com/article/1806-slider-settings-developer#block-carousel'
+        ));
+
         new OnOff($row1, 'clear-both', n2_('Clear before'), 1, array(
             'tipLabel'       => n2_('Clear before'),
             'tipDescription' => n2_('Closes the unclosed float CSS codes before the slider.'),

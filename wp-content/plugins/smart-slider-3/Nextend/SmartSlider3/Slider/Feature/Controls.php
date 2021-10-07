@@ -22,9 +22,10 @@ class Controls {
 
         $this->slider = $slider;
 
-        $this->mousewheel = intval($slider->params->get('controlsScroll', 0));
-        $this->touch      = $slider->params->get('controlsTouch', 'horizontal');
-        $this->keyboard   = intval($slider->params->get('controlsKeyboard', 1));
+        $this->mousewheel               = intval($slider->params->get('controlsScroll', 0));
+        $this->touch                    = $slider->params->get('controlsTouch', 'horizontal');
+        $this->keyboard                 = intval($slider->params->get('controlsKeyboard', 1));
+        $this->blockCarouselInteraction = intval($slider->params->get('controlsBlockCarouselInteraction', 1));
     }
 
     public function makeJavaScriptProperties(&$properties) {

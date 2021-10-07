@@ -631,7 +631,7 @@ class Responsive {
         }
 
 
-        if ($this->minimumHeight) {
+        if ($this->minimumHeight > 0) {
             $this->slider->sliderType->handleSliderMinHeight($this->minimumHeight);
         }
 

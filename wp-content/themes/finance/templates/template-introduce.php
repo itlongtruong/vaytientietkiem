@@ -10,15 +10,13 @@
 
 get_header();
 ?>
-
-
   <main id="main">
          <!-- ======= Breadcrumbs ======= -->
     <section id="breadcrumbs" class="breadcrumbs">
       <div class="container">
 
         <ol>
-          <li><a href="index.html">Trang Chủ</a></li>
+          <li><a href="<?php echo home_url(); ?>/">Trang Chủ</a></li>
           <li>Giới Thiệu</li>
         </ol>
       </div>
@@ -78,14 +76,14 @@ get_header();
                 <div class="info-box">
                   <i class="bi bi-geo-alt"></i>
                   <h3>Địa Chỉ</h3>
-                  <p>A108 Adam Street,<br>New York, NY 535022</p>
+                  <p>Quang Trung,<br>Gò Vấp, HCM</p>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="info-box">
                   <i class="bi bi-telephone"></i>
                   <h3>Số Điện Thoại</h3>
-                  <p>+1 5589 55488 55<br>+1 6678 254445 41</p>
+                  <p>09887.250.58<br>0337.497.684</p>
                 </div>
               </div>
               <div class="col-md-6">
@@ -99,17 +97,13 @@ get_header();
                 <div class="info-box">
                   <i class="bi bi-clock"></i>
                   <h3>Giờ làm việc</h3>
-                  <p>Thứ 2 - Thứ 6<br>9:00AM - 05:00PM</p>
+                  <p>Thứ 2 - Chủ Nhật<br>7:00AM - 22:00PM</p>
                 </div>
               </div>
             </div>
-
           </div>
 
-
-
           <div class="col-lg-6">
-            
             <?php
             echo do_shortcode('[contact-form-7 id="190" title="Form Liên Hệ"]');
             ?>

@@ -29,7 +29,7 @@ $categories = get_terms($args);
 		</form>
 		</div><!-- End sidebar search formn-->
 
-		<h3 class="sidebar-title">Danh Mục</h3>
+		<h3 class="sidebar-title">Kiến Thức</h3>
 		<div class="sidebar-item categories">
 		<ul>		
 		<?php
@@ -45,7 +45,7 @@ $categories = get_terms($args);
 
 		<?php
 		$args = array(
-			'post_type'        => 'blog',		
+			'post_type'        => 'kien-thuc',		
 			'numberposts'      =>  5,
 			'orderby'          => 'date',
 			'order'            => 'DESC',		

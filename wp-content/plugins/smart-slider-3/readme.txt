@@ -3,8 +3,8 @@ Contributors: nextendweb
 Tags: slider, wordpress slider, image slider, layer slider, responsive slider, slideshow, fullwidth slider, post slider, horizontal slider, vertical slider, photo slider, video slider
 Donate link: https://sites.fastspring.com/nextend/product/smartslider3donate
 Requires at least: 4.9
-Tested up to: 5.7
-Stable tag: 3.5.0.10
+Tested up to: 5.8
+Stable tag: 3.5.0.11
 Requires PHP: 7.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -208,6 +208,25 @@ Of course! Smart Slider use protocol relative urls which works fine on http:// a
 9. Layer slider with layers styles. Made with FREE version.
 
 == Changelog ==
+
+= 3.5.0.11 - 13. September 2021 =
+* Feature: The "Block carousel" feature is now available for free users as well. 
+* Feature: Gutenberg block toolbar is available at the slider. Also, there's an option to go to the slide editor directly from the block. 
+* Feature: Pressing enter on any control will trigger the control's action, as if it was clicked. 
+* Fix: Force full width sliders weren't always properly positioned in Divi. 
+* Fix: SVG paths were wrong in the HTML export of the slider. 
+* Fix: Fix for an output buffer problem related to Themeco Pro theme. 
+* Fix: Fix for a conflict between "Scroll To Slider" and "Use as Anchor > Smooth scroll" that created a weird scrolling. 
+* Fix: The image size box overlapped the thumbnail text on RTL UI. 
+* Fix: Long slider names are cropped when copied/duplicated, to ensure that the new slider can be created. 
+* Fix: PHP 8 compatibility fix to avoid Heading layers creating hdiv tag. 
+* Fix: On WordPress multisite installation only administrators can have unfiltered_html capability, which is required to be able to access the slider. We've modified the error message to reflect this.  
+* Fix: Some Google fonts contain space character, which wasn't properly encoded. 
+* Fix: Minimum height CSS won't be added if the value is 0 or smaller. 
+* Fix: We added 50MS timeout to HTMLImageElement.decode() as its promise wasn't always resolved in Safari. 
+* Fix: Outer positioned controls could create scrollbar, especially on small screens. 
+* Removed: Google font subsets are now removed, as in a browser that supports unicode-range the subset is dynamically served, there's no need to force it.  
+* Other: A couple of strings were not translate-able, which is now fixed. [Want to translate Smart Slider?](https://smartslider.helpscoutdocs.com/article/1938-translation#translation)
 
 = 3.5.0.10 - 21. June 2021 =
 * Feature: Smart Slider displays a preview image in Gutenberg's Add Block panel 

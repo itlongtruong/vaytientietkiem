@@ -33,7 +33,6 @@ class GoogleFonts extends AbstractFontSource {
     private static $fonts = array();
 
     private static $styles = array();
-    private static $subsets = array();
 
     public function __construct() {
         $lines = file(dirname(__FILE__) . '/families.csv', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
@@ -81,31 +80,6 @@ class GoogleFonts extends AbstractFontSource {
         new OnOff($rowStyle, 'google-style-800italic', '800 ' . n2_x('Italic', "Font style"), 0);
         new OnOff($rowStyle, 'google-style-900', '900', 0);
         new OnOff($rowStyle, 'google-style-900italic', '900 ' . n2_x('Italic', "Font style"), 0);
-
-
-        $rowGroupCharacterSet = new ContainerRowGroup($container, 'fonts-google-character-set', n2_('Character set'));
-        $rowCharacterSet      = $rowGroupCharacterSet->createRow('fonts-google-character-set');
-        new OnOff($rowCharacterSet, 'google-set-latin', n2_x('Latin', "Character set"), 1);
-        new OnOff($rowCharacterSet, 'google-set-latin-ext', n2_x('Latin Extended', "Character set"), 0);
-        new OnOff($rowCharacterSet, 'google-set-greek', n2_x('Greek', "Character set"), 0);
-        new OnOff($rowCharacterSet, 'google-set-greek-ext', n2_x('Greek Extended', "Character set"), 0);
-        new OnOff($rowCharacterSet, 'google-set-cyrillic', n2_x('Cyrillic', "Character set"), 0);
-        new OnOff($rowCharacterSet, 'google-set-devanagari', n2_x('Devanagari', "Character set"), 0);
-        new OnOff($rowCharacterSet, 'google-set-arabic', n2_x('Arabic', "Character set"), 0);
-        new OnOff($rowCharacterSet, 'google-set-khmer', n2_x('Khmer', "Character set"), 0);
-        new OnOff($rowCharacterSet, 'google-set-telugu', n2_x('Telugu', "Character set"), 0);
-        new OnOff($rowCharacterSet, 'google-set-vietnamese', n2_x('Vietnamese', "Character set"), 0);
-    }
-
-    public static function getDefaults() {
-        $defaults  = array();
-        $fontsSets = explode(',', n2_x('latin', 'Default font sets'));
-        for ($i = 0; $i < count($fontsSets); $i++) {
-            $fontsSets[$i] = 'google-set-' . $fontsSets[$i];
-        }
-        $defaults += array_fill_keys($fontsSets, 1);
-
-        return $defaults;
     }
 
     public function getPath() {
@@ -117,8 +91,6 @@ class GoogleFonts extends AbstractFontSource {
         if (!$loaded || $force) {
             $loaded     = true;
             $parameters = FontSettings::getPluginsData();
-
-            $parameters->fillDefault(self::getDefaults());
 
             if ((!Platform::isAdmin() && $parameters->get('google-enabled', 1)) || (Platform::isAdmin() && $parameters->get('google-enabled-backend', 1))) {
                 Google::$enabled = 1;
@@ -132,22 +104,6 @@ class GoogleFonts extends AbstractFontSource {
                     self::$styles[] = '400';
                 }
 
-                $this->addSubset($parameters, 'latin');
-                $this->addSubset($parameters, 'latin-ext');
-                $this->addSubset($parameters, 'greek');
-                $this->addSubset($parameters, 'greek-ext');
-                $this->addSubset($parameters, 'cyrillic');
-                $this->addSubset($parameters, 'devanagari');
-                $this->addSubset($parameters, 'arabic');
-                $this->addSubset($parameters, 'khmer');
-                $this->addSubset($parameters, 'telugu');
-                $this->addSubset($parameters, 'vietnamese');
-                if (empty(self::$subsets)) {
-                    self::$subsets[] = 'latin';
-                }
-                foreach (self::$subsets as $subset) {
-                    Google::addSubset($subset);
-                }
                 Plugin::addAction('fontFamily', array(
                     $this,
                     'onFontFamily'
@@ -159,22 +115,14 @@ class GoogleFonts extends AbstractFontSource {
     public function onFontManagerLoadBackend() {
         $parameters = FontSettings::getPluginsData();
 
-        $parameters->fillDefault(self::getDefaults());
-
         if ($parameters->get('google-enabled-backend', 1)) {
-            Js::addInline('new _N2.NextendFontServiceGoogle("' . implode(',', self::$styles) . '","' . implode(',', self::$subsets) . '", ' . json_encode(self::$fonts) . ', ' . json_encode(AssetManager::$googleFonts->getLoadedFamilies()) . ');');
+            Js::addInline('new _N2.NextendFontServiceGoogle("' . implode(',', self::$styles) . '", ' . json_encode(self::$fonts) . ', ' . json_encode(AssetManager::$googleFonts->getLoadedFamilies()) . ');');
         }
     }
 
     function addStyle($parameters, $weight) {
         if ($parameters->get('google-style-' . $weight, 0)) {
             self::$styles[] = $weight;
-        }
-    }
-
-    function addSubset($parameters, $subset) {
-        if ($parameters->get('google-set-' . $subset, 0)) {
-            self::$subsets[] = $subset;
         }
     }
 

@@ -53,7 +53,7 @@ class WordPressUpdate {
 
         $filename = NEXTEND_SMARTSLIDER_3_BASENAME;
 
-        if (!isset($transient->response[$filename])) {
+        if (is_object($transient) && !isset($transient->response[$filename])) {
 
             try {
                 $response = SmartSlider3Info::api(array(

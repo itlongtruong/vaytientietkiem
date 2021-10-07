@@ -182,6 +182,17 @@ class Shortcode {
                     'shortcodeModeToNormal'
                 ), 11);
             }
+
+
+            if (class_exists('Themeco\Theme\Theme')) {
+                /**
+                 * @see SSDEV-3244
+                 */
+                remove_action('wp_head', array(
+                    self::class,
+                    'headStart'
+                ), -10000);
+            }
         });
 
     }

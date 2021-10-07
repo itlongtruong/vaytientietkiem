@@ -54,6 +54,8 @@ class SliderTypeBlockAdmin extends AbstractSliderTypeAdmin {
              ->remove();
         $form->getElement('/controls/widget-thumbnail')
              ->remove();
+        $form->getElement('/developer/developer/developer-1/controlsBlockCarouselInteraction')
+             ->remove();
 
     }
 

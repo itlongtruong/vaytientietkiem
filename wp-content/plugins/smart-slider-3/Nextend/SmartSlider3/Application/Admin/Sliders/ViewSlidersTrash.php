@@ -25,7 +25,7 @@ class ViewSlidersTrash extends AbstractView {
         $topBar = new BlockTopBarMain($this);
 
         $buttonEmptyTrash = new BlockButton($this);
-        $buttonEmptyTrash->setLabel('Empty trash');
+        $buttonEmptyTrash->setLabel(n2_('Empty trash'));
         $buttonEmptyTrash->setBig();
         $buttonEmptyTrash->setRed();
         $buttonEmptyTrash->addClass('n2_slider_empty_trash');

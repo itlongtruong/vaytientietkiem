@@ -12,10 +12,6 @@ class Google {
 
     public static $excludedFamilies = array();
 
-    public static function addSubset($subset = 'latin') {
-        AssetManager::$googleFonts->addSubset($subset);
-    }
-
     public static function addFont($family, $style = '400') {
         AssetManager::$googleFonts->addFont($family, $style);
     }

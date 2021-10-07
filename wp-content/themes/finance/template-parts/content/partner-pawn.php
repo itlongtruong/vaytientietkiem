@@ -82,7 +82,7 @@ $data = get_posts( $args );
 		?>  
         </div>
 		<?php
-		  if ($pagename != 'vay-tien-nhanh'){
+		  if ($pagename != 'cam-do-online'){
 		?>
         <div class="row block-more">
         	<div class="col-xs-12 col-lg-12" data-aos="fade-up" data-aos-delay="300">

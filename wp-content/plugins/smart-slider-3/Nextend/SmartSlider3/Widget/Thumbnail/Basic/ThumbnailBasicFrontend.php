@@ -187,6 +187,9 @@ class ThumbnailBasicFrontend extends AbstractWidgetFrontend {
                 $image = self::getAssetsPath() . '/thumbnail-up-arrow.svg';
                 FastImageSize::initAttributes($image, $previousSizeAttributes);
                 $arrowImagePrevious = 'data:image/svg+xml;base64,' . Base64::encode(Filesystem::readFile($image));
+                if ($orientation === 'horizontal') {
+                    $previousStyle .= 'transform:rotateZ(-90deg);';
+                }
             } else {
                 FastImageSize::initAttributes(ResourceTranslator::urlToResource($arrowImagePrevious), $previousSizeAttributes);
                 switch ($orientation) {
@@ -194,13 +197,16 @@ class ThumbnailBasicFrontend extends AbstractWidgetFrontend {
                         $previousStyle .= 'transform:rotateY(180deg) rotateX(180deg);';
                         break;
                     default:
-                        $previousStyle .= 'transform:rotateZ(180deg) rotateX(180deg);';
+                        $previousStyle .= 'transform:rotateZ(180deg);';
                 }
             }
             if (empty($arrowImageNext)) {
                 $image = self::getAssetsPath() . '/thumbnail-down-arrow.svg';
                 FastImageSize::initAttributes($image, $nextSizeAttributes);
                 $arrowImageNext = 'data:image/svg+xml;base64,' . Base64::encode(Filesystem::readFile($image));
+                if ($orientation === 'horizontal') {
+                    $nextStyle .= 'transform:rotateZ(-90deg);';
+                }
             } else {
                 $nextStyle .= 'transform:none;';
                 FastImageSize::initAttributes(ResourceTranslator::urlToResource($arrowImageNext), $nextSizeAttributes);

@@ -15,10 +15,17 @@ class WidgetSmartSlider3 extends WP_Widget {
 
     function __construct() {
 
-        parent::__construct('smartslider3', // Base ID
-            'Smart Slider', // Name
-            array('description' => 'Displays a Smart Slider') // Args
-        );
+        parent::__construct('smartslider3', 'Smart Slider', array(
+            'show_instance_in_rest' => true,
+            'description'           => 'Displays a Smart Slider'
+        ));
+
+        add_filter('widget_types_to_hide_from_legacy_widget_block', function ($widget_types) {
+
+            $widget_types[] = 'smartslider3';
+
+            return $widget_types;
+        });
 
         // YOAST SEO fix
         add_action('wpseo_head', array(
@@ -122,7 +129,7 @@ class WidgetSmartSlider3 extends WP_Widget {
 
             $_title = '';
             ?>
-            <select id="<?php echo $this->get_field_id('slider'); ?>" onchange="jQuery('#<?php echo $this->get_field_id('temp-title'); ?>').val(jQuery(this).find('option:selected').text()).trigger('change');" name="<?php echo $this->get_field_name('slider'); ?>" class="widefat">
+            <select id="<?php echo $this->get_field_id('slider'); ?>" name="<?php echo $this->get_field_name('slider'); ?>" class="widefat">
                 <?php if (empty($choices)): ?>
                     <option value=""><?php n2_e('None'); ?></option>
                 <?php else: ?>
@@ -159,18 +166,6 @@ class WidgetSmartSlider3 extends WP_Widget {
             <input id="<?php echo $this->get_field_id('temp-title'); ?>"
                    name="<?php echo $this->get_field_name('temp-title'); ?>" type="hidden"
                    value="<?php echo $_title; ?>">
-
-            <?php
-            $showSelectSlider = apply_filters('smartslider3_display_widget_button', __return_true());
-            if ($showSelectSlider):
-                ?>
-                <span style="display:block;line-height:2;padding:10px;"><?php n2_e('OR'); ?></span>
-
-                <a style="vertical-align: top;" href="#" onclick="NextendSmartSliderSelectModal(jQuery('#<?php echo $this->get_field_id('slider'); ?>')); return false;" class="button button-primary elementor-button elementor-button-smartslider fl-builder-button fl-builder-button-large" title="Select slider">Select
-                    slider</a>
-            <?php
-            endif;
-            ?>
 
         </p>
         <p>

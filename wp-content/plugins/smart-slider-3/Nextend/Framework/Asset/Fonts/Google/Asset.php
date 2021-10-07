@@ -14,12 +14,6 @@ class Asset extends AbstractAsset {
         return array_keys($this->files);
     }
 
-    function addSubset($subset = 'latin') {
-        if (!in_array($subset, $this->inline)) {
-            $this->inline[] = $subset;
-        }
-    }
-
     function addFont($family, $style = '400') {
         $style = (string)$style;
         if (!isset($this->files[$family])) {
@@ -33,7 +27,7 @@ class Asset extends AbstractAsset {
     public function loadFonts() {
 
         if (!empty($this->files)) {
-            //https://fonts.googleapis.com/css?display=swap&family=Montserrat:400%7CRoboto:100italic,300,400&subset=latin,greek-ext
+            //https://fonts.googleapis.com/css?display=swap&family=Montserrat:400%7CRoboto:100italic,300,400
 
             $families = array();
             foreach ($this->files as $name => $styles) {
@@ -45,8 +39,7 @@ class Asset extends AbstractAsset {
             if (count($families)) {
                 $params = array(
                     'display' => 'swap',
-                    'family'  => implode('|', $families),
-                    'subset'  => implode(',', $this->inline)
+                    'family'  => urlencode(implode('|', $families))
                 );
 
                 Css::addUrl(UrlHelper::add_query_arg($params, 'https://fonts.googleapis.com/css'));

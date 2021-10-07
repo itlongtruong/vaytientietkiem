@@ -55,7 +55,7 @@ class ItemHeadingFrontend extends AbstractItemFrontend {
     }
 
     private function heading($type, $attributes, $content) {
-        if ($type > 0) {
+        if (is_numeric($type) && $type > 0) {
             return Html::tag("h{$type}", $attributes, $content);
         }
 
