@@ -61,7 +61,7 @@
 							'order'            => 'DESC',		
 						);
 						$data = get_posts( $args );
-						$i = 0
+						$i = 0;
 						?>
 							<?php
 								foreach ($data as $post) {

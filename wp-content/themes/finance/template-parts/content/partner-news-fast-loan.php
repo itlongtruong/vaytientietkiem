@@ -10,7 +10,7 @@
  */
 $query = new WP_Query( array(
   'post_type'        => 'kien-thuc',
-	'numberposts'      =>  4,
+  'showposts'=>4,
 	'cat'       => 12
 ));
 

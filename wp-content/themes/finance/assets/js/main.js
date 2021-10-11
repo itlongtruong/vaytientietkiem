@@ -188,6 +188,7 @@
     loop: true,
     items: 2
   });
+  
 
   // Clients carousel (uses the Owl Carousel library)
   $(".clients-carousel").owlCarousel({

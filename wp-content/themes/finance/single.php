@@ -65,10 +65,55 @@ get_header();
           </div><!-- End blog entries list -->
           <div class="col-lg-4">
            <?php get_template_part( 'template-parts/sidebar/blog' ); ?>
-          </div><!-- End blog sidebar -->
+          </div><!-- End blog sidebar --> 
         </div>
+        <?php wp_reset_postdata(); ?>  
+        <?php
+            $categories = get_the_category(get_the_ID());
+            $category_ids = array();
+            foreach($categories as $individual_category) $category_ids[] = $individual_category->term_id;
+          
+            $query = new WP_Query( array(
+              'post_type'        => 'kien-thuc',
+              'numberposts'      =>  4,
+              'post__not_in' => array($post->ID),
+              'cat'       => $category_ids,
+            ));
+        ?>
+ 
+    <section id="team" class="team">
+          <div class="container">
+          <header class="section-header">
+          <h4>Bài viết liên quan:</h4>
+           </header>
+            <div class="row">
+              <?php if ( $query->have_posts() ) : ?>
+                <?php while ( $query->have_posts() ) : $query->the_post();
+                  $post_id = get_the_ID();            
+                ?>
+              <div class="col-lg-3 col-md-6" >
+                <div class="member">
+                  <a href="<?php the_permalink(); ?>">
+                    <img src="<?php echo get_the_post_thumbnail_url($post_id,'full');?>" width="225" height="179"  class="img-fluid" alt="">
+                    <div class="member-info">
+                      <div class="member-info-content">
+                        <h4><?php the_title(); ?></h4>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+          <?php endwhile; ?>
+        
+            </div>
+        <?php wp_reset_postdata(); ?>  
+              <?php endif;?>
+          </div>
+        </section>
+        
 
       </div>
+      
     </section><!-- End Blog Section -->
   </main><!-- End #main -->
 
