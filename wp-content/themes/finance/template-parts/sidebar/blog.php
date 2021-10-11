@@ -23,11 +23,11 @@ $categories = get_terms($args);
 
 		<h3 class="sidebar-title">Tìm Kiếm</h3>
 		<div class="sidebar-item search-form">
-		<form action="">
-			<input type="text">
+		<form action="<?php echo get_home_url(); ?>/kien-thuc" method="GET">
+			<input type="text" name="s">
 			<button type="submit"><i class="bi bi-search"></i></button>
 		</form>
-		</div><!-- End sidebar search formn-->
+		</div>
 
 		<h3 class="sidebar-title">Kiến Thức</h3>
 		<div class="sidebar-item categories">
@@ -70,25 +70,5 @@ $categories = get_terms($args);
 
 		</div><!-- End sidebar recent posts-->
 		<?php endif;?>
-        <?php
-			$tags = get_terms( array(
-				'taxonomy' => 'post_tag',
-				'hide_empty' => false,
-			) );
-		?>
-		<?php if (!empty($data)):?>
-		<h3 class="sidebar-title">Tags</h3>
-		<div class="sidebar-item tags">
-		<ul>
-		<?php
-		    foreach ($tags as $tag) {
-				$url = get_term_link($tag);
-		?>
-			<li><a href="<?php echo $url;?>"><?php echo $tag->name; ?></a></li>
-		<?php
-			}
-		?>
-		</div><!-- End sidebar tags-->
-		<?php endif;?>
-
+      
     </div><!-- End sidebar -->
