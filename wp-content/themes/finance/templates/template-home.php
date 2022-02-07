@@ -10,7 +10,6 @@
 
 get_header();
 ?>
- 
    <section id="hero" class="clearfix">
    <?php
         echo do_shortcode('[smartslider3 slider="2"]');
@@ -47,32 +46,6 @@ get_header();
               <h4 class="title"><a href="javascript:void(0)">Ví điện tử</a></h4>
             </div>
           </div>
-
-          <!-- <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="300">
-            <div class="box">
-              <div class="icon"><img  src="<?php echo get_template_directory_uri();?>/assets/img/icon/vay-tin-chap-1.png" style="width:60px"></i></div>
-              <h4 class="title"><a href="javascript:void(0)">Vay tín chấp</a></h4>
-            </div> 
-          </div>
-          <div class="col-md-6 col-lg-4 wow" data-aos="zoom-in" data-aos-delay="100">
-            <div class="box">
-              <div class="icon"><img  src="<?php echo get_template_directory_uri();?>/assets/img/icon/the-tin-dung-1.png" style="width:60px"></div>
-              <h4 class="title"><a href="javascript:void(0)">Ví điện tử</a></h4>
-            </div>
-          </div>-->
-<!-- 
-          <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="200"">
-	        <div class=" box">
-	            <div class="icon"><img  src="<?php echo get_template_directory_uri();?>/assets/img/icon/vay-mua-xe-1.png" style="width:60px"></div>
-	            <h4 class="title"><a href="javascript:void(0)">Vay mua xe</a></h4>
-	          </div>
-	        </div>
-	        <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="300">
-	          <div class="box">
-	            <div class="icon" ><img  src="<?php echo get_template_directory_uri();?>/assets/img/icon/vay-mua-nha-1.png" style="width:60px"></div>
-	            <h4 class="title"><a href="javascript:void(0)">Vay mua nhà</a></h4>     
-	          </div>
-	        </div> -->
         </div>
       </div>
     </section><!-- End Services Section -->
@@ -173,8 +146,7 @@ get_header();
 
       </div>
     </section><!--  End Call To Action Section -->
-    
-
+  
         <!-- ======= Team Section ======= -->
     
 

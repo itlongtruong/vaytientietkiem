@@ -10,8 +10,8 @@
  */
 $query = new WP_Query( array(
   'post_type'        => 'kien-thuc',
-  'showposts'=>4,
-	'cat'       => 1
+  'showposts'        => 4,
+	'cat'              => 1
 ));
 
 ?>
@@ -48,7 +48,7 @@ $query = new WP_Query( array(
 
         <div class="row block-more">
         	<div class="col-xs-12 col-lg-12" data-aos="fade-up" data-aos-delay="200">
-        	  <a href="<?php echo get_home_url(); ?>/vi-tien-online" class="btn-more">Xem thêm</a>
+        	  <a href="<?php echo get_home_url(); ?>/danh-muc/vi-tien-online" class="btn-more">Xem thêm</a>
             </div>
         </div>
 

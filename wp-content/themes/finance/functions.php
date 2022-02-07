@@ -715,4 +715,31 @@ function getPostViews($postID){
 	echo getPostViews(get_the_ID());
 	}
 	}
+
+
+	function htmlwp_pagination()
+	{
+		global $wp_query;
+		$big = 999999999;
+		$pages = paginate_links(array(
+			'base' => str_replace($big, '%#%', get_pagenum_link($big)),
+			'format' => '?paged=%#%',
+			'current' => max(1, get_query_var('paged')),
+			'total' => $wp_query->max_num_pages,
+			'type'  => 'array',
+			'prev_text'    => '« Trang trước',
+			'next_text'    => 'Trang sau »',
+		));
+		if( is_array( $pages ) ) {
+			$paged = ( get_query_var('paged') == 0 ) ? 1 : get_query_var('paged');
+			echo '<div class="blog-pagination"><ul class="justify-content-center">';
+			foreach ( $pages as $page ) {
+					echo "<li>$page</li>";
+			}
+		   echo '</ul></div>';
+			}
+	}
+
+
+	
 ?>

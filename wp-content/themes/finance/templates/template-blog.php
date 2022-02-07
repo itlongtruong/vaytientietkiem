@@ -8,9 +8,13 @@
  * @since Finance 1.0
  */
 get_header();
-$query = new WP_Query( array(
+
+$wp_query = new WP_Query( array(
     'post_type'        => 'kien-thuc',
+    'posts_per_page' => 2,
+    'paged' =>  get_query_var( 'paged' )
 ));
+// $paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 2;
 
 ?>
   <main id="main">
@@ -33,8 +37,8 @@ $query = new WP_Query( array(
         <div class="row">
            
           <div class="col-lg-8 entries">
-            <?php if ( $query->have_posts() ) : ?>
-            <?php while ( $query->have_posts() ) : $query->the_post();
+            <?php if ( $wp_query->have_posts() ) : ?>
+            <?php while ( $wp_query->have_posts() ) : $wp_query->the_post();
               $post_id = get_the_ID();            
             ?>
             <article class="entry">
@@ -68,19 +72,23 @@ $query = new WP_Query( array(
             <?php endwhile; ?>
             <?php endif;?>
 
-
+           
+            <?php htmlwp_pagination(); 
+           
+            ?>
+           
             
-            <!-- end loop -->
 
-            <div class="blog-pagination">
+            <!-- end loop -->
+  
+            <!-- <div class="blog-pagination">
               <ul class="justify-content-center">
                 <li><a href="#">1</a></li>
                 <li class="active"><a href="#">2</a></li>
                 <li><a href="#">3</a></li>
               </ul>
-            </div>
+            </div> -->
           
-         
           </div><!-- End blog entries list -->          
           <div class="col-lg-4">
             <?php get_template_part( 'template-parts/sidebar/blog' ); ?>
@@ -95,3 +103,4 @@ $query = new WP_Query( array(
   </main><!-- End #main -->
 
 <?php get_footer(); ?>
+

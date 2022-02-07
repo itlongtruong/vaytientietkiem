@@ -4303,7 +4303,7 @@ function paginate_links( $args = '' ) {
 
 				$dots = true;
 			elseif ( $dots && ! $args['show_all'] ) :
-				$page_links[] = '<span class="page-numbers dots">' . __( '&hellip;' ) . '</span>';
+				$page_links[] = '<a class="page-numbers dots">' . __( '&hellip;' ) . '</a>';
 
 				$dots = false;
 			endif;

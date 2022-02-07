@@ -75,7 +75,7 @@ get_header();
           
             $query = new WP_Query( array(
               'post_type'        => 'kien-thuc',
-              'numberposts'      =>  4,
+              'showposts'      =>  4,
               'post__not_in' => array($post->ID),
               'cat'       => $category_ids,
             ));

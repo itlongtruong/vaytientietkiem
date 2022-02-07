@@ -28,6 +28,7 @@ $query = new WP_Query( array(
             <?php while ( $query->have_posts() ) : $query->the_post();
               $post_id = get_the_ID();            
             ?>
+
           <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
             <div class="member">
               <a href="<?php the_permalink(); ?>">
@@ -40,6 +41,8 @@ $query = new WP_Query( array(
               </a>
             </div>
           </div>
+
+          
 		  <?php endwhile; ?>
 		 
         </div>
@@ -48,7 +51,7 @@ $query = new WP_Query( array(
 
         <div class="row block-more">
         	<div class="col-xs-12 col-lg-12" data-aos="fade-up" data-aos-delay="200">
-        	  <a href="<?php echo get_home_url(); ?>/vay-nhanh" class="btn-more">Xem thêm</a>
+        	  <a href="<?php echo get_home_url(); ?>/danh-muc/vay-nhanh" class="btn-more">Xem thêm</a>
             </div>
         </div>
 

@@ -12,13 +12,17 @@
 get_header();
 $category = get_category( get_query_var( 'cat' ) );
 $cat_id = $category->cat_ID;
-$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
-$query = new WP_Query( array(
+// $paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+$wp_query = new WP_Query( array(
     'post_type'        => 'kien-thuc',
+    'posts_per_page' => 2,
+    'paged' =>  get_query_var( 'paged' ),
 	  'cat'       => $cat_id
+    
 ));
 
 ?>
+
   <main id="main">
          <!-- ======= Breadcrumbs ======= -->
     <section id="breadcrumbs" class="breadcrumbs">
@@ -26,7 +30,7 @@ $query = new WP_Query( array(
 
         <ol>
           <li><a href="<?php echo get_home_url(); ?>">Trang Chủ</a></li>
-          <li><?php single_cat_title(); ?></li>
+          <li><?php single_cat_title();?></li>
         </ol>
     
       </div>
@@ -39,8 +43,8 @@ $query = new WP_Query( array(
 
         <div class="row">		  
           <div class="col-lg-8 entries">
-		     <?php if ( $query->have_posts() ) : ?>
-            <?php while ( $query->have_posts() ) : $query->the_post();
+		     <?php if ( $wp_query->have_posts() ) : ?>
+            <?php while ( $wp_query->have_posts() ) : $wp_query->the_post();
               $post_id = get_the_ID();            
             ?>
             <article class="entry">
@@ -72,20 +76,19 @@ $query = new WP_Query( array(
 
             </article><!-- End blog entry -->
             <?php endwhile; ?>
+            <?php endif;?>
             <!-- end loop -->
-
-          <div class="blog-pagination">
+          <!-- <div class="blog-pagination">
             <ul class="justify-content-center">
               <li><a href="#">1</a></li>
               <li class="active"><a href="#">2</a></li>
               <li><a href="#">3</a></li>
             </ul>
-          </div>
-		  <?php wp_reset_postdata(); ?>  
-          <?php endif;?>
-          </div><!-- End blog entries list -->
-		  
+          </div> -->
 
+          <?php htmlwp_pagination();?>
+          </div><!-- End blog entries list -->
+		
           <div class="col-lg-4">
             <?php get_template_part( 'template-parts/sidebar/blog' ); ?>
           </div><!-- End blog sidebar -->
