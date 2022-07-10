@@ -24,7 +24,7 @@ $categories = get_terms($args);
 		<h3 class="sidebar-title">Tìm Kiếm</h3>
 		<div class="sidebar-item search-form">
 		<form action="<?php bloginfo('url'); ?>/" method="GET" role="search">
-			<input type="text" name="s" placeholder="Nhập Từ khóa...."  <?php if(is_search()) { ?>value="<?php the_search_query(); ?>" <?php } else { ?>value="" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;"<?php } ?>>
+			<input type="text" name="s" placeholder="Search"  <?php if(is_search()) { ?>value="<?php the_search_query(); ?>" <?php } else { ?>value="" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;"<?php } ?>>
 			<input type="hidden" name="post_type" value="kien-thuc" />
 			<button type="submit"><i class="bi bi-search"></i></button>
 		</form>

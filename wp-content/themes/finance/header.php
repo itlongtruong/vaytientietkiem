@@ -70,8 +70,11 @@
 			'menu_class' => 'menu'
 		) 
 		); ?>
-	
+
+		
+
       </nav><!-- .main-nav-->
+	 
 
     </div>
   </header><!-- End Header -->
