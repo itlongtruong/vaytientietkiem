@@ -12,6 +12,7 @@
 get_header();
 ?>
 <?php setPostViews(get_the_ID()); ?>
+<?php if( have_posts() ) the_post(); ?>
   <main id="main">
          <!-- ======= Breadcrumbs ======= -->
     <section id="breadcrumbs" class="breadcrumbs">
@@ -45,7 +46,7 @@ get_header();
 
               <div class="entry-meta">
                 <ul>
-                  <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="<?php the_permalink(); ?>"> <?php echo get_the_author();?></a></li>
+                  <li class="d-flex align-items-center"><i class="bi bi-person"></i> <a href="<?php the_permalink(); ?>"><?php echo get_the_author();?></a></li>
                   <li class="d-flex align-items-center"><i class="bi bi-clock"></i> <a href="<?php the_permalink(); ?>"><time datetime="<?php echo date('Y-m-d', strtotime($post->post_date))?>"><?php echo date('M j, Y', strtotime($post->post_date))?></time></a></li>
                   <li class="d-flex align-items-center"><i class="bi bi-eye"></i> <a href="<?php the_permalink(); ?>"><?php echo getPostViews(get_the_ID()); ?></a></li>
                 </ul>
@@ -84,7 +85,7 @@ get_header();
     <section id="team" class="team">
           <div class="container">
           <header class="section-header">
-          <h4>Bài viết liên quan:</h4>
+          <h3 class="related">Bài viết liên quan:</h3>
            </header>
             <div class="row">
               <?php if ( $query->have_posts() ) : ?>
@@ -94,7 +95,7 @@ get_header();
               <div class="col-lg-3 col-md-6" >
                 <div class="member">
                   <a href="<?php the_permalink(); ?>">
-                    <img src="<?php echo get_the_post_thumbnail_url($post_id,'full');?>" width="225" height="179"  class="img-fluid" alt="">
+                    <img src="<?php echo get_the_post_thumbnail_url($post_id,'full');?>"   class="img-fluid" alt="">
                     <div class="member-info">
                       <div class="member-info-content">
                         <h4><?php the_title(); ?></h4>

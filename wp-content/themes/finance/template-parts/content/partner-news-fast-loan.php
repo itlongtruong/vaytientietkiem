@@ -32,7 +32,7 @@ $query = new WP_Query( array(
           <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
             <div class="member">
               <a href="<?php the_permalink(); ?>">
-	              <img src="<?php echo get_the_post_thumbnail_url($post_id,'full');?>" width="225" height="179"  class="img-fluid" alt="">
+	              <img src="<?php echo get_the_post_thumbnail_url($post_id,'full');?>"  class="img-fluid" alt="">
 	              <div class="member-info">
 	                <div class="member-info-content">
 	                  <h4><?php the_title(); ?></h4>

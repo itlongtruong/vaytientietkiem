@@ -1,4 +1,5 @@
-n/**
+n
+/**
 * Template Name: Rapid - v2.3.1
 * Template URL: https://bootstrapmade.com/rapid-multipurpose-bootstrap-business-template/
 * Author: BootstrapMade.com
@@ -19,7 +20,9 @@ a {
   transition: 0.5s;
 }
 
-a:hover, a:active, a:focus {
+a:hover,
+a:active,
+a:focus {
   color: #00953B;
   outline: none;
   text-decoration: none;
@@ -30,7 +33,12 @@ p {
   margin: 0 0 30px 0;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: "Montserrat", sans-serif;
   font-weight: 400;
   margin: 0 0 20px 0;
@@ -96,6 +104,7 @@ h1, h2, h3, h4, h5, h6 {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -105,6 +114,7 @@ h1, h2, h3, h4, h5, h6 {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -196,6 +206,7 @@ h1, h2, h3, h4, h5, h6 {
   #header {
     top: 0;
   }
+
   #header .logo {
     font-size: 28px;
   }
@@ -210,13 +221,14 @@ h1, h2, h3, h4, h5, h6 {
   /* Deep Drop Down */
 }
 
-.main-nav, .main-nav * {
+.main-nav,
+.main-nav * {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.main-nav > ul > li {
+.main-nav>ul>li {
   position: relative;
   white-space: nowrap;
   float: left;
@@ -235,7 +247,9 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
 }
 
-.main-nav a:hover, .main-nav .current-menu-item > a, .main-nav li:hover > a {
+.main-nav a:hover,
+.main-nav .current-menu-item>a,
+.main-nav li:hover>a {
   color: #50B848;
   text-decoration: none;
 }
@@ -254,7 +268,7 @@ h1, h2, h3, h4, h5, h6 {
   transition: ease all 0.3s;
 }
 
-.main-nav .drop-down:hover > ul {
+.main-nav .drop-down:hover>ul {
   opacity: 1;
   top: 100%;
   visibility: visible;
@@ -273,11 +287,13 @@ h1, h2, h3, h4, h5, h6 {
   color: #065e77;
 }
 
-.main-nav .drop-down ul a:hover, .main-nav .drop-down ul .active > a, .main-nav .drop-down ul li:hover > a {
+.main-nav .drop-down ul a:hover,
+.main-nav .drop-down ul .active>a,
+.main-nav .drop-down ul li:hover>a {
   color: #50B848;
 }
 
-.main-nav .drop-down > a:after {
+.main-nav .drop-down>a:after {
   content: "\f107";
   font-family: FontAwesome;
   padding-left: 10px;
@@ -288,17 +304,17 @@ h1, h2, h3, h4, h5, h6 {
   left: calc(100% - 30px);
 }
 
-.main-nav .drop-down .drop-down:hover > ul {
+.main-nav .drop-down .drop-down:hover>ul {
   opacity: 1;
   top: 0;
   left: 100%;
 }
 
-.main-nav .drop-down .drop-down > a {
+.main-nav .drop-down .drop-down>a {
   padding-right: 35px;
 }
 
-.main-nav .drop-down .drop-down > a:after {
+.main-nav .drop-down .drop-down>a:after {
   content: "\f105";
   position: absolute;
   right: 15px;
@@ -332,12 +348,14 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 500;
 }
 
-.mobile-nav a:hover, .mobile-nav .active > a, .mobile-nav li:hover > a {
+.mobile-nav a:hover,
+.mobile-nav .active>a,
+.mobile-nav li:hover>a {
   color: #8dc2fa;
   text-decoration: none;
 }
 
-.mobile-nav .drop-down > a:after {
+.mobile-nav .drop-down>a:after {
   content: "\f078";
   font-family: FontAwesome;
   padding-left: 10px;
@@ -345,11 +363,11 @@ h1, h2, h3, h4, h5, h6 {
   right: 15px;
 }
 
-.mobile-nav .active.drop-down > a:after {
+.mobile-nav .active.drop-down>a:after {
   content: "\f077";
 }
 
-.mobile-nav .drop-down > a {
+.mobile-nav .drop-down>a {
   padding-right: 35px;
 }
 
@@ -422,9 +440,11 @@ h1, h2, h3, h4, h5, h6 {
     height: auto;
     padding: 100px 0 0 0;
   }
+
   #hero .container {
     height: auto !important;
   }
+
   #hero .intro-img {
     width: 80%;
   }
@@ -461,7 +481,8 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-#hero .intro-info .btn-get-started, #hero .intro-info .btn-services {
+#hero .intro-info .btn-get-started,
+#hero .intro-info .btn-services {
   font-family: "Montserrat", sans-serif;
   font-size: 13px;
   font-weight: 600;
@@ -476,7 +497,8 @@ h1, h2, h3, h4, h5, h6 {
   color: #fff;
 }
 
-#hero .intro-info .btn-get-started:hover, #hero .intro-info .btn-services:hover {
+#hero .intro-info .btn-get-started:hover,
+#hero .intro-info .btn-services:hover {
   background: #00953B;
 }
 
@@ -490,12 +512,17 @@ section {
 /* Sections Header
 --------------------------------*/
 .section-header h3 {
-  font-size: 36px;
+  font-size: 31px;
   color: #08993C;
   text-align: center;
   font-weight: 700;
   position: relative;
   font-family: "Montserrat", sans-serif;
+}
+
+.section-header .related {
+  font-size: 25px;
+  text-align: left;
 }
 
 .section-header p {
@@ -792,7 +819,8 @@ section {
   transition: all 0.3s ease-in-out;
 }
 
-#portfolio #portfolio-flters li:hover, #portfolio #portfolio-flters li.filter-active {
+#portfolio #portfolio-flters li:hover,
+#portfolio #portfolio-flters li.filter-active {
   color: #50B848;
 }
 
@@ -857,7 +885,8 @@ section {
   text-transform: uppercase;
 }
 
-#portfolio .portfolio-item .portfolio-wrap .portfolio-info .link-preview, #portfolio .portfolio-item .portfolio-wrap .portfolio-info .link-details {
+#portfolio .portfolio-item .portfolio-wrap .portfolio-info .link-preview,
+#portfolio .portfolio-item .portfolio-wrap .portfolio-info .link-details {
   display: inline-block;
   line-height: 1;
   text-align: center;
@@ -868,17 +897,20 @@ section {
   margin: 10px 4px 0 4px;
 }
 
-#portfolio .portfolio-item .portfolio-wrap .portfolio-info .link-preview i, #portfolio .portfolio-item .portfolio-wrap .portfolio-info .link-details i {
+#portfolio .portfolio-item .portfolio-wrap .portfolio-info .link-preview i,
+#portfolio .portfolio-item .portfolio-wrap .portfolio-info .link-details i {
   padding-top: 6px;
   font-size: 22px;
   color: #fff;
 }
 
-#portfolio .portfolio-item .portfolio-wrap .portfolio-info .link-preview:hover, #portfolio .portfolio-item .portfolio-wrap .portfolio-info .link-details:hover {
+#portfolio .portfolio-item .portfolio-wrap .portfolio-info .link-preview:hover,
+#portfolio .portfolio-item .portfolio-wrap .portfolio-info .link-details:hover {
   background: #42c3e8;
 }
 
-#portfolio .portfolio-item .portfolio-wrap .portfolio-info .link-preview:hover i, #portfolio .portfolio-item .portfolio-wrap .portfolio-info .link-details:hover i {
+#portfolio .portfolio-item .portfolio-wrap .portfolio-info .link-preview:hover i,
+#portfolio .portfolio-item .portfolio-wrap .portfolio-info .link-details:hover i {
   color: #fff;
 }
 
@@ -947,12 +979,16 @@ section {
 }
 
 @media (max-width: 767px) {
-  #testimonials .testimonial-item h3, #testimonials .testimonial-item h4, #testimonials .testimonial-item p {
+
+  #testimonials .testimonial-item h3,
+  #testimonials .testimonial-item h4,
+  #testimonials .testimonial-item p {
     margin-left: 0;
   }
 }
 
-#testimonials .owl-nav, #testimonials .owl-dots {
+#testimonials .owl-nav,
+#testimonials .owl-dots {
   margin-top: 5px;
   text-align: center;
 }
@@ -1059,7 +1095,8 @@ section {
   opacity: 1;
 }
 
-#clients .owl-nav, #clients .owl-dots {
+#clients .owl-nav,
+#clients .owl-dots {
   margin-top: 5px;
   text-align: center;
 }
@@ -1232,6 +1269,7 @@ section {
   #faq #faq-list a {
     font-size: 18px;
   }
+
   #faq #faq-list i {
     top: 13px;
   }
@@ -1280,11 +1318,11 @@ section {
   font-size: 14px;
 }
 
-.breadcrumbs ol li + li {
+.breadcrumbs ol li+li {
   padding-left: 10px;
 }
 
-.breadcrumbs ol li + li::before {
+.breadcrumbs ol li+li::before {
   display: inline-block;
   padding-right: 10px;
   color: #555186;
@@ -1307,7 +1345,8 @@ section {
   z-index: 1;
 }
 
-.portfolio-details .portfolio-details-carousel .owl-nav, .portfolio-details .portfolio-details-carousel .owl-dots {
+.portfolio-details .portfolio-details-carousel .owl-nav,
+.portfolio-details .portfolio-details-carousel .owl-dots {
   margin-top: 5px;
   text-align: left;
 }
@@ -1349,7 +1388,7 @@ section {
   font-size: 15px;
 }
 
-.portfolio-details .portfolio-info ul li + li {
+.portfolio-details .portfolio-info ul li+li {
   margin-top: 10px;
 }
 
@@ -1372,6 +1411,7 @@ section {
   .portfolio-details .portfolio-description h3 {
     width: 100%;
   }
+
   .portfolio-details .portfolio-info {
     position: static;
     margin-top: 30px;
@@ -1528,7 +1568,7 @@ section {
   font-weight: 600;
 }
 
-#footer .php-email-form .error-message br + br {
+#footer .php-email-form .error-message br+br {
   margin-top: 25px;
 }
 
@@ -1561,14 +1601,16 @@ section {
   animation: animate-loading 1s linear infinite;
 }
 
-#footer .php-email-form input, #footer .php-email-form textarea {
+#footer .php-email-form input,
+#footer .php-email-form textarea {
   border-radius: 0;
   box-shadow: none;
   border: 1px solid #dce1ec;
   font-size: 14px;
 }
 
-#footer .php-email-form input::focus, #footer .php-email-form textarea::focus {
+#footer .php-email-form input::focus,
+#footer .php-email-form textarea::focus {
   background-color: #50B848;
 }
 
@@ -1598,6 +1640,7 @@ section {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -1607,6 +1650,7 @@ section {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -1659,12 +1703,12 @@ section {
 }
 
 .blog .entry .entry-title a {
-  color: #696592;
+  color: #50B848;
   transition: 0.3s;
 }
 
 .blog .entry .entry-title a:hover {
-  color: #50B848;
+  color: #00953B; 
 }
 
 .blog .entry .entry-meta {
@@ -1681,7 +1725,7 @@ section {
   margin: 0;
 }
 
-.blog .entry .entry-meta ul li + li {
+.blog .entry .entry-meta ul li+li {
   padding-left: 20px;
 }
 
@@ -1763,12 +1807,12 @@ section {
 }
 
 .blog .entry .entry-footer i {
-  color: #0d64fd;
+  color: #50B848;
   display: inline;
 }
 
 .blog .entry .entry-footer a {
-  color: #013289;
+  color: #50B848;
   transition: 0.3s;
 }
 
@@ -1798,7 +1842,7 @@ section {
   display: inline-block;
 }
 
-.blog .entry .entry-footer .tags li + li::before {
+.blog .entry .entry-footer .tags li+li::before {
   padding-right: 6px;
   color: #6c757d;
   content: ",";
@@ -1973,7 +2017,8 @@ section {
   transition: 0.3s;
 }
 
-.blog .blog-pagination li a, .blog .blog-pagination li span {
+.blog .blog-pagination li a,
+.blog .blog-pagination li span {
   color: #50B848;
   padding: 7px 16px;
   display: flex;
@@ -1981,17 +2026,21 @@ section {
   justify-content: center;
 }
 
-.blog .blog-pagination li span,  .blog .blog-pagination li.active, .blog .blog-pagination li:hover {
+.blog .blog-pagination li span,
+.blog .blog-pagination li.active,
+.blog .blog-pagination li:hover {
   background: #50B848;
 }
 
-.blog .blog-pagination li.active a, .blog .blog-pagination li:hover a, .blog .blog-pagination li span {
+.blog .blog-pagination li.active a,
+.blog .blog-pagination li:hover a,
+.blog .blog-pagination li span {
   color: #fff;
 }
 
 .blog .sidebar {
   padding: 30px;
-  margin: 0 0 60px 20px;
+  /* margin: 0 0 60px 20px; */
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
@@ -2056,12 +2105,13 @@ section {
   padding: 0;
 }
 
-.blog .sidebar .categories ul li + li {
+.blog .sidebar .categories ul li+li {
   padding-top: 10px;
 }
 
 .blog .sidebar .categories ul a {
-  color: #696592;;
+  color: #696592;
+  ;
   transition: 0.3s;
 }
 
@@ -2075,7 +2125,7 @@ section {
   font-size: 14px;
 }
 
-.blog .sidebar .recent-posts .post-item + .post-item {
+.blog .sidebar .recent-posts .post-item+.post-item {
   margin-top: 15px;
 }
 
@@ -2163,7 +2213,7 @@ section {
 }
 
 .contact .info-box h3 {
-  font-size: 20px;
+  font-size: 15px;
   color: #50B848;
   font-weight: 700;
   margin: 20px 0 10px 0;
@@ -2223,14 +2273,16 @@ section {
   animation: animate-loading 1s linear infinite;
 }
 
-.contact .php-email-form input, .contact .php-email-form textarea {
+.contact .php-email-form input,
+.contact .php-email-form textarea {
   border-radius: 0;
   box-shadow: none;
   font-size: 14px;
   border-radius: 0;
 }
 
-.contact .php-email-form input:focus, .contact .php-email-form textarea:focus {
+.contact .php-email-form input:focus,
+.contact .php-email-form textarea:focus {
   border-color: #50B848;
 }
 
@@ -2259,6 +2311,7 @@ section {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -2268,7 +2321,18 @@ section {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
+  }
+}
+
+
+
+@media (max-width: 992px) {
+  .blog .sidebar {
+    padding: 30px;
+    margin-top: 40px;
+
   }
 }

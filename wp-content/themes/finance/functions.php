@@ -727,8 +727,8 @@ function getPostViews($postID){
 			'current' => max(1, get_query_var('paged')),
 			'total' => $wp_query->max_num_pages,
 			'type'  => 'array',
-			'prev_text'    => '« Trang trước',
-			'next_text'    => 'Trang sau »',
+			'prev_text'    => '<i class="bi bi-chevron-left"></i>',
+			'next_text'    => '<i class="bi bi-chevron-right"></i>',
 		));
 		if( is_array( $pages ) ) {
 			$paged = ( get_query_var('paged') == 0 ) ? 1 : get_query_var('paged');
@@ -739,7 +739,6 @@ function getPostViews($postID){
 		   echo '</ul></div>';
 			}
 	}
-
 
 	
 ?>
