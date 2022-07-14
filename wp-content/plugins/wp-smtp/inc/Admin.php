@@ -19,10 +19,13 @@ class Admin {
 
 	public function add_menu() {
 		add_menu_page( __( 'WP SMTP'),  __( 'WP SMTP'), 'manage_options', 'wp-smtp/wp-smtp.php', array( $this, 'render_setup_menu' ) );
-		add_submenu_page( 'wp-smtp/wp-smtp.php',  __( 'Mail Logs'),  __( 'Mail Logs'), 'manage_options','wpsmtp_logs', array( $this, 'render_log_menu' ) );
+
+		if( ! isset( $this->wsOptions['disable_logs'] ) || 'yes' !== $this->wsOptions['disable_logs'] ) {
+			add_submenu_page( 'wp-smtp/wp-smtp.php',  __( 'Mail Logs'),  __( 'Mail Logs'), 'manage_options','wpsmtp_logs', array( $this, 'render_log_menu' ) );
+		}
 	}
 
-	function enqueue_scripts() {
+	public function enqueue_scripts() {
 
 		$screen = get_current_screen();
 
@@ -30,24 +33,22 @@ class Admin {
 			return;
 		}
 
-		if ( $screen->id !== 'wp-smtp_page_wpsmtp_logs' ) {
-			return;
+		if ( $screen->id === 'wp-smtp_page_wpsmtp_logs' ) {
+			wp_enqueue_style( 'wpsmtp-table', WPSMTP_ASSETS_URL . 'css/table.css' );
+			wp_enqueue_style( 'datatable', WPSMTP_ASSETS_URL . 'css/jquery.dataTables.min.css' );
+
+			wp_register_script( 'datatable', WPSMTP_ASSETS_URL . 'js/jquery.dataTables.min.js', array( 'jquery' ), false, true );
+			wp_register_script( 'dataTables.buttons', WPSMTP_ASSETS_URL . 'js/dataTables.buttons.min.js', array( 'datatable' ), false, true );
+			wp_register_script( 'buttons.html5', WPSMTP_ASSETS_URL . 'js/dataTables.buttons.html5.min.js', array( 'datatable', 'dataTables.buttons' ), false, true );
+			wp_register_script( 'dataTables.select', WPSMTP_ASSETS_URL . 'js/dataTables.select.min.js', array( 'datatable', 'buttons.html5' ), false, true );
+
+			wp_register_script( 'wpsmtp-table', WPSMTP_ASSETS_URL . 'js/table.js', array('jquery', 'dataTables.select'),false, true );
+			wp_localize_script( 'wpsmtp-table', 'wpsmtp', array(
+				'ajaxurl' => admin_url('admin-ajax.php'),
+			) );
+
+			wp_enqueue_script('wpsmtp-table');
 		}
-
-		wp_enqueue_style( 'wpsmtp-table', WPSMTP_ASSETS_URL . 'css/table.css' );
-		wp_enqueue_style( 'datatable', 'https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css' );
-
-		wp_register_script( 'datatable', 'https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js', array( 'jquery' ), false, true );
-		wp_register_script( 'dataTables.buttons', 'https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js', array( 'datatable' ), false, true );
-		wp_register_script( 'buttons.html5', 'https://cdn.datatables.net/buttons/1.6.2/js/buttons.html5.min.js', array( 'datatable', 'dataTables.buttons' ), false, true );
-		wp_register_script( 'dataTables.select', 'https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js', array( 'datatable', 'buttons.html5' ), false, true );
-
-		wp_register_script( 'wpsmtp-table', WPSMTP_ASSETS_URL . 'js/table.js', array('jquery', 'dataTables.select'),false, true );
-		wp_localize_script( 'wpsmtp-table', 'wpsmtp', array(
-			'ajaxurl' => admin_url('admin-ajax.php'),
-		) );
-
-		wp_enqueue_script('wpsmtp-table');
 	}
 
 	function render_setup_menu() {
@@ -103,7 +104,7 @@ class Admin {
 		die();
 	}
 
-	function wpsmtp_delete_rows() {
+	public function wpsmtp_delete_rows() {
 		check_admin_referer('wpsmtp', 'security' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -115,7 +116,7 @@ class Admin {
 
 	}
 
-	function wpsmtp_delete_all_rows() {
+	public function wpsmtp_delete_all_rows() {
 		check_admin_referer('wpsmtp', 'security' );
 
 		if ( ! current_user_can( 'manage_options' ) ) {

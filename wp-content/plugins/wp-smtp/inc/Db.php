@@ -75,17 +75,20 @@ class Db {
 	public function get() {
 		$where = '';
 		$where_cols = array();
+		$prepare_array = array();
 		if ( isset($_GET['search']['value'] ) && ! empty( $_GET['search']['value'] ) ) {
 			$search = sanitize_text_field( $_GET['search']['value'] );
 
 			foreach ( $_GET['columns'] as $key => $col ) {
 				if ( $col['searchable'] && ! empty( $col['data'] ) && $col['data'] !== 'timestamp' ) {
-					$where_cols[] = "`{$col['data']}` LIKE '%$search%'";
+					$column          = sanitize_text_field( wp_unslash( $col['data'] ) );
+					$where_cols[]    = "`{$column}` LIKE %s";
+					$prepare_array[] = '%' . $this->db->esc_like( $search ) . '%';
 				}
 			}
 
 			if ( ! empty( $where_cols ) ) {
-				$where .= ' WHERE ' . implode( ' OR ', $where_cols );
+				$where = implode( ' OR ', $where_cols );
 			}
 
 		}
@@ -101,18 +104,27 @@ class Db {
 
 		$limit_query = '';
 		if ( ! empty( $limit ) ) {
-			$limit_query = ' LIMIT ' . implode( ',', $limit );
+			$limit_query = implode( ',', $limit );
 		}
 
-		$order = ' ORDER BY `timestamp` desc';
+		$orderby = 'timestamp';
+		$order = 'DESC';
+
 		if ( ! empty( $_GET['order'][0] ) ) {
-			$col_num = $_GET['order'][0]['column'];
-			$col_name = $_GET['columns'][$col_num]['data'];
-			$order_dir = $_GET['order'][0]['dir'];
-			$order = " ORDER BY `{$col_name}` {$order_dir}";
+			$col_num   = absint( $_GET['order'][0]['column'] );
+			$col_name  = sanitize_text_field( wp_unslash( $_GET['columns'][$col_num]['data'] ) );
+			$order_dir = sanitize_text_field( wp_unslash( $_GET['order'][0]['dir'] ) );
+			$orderby   = "`{$col_name}`";
+			$order     = "{$order_dir}";
 		}
 
-		$sql = "SELECT * from {$this->table}{$where}{$order}{$limit_query};";
+		// If there is something to search for we need to add the search query to the query.
+		if ( ! empty( $prepare_array ) ) {
+
+			$sql = $this->db->prepare( "SELECT * from {$this->table} WHERE {$where} ORDER BY {$orderby} {$order} LIMIT {$limit_query};", $prepare_array );
+		} else {
+			$sql = $this->db->prepare( "SELECT * from {$this->table} ORDER BY {$orderby} {$order} LIMIT {$limit_query};", $orderby );
+		}
 
 		error_log( $sql );
 

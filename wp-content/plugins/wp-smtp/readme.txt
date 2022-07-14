@@ -1,11 +1,10 @@
 === WP SMTP ===
-Contributors: yehudah
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=yehudahas@gmail.com&item_name=Donation+for+WPSMTP
 Tags: wp smtp,smtp,mail,email,logs,mailer,wp mail,gmail,yahoo,mail smtp,ssl,tls
-License: GPLv2
+Contributors: wpchill,silkalns,raldea89,giucu91,andylukak
+License: GPLv3 or later
 Requires at least: 2.7
-Tested up to: 5.7.1
-Stable tag: 1.2.3
+Tested up to: 5.9
+Stable tag: 1.2.5
 
 WP SMTP can help us to send emails via SMTP instead of the PHP mail() function.
 
@@ -18,7 +17,7 @@ If the field "From" was not a valid email address, or the field "SMTP Host" was 
 
 = CREDITS =
 
-WP SMTP plugin was originally created by BoLiQuan. It is now owned and maintained by Yehuda Hassine.
+WP SMTP plugin was originally created by BoLiQuan. It is now owned and maintained by WPChill.
 
 = Usage =
 
@@ -35,6 +34,14 @@ WP SMTP plugin was originally created by BoLiQuan. It is now owned and maintaine
 4. For more information of this plugin, please visit: [Plugin Homepage](https://wpsmtpmail.com/ "WP SMTP").
 
 == Changelog ==
+
+= 1.2.5 - 15.04.2022 - =
+Fixed: base64_encoding problem for passwords and users that may appear that they are already in base64_encoding but in reality they are not ( https://github.com/WPChill/wp-smtp/issues/7 )
+Changed: Removed CDN files and added them locally ( https://github.com/WPChill/wp-smtp/issues/8 )
+
+= 1.2.4 =
+Changed: Added base64 encode for username and passwords ( https://github.com/WPChill/wp-smtp/issues/2 )
+Added: Setting to disable the email logging. ( https://github.com/WPChill/wp-smtp/issues/3 )
 
 = 1.2.3 =
 Fix auto loading require path
