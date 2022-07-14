@@ -2026,6 +2026,12 @@ section {
   justify-content: center;
 }
 
+
+.blog .blog-pagination li .dots {
+ background-color: #fff;
+ color: #50B848;
+}
+
 .blog .blog-pagination li span,
 .blog .blog-pagination li.active,
 .blog .blog-pagination li:hover {
