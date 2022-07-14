@@ -18,7 +18,7 @@ class Custom_Permalinks {
 	 *
 	 * @var string
 	 */
-	public $version = '2.0.1';
+	public $version = '2.4.0';
 
 	/**
 	 * Class constructor.
@@ -152,7 +152,7 @@ class Custom_Permalinks {
 	 * @since 1.6.1
 	 * @access public
 	 */
-	public function deactivate_details() {
+	public static function deactivate_details() {
 		include_once CUSTOM_PERMALINKS_PATH . 'admin/class-custom-permalinks-updates.php';
 		new Custom_Permalinks_Updates( 'deactivate' );
 	}

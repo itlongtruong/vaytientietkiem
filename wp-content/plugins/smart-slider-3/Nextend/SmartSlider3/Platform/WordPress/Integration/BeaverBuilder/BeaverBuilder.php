@@ -189,7 +189,7 @@ class BeaverBuilder {
         </select>
         <div style="line-height:2;padding:10px;"><?php n2_e('OR'); ?></div>
 
-        <a href="#" onclick="NextendSmartSliderSelectModal(jQuery(this).siblings('select')) ;return false;" class="fl-builder-smart-slider-select fl-builder-button fl-builder-button-small fl-builder-button-primary" title="Select slider"><?php echo n2_('Select slider'); ?></a>
+        <a href="#" onclick="NextendSmartSliderSelectModal(jQuery(this).siblings('select')) ;return false;" class="fl-builder-smart-slider-select fl-builder-button fl-builder-button-small fl-builder-button-primary" title="Select slider"><?php echo n2_('Select Slider'); ?></a>
         <script>
             (function ($) {
                 var value = $('select[name="<?php echo $name; ?>"]').val();

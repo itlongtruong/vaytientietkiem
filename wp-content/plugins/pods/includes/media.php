@@ -13,7 +13,6 @@
  * @since 2.0.5
  */
 function pods_image_id_from_field( $image ) {
-
 	$id = 0;
 
 	if ( ! empty( $image ) ) {
@@ -129,7 +128,6 @@ function pods_is_image_size( $size ) {
  * @since 2.0.5
  */
 function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = '', $force = false ) {
-
 	if ( ! $default && -1 !== $default ) {
 		/**
 		 * Filter for default value.
@@ -177,7 +175,6 @@ function pods_image( $image, $size = 'thumbnail', $default = 0, $attributes = ''
  * @since 2.0.5
  */
 function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = false ) {
-
 	if ( ! $default && -1 !== $default ) {
 		/**
 		 * Filter for default value.
@@ -228,13 +225,13 @@ function pods_image_url( $image, $size = 'thumbnail', $default = 0, $force = fal
  * @param string  $url         URL to media for import.
  * @param int     $post_parent ID of post parent, default none.
  * @param boolean $featured    Whether to set it as the featured (post thumbnail) of the post parent.
+ * @param boolean $strict      Whether to return errors upon failure.
  *
  * @return int Attachment ID.
  *
  * @since 2.3.0
  */
-function pods_attachment_import( $url, $post_parent = null, $featured = false ) {
-
+function pods_attachment_import( $url, $post_parent = null, $featured = false, $strict = false ) {
 	$filename = explode( '?', $url );
 	$filename = $filename[0];
 
@@ -248,19 +245,23 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false ) 
 	$uploads = wp_upload_dir( current_time( 'mysql' ) );
 
 	if ( ! ( $uploads && false === $uploads['error'] ) ) {
+		if ( $strict ) {
+			throw new Exception( sprintf( 'Attachment import failed, uploads directory has a problem: %s', var_export( $uploads, true ) ) );
+		}
+
 		return 0;
 	}
 
 	$filename = wp_unique_filename( $uploads['path'], $filename );
 	$new_file = $uploads['path'] . '/' . $filename;
 
-	$file_data = @file_get_contents( $url );
+	if ( ! copy( $url, $new_file ) ) {
+        if ( $strict ) {
+            throw new Exception( sprintf( 'Attachment import failed, could not copy file from %s to %s', $url, $new_file ) );
+        }
 
-	if ( ! $file_data ) {
-		return 0;
-	}
-
-	file_put_contents( $new_file, $file_data );
+        return 0;
+    }
 
 	$stat  = stat( dirname( $new_file ) );
 	$perms = $stat['mode'] & 0000666;
@@ -269,6 +270,10 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false ) 
 	$wp_filetype = wp_check_filetype( $filename );
 
 	if ( ! $wp_filetype['type'] || ! $wp_filetype['ext'] ) {
+		if ( $strict ) {
+			throw new Exception( sprintf( 'Attachment import failed, filetype check failed: %s', var_export( $wp_filetype, true ) ) );
+		}
+
 		return 0;
 	}
 
@@ -283,6 +288,10 @@ function pods_attachment_import( $url, $post_parent = null, $featured = false ) 
 	$attachment_id = wp_insert_attachment( $attachment, $new_file, $post_parent );
 
 	if ( is_wp_error( $attachment_id ) ) {
+		if ( $strict ) {
+			throw new Exception( sprintf( 'Attachment import failed, wp_insert_attachment failed: %s', var_export( $attachment_id, true ) ) );
+		}
+
 		return 0;
 	}
 
@@ -338,7 +347,6 @@ function pods_maybe_image_resize( $attachment_id, $size ) {
  * @since 2.3.0
  */
 function pods_image_resize( $attachment_id, $size ) {
-
 	$size_data = array();
 
 	if ( ! is_array( $size ) ) {
@@ -416,7 +424,6 @@ function pods_image_resize( $attachment_id, $size ) {
  * @return string
  */
 function pods_audio( $url, $args = false ) {
-
 	// Support arrays.
 	if ( is_array( $url ) ) {
 		$url = pods_v( 'ID', $url );
@@ -440,7 +447,6 @@ function pods_audio( $url, $args = false ) {
 	}
 
 	return wp_audio_shortcode( $audio_args );
-
 }
 
 /**
@@ -456,7 +462,6 @@ function pods_audio( $url, $args = false ) {
  * @return string
  */
 function pods_video( $url, $args = false ) {
-
 	// Support arrays.
 	if ( is_array( $url ) ) {
 		$url = pods_v( 'ID', $url );
@@ -480,7 +485,6 @@ function pods_video( $url, $args = false ) {
 	}
 
 	return wp_video_shortcode( $video_args );
-
 }
 
 /**

@@ -7,6 +7,7 @@ use Nextend\Framework\Asset\Js\Js;
 use Nextend\Framework\Form\AbstractField;
 use Nextend\Framework\Form\ContainerInterface;
 use Nextend\Framework\Form\Element\AbstractFieldHidden;
+use Nextend\Framework\Form\Element\Grouping;
 use Nextend\Framework\Form\Element\OnOff;
 use Nextend\Framework\Form\Element\Select;
 use Nextend\Framework\Form\Element\Text\Number;
@@ -21,6 +22,10 @@ class DatePicker extends AbstractFieldHidden implements ContainerInterface {
 
     protected $onOffLabel = '';
 
+    protected $hasOnOff = true;
+
+    private $dateTimeFields = array();
+
     public function __construct($insertAt, $name = '', $label = false, $default = '', $parameters = array()) {
 
         $this->onOffLabel = $label;
@@ -31,26 +36,28 @@ class DatePicker extends AbstractFieldHidden implements ContainerInterface {
     protected function fetchElement() {
         $this->addDatePicker();
 
-        $html = '';
-
         $subElements = array();
-        $i           = 0;
+        foreach ($this->dateTimeFields as $dateTimeField) {
+
+            $dateTimeField->setExposeName(false);
+            $subElements[] = $dateTimeField->getID();
+        }
+
+        $html = '';
 
         $element = $this->first;
         while ($element) {
 
             $element->setExposeName(false);
 
-            $html            .= $this->decorateElement($element);
-            $subElements[$i] = $element->getID();
-            $i++;
+            $html .= $this->decorateElement($element);
 
             $element = $element->getNext();
         }
 
         $html .= parent::fetchElement();
 
-        Js::addInline('new _N2.FormElementDatePicker("' . $this->fieldID . '", ' . json_encode($subElements) . ');');
+        Js::addInline('new _N2.FormElementDatePicker("' . $this->fieldID . '", ' . json_encode($subElements) . ', ' . json_encode($this->hasOnOff) . ');');
 
         return $html;
     }
@@ -79,20 +86,23 @@ class DatePicker extends AbstractFieldHidden implements ContainerInterface {
 
         $valueArray = $valueArray + $defaultArray;
 
-        $controlName = $this->getControlName();
-        new OnOff($this, $this->name . '-enable', $this->onOffLabel, 0, array(
-            'relatedFieldsOn' => array(
-                $controlName . $this->name . '-year',
-                $controlName . $this->name . '-month',
-                $controlName . $this->name . '-day',
-                $controlName . $this->name . '-hour',
-                $controlName . $this->name . '-minute'
-            )
-        ));
+        $dateGroup = new Grouping($this, $this->name . '-date');
 
+        $controlName = $this->getControlName();
+        if ($this->hasOnOff) {
+            $this->dateTimeFields[] = new OnOff($dateGroup, $this->name . '-enable', $this->onOffLabel, 0, array(
+                'relatedFieldsOn' => array(
+                    $controlName . $this->name . '-year',
+                    $controlName . $this->name . '-month',
+                    $controlName . $this->name . '-day',
+                    $controlName . $this->name . '-hour',
+                    $controlName . $this->name . '-minute'
+                )
+            ));
+        }
 
         //YEAR
-        new Number($this, $this->name . '-year', n2_('Year'), $valueArray[0], array(
+        $this->dateTimeFields[] = new Number($dateGroup, $this->name . '-year', n2_('Year'), $valueArray[0], array(
             'wide' => 4,
             'min'  => 1970,
             'max'  => 9999
@@ -104,7 +114,7 @@ class DatePicker extends AbstractFieldHidden implements ContainerInterface {
             $formattedValue          = sprintf("%02d", $i);
             $months[$formattedValue] = $formattedValue;
         }
-        new Select($this, $this->name . '-month', n2_('Month'), $valueArray[1], array(
+        $this->dateTimeFields[] = new Select($dateGroup, $this->name . '-month', n2_('Month'), $valueArray[1], array(
             'options' => $months
         ));
 
@@ -115,9 +125,11 @@ class DatePicker extends AbstractFieldHidden implements ContainerInterface {
             $days[$formattedValue] = $formattedValue;
         }
 
-        new Select($this, $this->name . '-day', n2_('Day'), $valueArray[2], array(
-            'options' => $days,
+        $this->dateTimeFields[] = new Select($dateGroup, $this->name . '-day', n2_('Day'), $valueArray[2], array(
+            'options' => $days
         ));
+
+        $timeGroup = new Grouping($this, $this->name . '-time');
 
         //HOUR
         $hours = array();
@@ -125,15 +137,19 @@ class DatePicker extends AbstractFieldHidden implements ContainerInterface {
             $formattedValue         = sprintf("%02d", $i);
             $hours[$formattedValue] = $formattedValue;
         }
-        new Select($this, $this->name . '-hour', n2_('Hour'), $valueArray[3], array(
+        $this->dateTimeFields[] = new Select($timeGroup, $this->name . '-hour', n2_('Hour'), $valueArray[3], array(
             'options' => $hours
         ));
 
         //MINUTE
-        new NumberSlider($this, $this->name . '-minute', n2_('Minute'), $valueArray[4], array(
+        $this->dateTimeFields[] = new NumberSlider($timeGroup, $this->name . '-minute', n2_('Minute'), $valueArray[4], array(
             'wide' => 2,
             'min'  => 0,
             'max'  => 59
         ));
+    }
+
+    protected function setOnOff($hasOnOff) {
+        $this->hasOnOff = $hasOnOff;
     }
 }

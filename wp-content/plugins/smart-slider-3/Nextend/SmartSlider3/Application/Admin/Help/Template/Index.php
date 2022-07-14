@@ -190,6 +190,72 @@ $conflicts = $this->getConflicts();
                 $debug[] = '';
             }
 
+            if (extension_loaded('gd')) {
+                $debug[] = 'GD modules status:';
+                foreach (gd_info() as $module => $status) {
+                    $debug[] = $module . ' : ' . (!empty($status) ? $status : "0");
+                }
+            }
+            $debug[] = '';
+
+            if (function_exists('get_loaded_extensions')) {
+
+                $debug[] = 'Uncommon PHP extensions:';
+
+                $debug[] = implode(" \t", array_diff(get_loaded_extensions(), array(
+                    'Core',
+                    'openssl',
+                    'pcre',
+                    'zlib',
+                    'SPL',
+                    'session',
+                    'standard',
+                    'cgi-fcgi',
+                    'mysqlnd',
+                    'PDO',
+                    'bz2',
+                    'calendar',
+                    'filter',
+                    'hash',
+                    'Reflection',
+                    'zip',
+                    'Zend OPcache',
+                    'shmop',
+                    'sodium',
+                    'date',
+                    'dom',
+                    'ctype',
+                    'xml',
+                    'libxml',
+                    'fileinfo',
+                    'ftp',
+                    'gettext',
+                    'iconv',
+                    'intl',
+                    'json',
+                    'exif',
+                    'mysqli',
+                    'pdo_mysql',
+                    'Phar',
+                    'posix',
+                    'readline',
+                    'SimpleXML',
+                    'soap',
+                    'sockets',
+                    'sysvmsg',
+                    'sysvsem',
+                    'sysvshm',
+                    'tokenizer',
+                    'wddx',
+                    'xmlreader',
+                    'xmlwriter',
+                    'xsl'
+                )));
+
+                $debug[] = '';
+            }
+
+
             $debugConflicts = $this->getDebugConflicts();
             if (empty($debugConflicts)) {
                 $debug[] = 'No conflicts detected';

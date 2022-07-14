@@ -5,6 +5,9 @@
  * @package WPSEO\Admin\Import\Plugins
  */
 
+use Yoast\WP\SEO\Actions\Importing\Aioseo\Aioseo_Cleanup_Action;
+use Yoast\WP\SEO\Actions\Importing\Aioseo\Aioseo_Posts_Importing_Action;
+
 /**
  * Class with functionality to import & clean All in One SEO Pack post metadata, versions 4 and up.
  */
@@ -212,4 +215,25 @@ class WPSEO_Import_AIOSEO_V4 extends WPSEO_Plugin_Importer {
 	}
 
 	// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+	/**
+	 * Detects whether there is AIOSEO data to import by looking whether the AIOSEO data have been cleaned up.
+	 *
+	 * @return bool Boolean indicating whether there is something to import.
+	 */
+	protected function detect() {
+		$aioseo_cleanup_action = YoastSEO()->classes->get( Aioseo_Cleanup_Action::class );
+		return ( $aioseo_cleanup_action->get_total_unindexed() > 0 );
+	}
+
+	/**
+	 * Import AIOSEO post data from their custom indexable table. Not currently used.
+	 *
+	 * @return void
+	 */
+	protected function import() {
+		// This is overriden from the import.js and never run.
+		$aioseo_posts_import_action = YoastSEO()->classes->get( Aioseo_Posts_Importing_Action::class );
+		$aioseo_posts_import_action->index();
+	}
 }

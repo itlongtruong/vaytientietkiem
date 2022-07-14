@@ -24,6 +24,15 @@ abstract class Filters {
 	private $plugin;
 
 	/**
+	 * ID of the WooCommerce product that is being duplicated.
+	 *
+	 * @since 4.1.4
+	 *
+	 * @var integer
+	 */
+	private static $originalProductId;
+
+	/**
 	 * Construct method.
 	 *
 	 * @since 4.0.0
@@ -40,15 +49,50 @@ abstract class Filters {
 			add_filter( 'weglot_active_translation_before_treat_page', '__return_false' );
 		}
 
+		if ( preg_match( '#(\.xml)$#i', $_SERVER['REQUEST_URI'] ) ) {
+			add_filter( 'jetpack_boost_should_defer_js', '__return_false' );
+		}
+
 		// GoDaddy CDN compatibility.
 		add_filter( 'wpaas_cdn_file_ext', [ $this, 'goDaddySitemapXml' ] );
 
 		// Duplicate Post integration.
-		add_action( 'dp_duplicate_post', [ $this, 'duplicatePostIntegration' ], 10, 3 );
-		add_action( 'dp_duplicate_page', [ $this, 'duplicatePostIntegration' ], 10, 3 );
+		add_action( 'dp_duplicate_post', [ $this, 'duplicatePost' ], 10, 2 );
+		add_action( 'dp_duplicate_page', [ $this, 'duplicatePost' ], 10, 2 );
+		add_action( 'woocommerce_product_duplicate_before_save', [ $this, 'scheduleDuplicateProduct' ], 10, 2 );
 
-		// Classic Editor emoji
 		add_action( 'init', [ $this, 'removeEmojiScript' ] );
+		add_action( 'init', [ $this, 'resetUserBBPress' ], -1 );
+
+		// Bypass the JWT Auth plugin's unnecessary restrictions. https://wordpress.org/plugins/jwt-auth/
+		add_filter( 'jwt_auth_default_whitelist', [ $this, 'allowRestRoutes' ] );
+
+		// Clear the site authors cache.
+		add_action( 'profile_update', [ $this, 'clearAuthorsCache' ] );
+		add_action( 'user_register', [ $this, 'clearAuthorsCache' ] );
+
+		add_filter( 'aioseo_public_post_types', [ $this, 'removeFalsePublicPostTypes' ] );
+
+		// Disable Jetpack sitemaps module.
+		if ( aioseo()->options->sitemap->general->enable ) {
+			add_filter( 'jetpack_get_available_modules', [ $this, 'disableJetpackSitemaps' ] );
+		}
+	}
+
+	/**
+	 * Resets the current user if bbPress is active.
+	 * We have to do this because our calls to wp_get_current_user() set the current user early and this breaks core functionality in bbPress.
+	 *
+	 *
+	 * @since 4.1.5
+	 *
+	 * @return void
+	 */
+	public function resetUserBBPress() {
+		if ( function_exists( 'bbpress' ) ) {
+			global $current_user;
+			$current_user = null;
+		}
 	}
 
 	/**
@@ -58,21 +102,17 @@ abstract class Filters {
 	 *
 	 * @param  integer $newPostId    The new post ID.
 	 * @param  WP_Post $originalPost The original post object.
-	 * @param  string  $status       The status of the post.
 	 * @return void
 	 */
-	public function duplicatePostIntegration( $newPostId, $originalPost, $status ) {
-		$originalAioseoPost = Models\Post::getPost( $originalPost->ID );
+	public function duplicatePost( $newPostId, $originalPost ) {
+		$originalPostId     = is_object( $originalPost ) ? $originalPost->ID : $originalPost;
+		$originalAioseoPost = Models\Post::getPost( $originalPostId );
 		if ( ! $originalAioseoPost->exists() ) {
 			return;
 		}
 
-		$newPost = Models\Post::getPost( $newPostId );
-		if ( $newPost->exists() ) {
-			return;
-		}
-
-		$columns = $originalAioseoPost->getColumns();
+		$newAioseoPost = Models\Post::getPost( $newPostId );
+		$columns       = $originalAioseoPost->getColumns();
 		foreach ( $columns as $column => $value ) {
 			// Skip the ID column.
 			if ( 'id' === $column ) {
@@ -80,13 +120,44 @@ abstract class Filters {
 			}
 
 			if ( 'post_id' === $column ) {
-				$newPost->$column = $newPostId;
+				$newAioseoPost->$column = $newPostId;
 				continue;
 			}
 
-			$newPost->$column = $originalAioseoPost->$column;
+			$newAioseoPost->$column = $originalAioseoPost->$column;
 		}
-		$newPost->save();
+		$newAioseoPost->save();
+	}
+
+	/**
+	 * Schedules an action to duplicate our meta after the duplicated WooCommerce product has been saved.
+	 *
+	 * @since 4.1.4
+	 *
+	 * @param  \WP_Product $newProduct      The new, duplicated product.
+	 * @param  \WP_Product $originalProduct The original product.
+	 * @return void
+	 */
+	public function scheduleDuplicateProduct( $newProduct, $originalProduct ) {
+		self::$originalProductId = $originalProduct->get_id();
+		add_action( 'wp_insert_post', [ $this, 'duplicateProduct' ], 10, 2 );
+	}
+
+	/**
+	 * Duplicates our meta for the new WooCommerce product.
+	 *
+	 * @since 4.1.4
+	 *
+	 * @param  integer  $postId The new post ID.
+	 * @param  \WP_Post $post   The new post object.
+	 * @return void
+	 */
+	public function duplicateProduct( $postId, $post ) {
+		if ( ! self::$originalProductId || 'product' !== $post->post_type ) {
+			return;
+		}
+
+		$this->duplicatePost( $postId, self::$originalProductId );
 	}
 
 	/**
@@ -118,6 +189,7 @@ abstract class Filters {
 	public function goDaddySitemapXml( $extensions ) {
 		$key = array_search( 'xml', $extensions, true );
 		unset( $extensions[ $key ] );
+
 		return $extensions;
 	}
 
@@ -163,6 +235,7 @@ abstract class Filters {
 				$actions = 'after' === $position ? array_merge( $actions, $link ) : array_merge( $link, $actions );
 			}
 		}
+
 		return $actions;
 	}
 
@@ -177,5 +250,71 @@ abstract class Filters {
 		if ( apply_filters( 'aioseo_classic_editor_disable_emoji_script', false ) ) {
 			remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
 		}
+	}
+
+	/**
+	 * Add our routes to this plugins allow list.
+	 *
+	 * @since 4.1.4
+	 *
+	 * @param  array $allowList The original list.
+	 * @return array            The modified list.
+	 */
+	public function allowRestRoutes( $allowList ) {
+		return array_merge( $allowList, [
+			'/aioseo/'
+		] );
+	}
+
+	/**
+	 * Clear the site authors cache when user is updated or registered.
+	 *
+	 * @since 4.1.8
+	 *
+	 * @return void
+	 */
+	public function clearAuthorsCache() {
+		aioseo()->core->cache->delete( 'site_authors' );
+	}
+
+	/**
+	 * Filters out post types that aren't really public when getPublicPostTypes() is called.
+	 *
+	 * @since 4.1.9
+	 *
+	 * @param  array[Object]|array[string] $postTypes The post types
+	 * @return array[Object]|array[string]            The filtered post types.
+	 */
+	public function removeFalsePublicPostTypes( $postTypes ) {
+		$elementorEnabled = isset( aioseo()->standalone->pageBuilderIntegrations['elementor'] ) &&
+			aioseo()->standalone->pageBuilderIntegrations['elementor']->isPluginActive();
+
+		if ( ! $elementorEnabled ) {
+			return $postTypes;
+		}
+
+		foreach ( $postTypes as $index => $postType ) {
+			if ( is_string( $postType ) && 'elementor_library' === $postType ) {
+				unset( $postTypes[ $index ] );
+				continue;
+			}
+
+			if ( is_array( $postType ) && 'elementor_library' === $postType['name'] ) {
+				unset( $postTypes[ $index ] );
+			}
+		}
+
+		return array_values( $postTypes );
+	}
+
+	/**
+	 * Disable Jetpack sitemaps module.
+	 *
+	 * @since 4.2.2
+	 */
+	function disableJetpackSitemaps( $active ) {
+		unset( $active['sitemaps'] );
+
+		return $active;
 	}
 }

@@ -5,8 +5,10 @@ namespace Nextend\SmartSlider3\Renderable\Item\Text;
 
 
 use Nextend\Framework\Platform\Platform;
+use Nextend\Framework\Sanitize;
 use Nextend\Framework\View\Html;
 use Nextend\SmartSlider3\Renderable\Item\AbstractItemFrontend;
+use function Nextend\Framework\Sanitize;
 
 class ItemTextFrontend extends AbstractItemFrontend {
 
@@ -37,7 +39,7 @@ class ItemTextFrontend extends AbstractItemFrontend {
         ), array(
             '<' . $tagName . ' class="' . $font . ' ' . $style . ' ">',
             '</' . $tagName . '>'
-        ), $this->wpautop($this->closeTags($owner->fill($this->data->get('content', '')))));
+        ), $this->wpautop(Sanitize::filter_allowed_html($this->closeTags($owner->fill($this->data->get('content', ''))), '<p>')));
 
         $class = '';
 
@@ -55,7 +57,7 @@ class ItemTextFrontend extends AbstractItemFrontend {
             ), array(
                 '<' . $tagName . ' class="' . $font . ' ' . $style . ' ">',
                 '</' . $tagName . '>'
-            ), $this->wpautop($this->closeTags($owner->fill($this->data->get('contentmobile', ''))))));
+            ), $this->wpautop(Sanitize::filter_allowed_html($this->closeTags($owner->fill($this->data->get('contentmobile', ''))), '<p>'))));
         }
 
         $hasTablet = false;
@@ -81,7 +83,7 @@ class ItemTextFrontend extends AbstractItemFrontend {
             ), array(
                 '<' . $tagName . ' class="' . $font . ' ' . $style . '">',
                 '</' . $tagName . '>'
-            ), $this->wpautop($this->closeTags($owner->fill($this->data->get('contenttablet', ''))))));
+            ), $this->wpautop(Sanitize::filter_allowed_html($this->closeTags($owner->fill($this->data->get('contenttablet', '')))), '<p>')));
             $class = '';
         }
 

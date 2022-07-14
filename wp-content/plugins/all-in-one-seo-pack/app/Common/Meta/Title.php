@@ -32,6 +32,7 @@ class Title {
 	 */
 	public function filterPageTitle( $wpTitle = '' ) {
 		$title = $this->getTitle();
+
 		return ! empty( $title ) ? aioseo()->helpers->encodeOutputHtml( $title ) : $wpTitle;
 	}
 
@@ -45,10 +46,12 @@ class Title {
 	public function getHomePageTitle() {
 		if ( 'page' === get_option( 'show_on_front' ) ) {
 			$title = $this->getPostTitle( (int) get_option( 'page_on_front' ) );
+
 			return $title ? $title : aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'name' ) );
 		}
 
 		$title = $this->helpers->prepare( aioseo()->options->searchAppearance->global->siteTitle );
+
 		return $title ? $title : aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'name' ) );
 	}
 
@@ -62,7 +65,7 @@ class Title {
 	 * @return string           The page title.
 	 */
 	public function getTitle( $post = null, $default = false ) {
-		if ( is_home() && 'posts' === get_option( 'show_on_front' ) ) {
+		if ( is_home() ) {
 			return $this->getHomePageTitle();
 		}
 
@@ -72,6 +75,7 @@ class Title {
 
 		if ( is_category() || is_tag() || is_tax() ) {
 			$term = $post ? $post : get_queried_object();
+
 			return $this->getTermTitle( $term, $default );
 		}
 
@@ -87,13 +91,17 @@ class Title {
 			return $this->helpers->prepare( aioseo()->options->searchAppearance->archives->search->title );
 		}
 
-		if ( is_archive() ) {
+		if ( is_post_type_archive() ) {
 			$postType = get_queried_object();
-			$options  = aioseo()->options->noConflict();
-			if ( $options->searchAppearance->dynamic->archives->has( $postType->name ) ) {
-				return $this->helpers->prepare( aioseo()->options->searchAppearance->dynamic->archives->{ $postType->name }->title );
+			if ( is_a( $postType, 'WP_Post_Type' ) ) {
+				$dynamicOptions = aioseo()->dynamicOptions->noConflict();
+				if ( $dynamicOptions->searchAppearance->archives->has( $postType->name ) ) {
+					return $this->helpers->prepare( aioseo()->dynamicOptions->searchAppearance->archives->{ $postType->name }->title );
+				}
 			}
 		}
+
+		return '';
 	}
 
 	/**
@@ -107,6 +115,9 @@ class Title {
 	 */
 	public function getPostTitle( $post, $default = false ) {
 		$post = $post && is_object( $post ) ? $post : aioseo()->helpers->getPost( $post );
+		if ( ! is_a( $post, 'WP_Post' ) ) {
+			return '';
+		}
 
 		static $posts = [];
 		if ( isset( $posts[ $post->ID ] ) ) {
@@ -129,6 +140,7 @@ class Title {
 		}
 
 		$posts[ $post->ID ] = $title;
+
 		return $posts[ $post->ID ];
 	}
 
@@ -146,8 +158,8 @@ class Title {
 			return $postTypeTitle[ $postType ];
 		}
 
-		if ( aioseo()->options->searchAppearance->dynamic->postTypes->has( $postType ) ) {
-			$title = aioseo()->options->searchAppearance->dynamic->postTypes->{$postType}->title;
+		if ( aioseo()->dynamicOptions->searchAppearance->postTypes->has( $postType ) ) {
+			$title = aioseo()->dynamicOptions->searchAppearance->postTypes->{$postType}->title;
 		}
 
 		$postTypeTitle[ $postType ] = empty( $title ) ? '' : $title;
@@ -165,20 +177,25 @@ class Title {
 	 * @return string           The term title.
 	 */
 	public function getTermTitle( $term, $default = false ) {
+		if ( ! is_a( $term, 'WP_Term' ) ) {
+			return '';
+		}
+
 		static $terms = [];
 		if ( isset( $terms[ $term->term_id ] ) ) {
 			return $terms[ $term->term_id ];
 		}
 
-		$title   = '';
-		$options = aioseo()->options->noConflict();
-		if ( ! $title && $options->searchAppearance->dynamic->taxonomies->has( $term->taxonomy ) ) {
-			$newTitle = aioseo()->options->searchAppearance->dynamic->taxonomies->{$term->taxonomy}->title;
+		$title          = '';
+		$dynamicOptions = aioseo()->dynamicOptions->noConflict();
+		if ( ! $title && $dynamicOptions->searchAppearance->taxonomies->has( $term->taxonomy ) ) {
+			$newTitle = aioseo()->dynamicOptions->searchAppearance->taxonomies->{$term->taxonomy}->title;
 			$newTitle = preg_replace( '/#taxonomy_title/', aioseo()->helpers->escapeRegexReplacement( $term->name ), $newTitle );
 			$title    = $this->helpers->prepare( $newTitle, false, $default );
 		}
 
 		$terms[ $term->term_id ] = $title;
+
 		return $terms[ $term->term_id ];
 	}
 }

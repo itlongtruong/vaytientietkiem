@@ -38,21 +38,21 @@ class PostsTerms {
 			], 400 );
 		}
 
-		$searchQuery = aioseo()->db->db->esc_like( $body['query'] );
+		$searchQuery = esc_sql( aioseo()->core->db->db->esc_like( $body['query'] ) );
 
-		$objects = [];
-		$options = aioseo()->options->noConflict();
+		$objects        = [];
+		$dynamicOptions = aioseo()->dynamicOptions->noConflict();
 		if ( 'posts' === $body['type'] ) {
 
 			$postTypes = aioseo()->helpers->getPublicPostTypes( true );
 			foreach ( $postTypes as $postType ) {
 				// Check if post type isn't noindexed.
-				if ( $options->searchAppearance->dynamic->postTypes->has( $postType ) && ! $options->searchAppearance->dynamic->postTypes->$postType->show ) {
+				if ( $dynamicOptions->searchAppearance->postTypes->has( $postType ) && ! $dynamicOptions->searchAppearance->postTypes->$postType->show ) {
 					$postTypes = aioseo()->helpers->unsetValue( $postTypes, $postType );
 				}
 			}
 
-			$objects = aioseo()->db
+			$objects = aioseo()->core->db
 				->start( 'posts' )
 				->select( 'ID, post_type, post_title, post_name' )
 				->whereRaw( "( post_title LIKE '%{$searchQuery}%' OR post_name LIKE '%{$searchQuery}%' OR ID = '{$searchQuery}' )" )
@@ -68,12 +68,12 @@ class PostsTerms {
 			$taxonomies = aioseo()->helpers->getPublicTaxonomies( true );
 			foreach ( $taxonomies as $taxonomy ) {
 				// Check if taxonomy isn't noindexed.
-				if ( $options->searchAppearance->dynamic->taxonomies->has( $taxonomy ) && ! $options->searchAppearance->dynamic->taxonomies->$taxonomy->show ) {
+				if ( $dynamicOptions->searchAppearance->taxonomies->has( $taxonomy ) && ! $dynamicOptions->searchAppearance->taxonomies->$taxonomy->show ) {
 					$taxonomies = aioseo()->helpers->unsetValue( $taxonomies, $taxonomy );
 				}
 			}
 
-			$objects = aioseo()->db
+			$objects = aioseo()->core->db
 				->start( 'terms as t' )
 				->select( 't.term_id as term_id, t.slug as slug, t.name as name, tt.taxonomy as taxonomy' )
 				->join( 'term_taxonomy as tt', 't.term_id = tt.term_id', 'INNER' )
@@ -145,10 +145,66 @@ class PostsTerms {
 			'postData' => [
 				'parsedTitle'       => aioseo()->tags->replaceTags( $thePost->title, $args['postId'] ),
 				'parsedDescription' => aioseo()->tags->replaceTags( $thePost->description, $args['postId'] ),
-				'content'           => aioseo()->helpers->doShortcodes( aioseo()->helpers->getAnalysisContent( $args['postId'] ) ),
+				'content'           => aioseo()->helpers->theContent( self::getAnalysisContent( $args['postId'] ) ),
 				'slug'              => get_post_field( 'post_name', $args['postId'] )
 			]
 		], 200 );
+	}
+
+	/**
+	 * Get the first attached image for a post.
+	 *
+	 * @since 4.1.8
+	 *
+	 * @param  \WP_REST_Request  $request The REST Request
+	 * @return \WP_REST_Response          The response.
+	 */
+	public static function getFirstAttachedImage( $request ) {
+		$args = $request->get_params();
+
+		if ( empty( $args['postId'] ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => __( 'No post ID was provided.', 'all-in-one-seo-pack' )
+			], 400 );
+		}
+
+		// Disable the cache.
+		aioseo()->social->image->useCache = false;
+
+		$post = aioseo()->helpers->getPost( $args['postId'] );
+		$url  = aioseo()->social->image->getImage( 'facebook', 'attach', $post );
+
+		// Reset the cache property.
+		aioseo()->social->image->useCache = true;
+
+		return new \WP_REST_Response( [
+			'success' => true,
+			'url'     => is_array( $url ) ? $url[0] : $url,
+		], 200 );
+	}
+
+	/**
+	 * Returns the posts custom fields.
+	 *
+	 * @since 4.0.6
+	 *
+	 * @param  WP_Post|int $post The post.
+	 * @return string            The custom field content.
+	 */
+	private static function getAnalysisContent( $post = null ) {
+		$post            = ( $post && is_object( $post ) ) ? $post : aioseo()->helpers->getPost( $post );
+		$customFieldKeys = aioseo()->dynamicOptions->searchAppearance->postTypes->{$post->post_type}->customFields;
+
+		if ( empty( $customFieldKeys ) ) {
+			return get_post_field( 'post_content', $post->ID );
+		}
+
+		$customFieldKeys    = explode( ' ', sanitize_text_field( $customFieldKeys ) );
+		$customFieldContent = aioseo()->helpers->getCustomFieldsContent( $post->ID, $customFieldKeys );
+		$analysisContent    = $post->post_content . apply_filters( 'aioseo_analysis_content', $customFieldContent );
+
+		return sanitize_post_field( 'post_content', $analysisContent, $post->ID, 'display' );
 	}
 
 	/**
@@ -181,12 +237,13 @@ class PostsTerms {
 		$body['twitter_title']       = ! empty( $body['twitter_title'] ) ? sanitize_text_field( $body['twitter_title'] ) : null;
 		$body['twitter_description'] = ! empty( $body['twitter_description'] ) ? sanitize_text_field( $body['twitter_description'] ) : null;
 
-		$saveStatus = Models\Post::savePost( $postId, $body );
+		// @TODO: Refactor this as it's not the best way to look for errors.
+		$error = Models\Post::savePost( $postId, $body );
 
-		if ( ! empty( $saveStatus ) ) {
+		if ( ! empty( $error ) ) {
 			return new \WP_REST_Response( [
 				'success' => false,
-				'message' => 'Failed update query: ' . $saveStatus
+				'message' => 'Failed update query: ' . $error
 			], 401 );
 		}
 
@@ -259,7 +316,7 @@ class PostsTerms {
 		}
 		$thePost->save();
 
-		$lastError = aioseo()->db->lastError();
+		$lastError = aioseo()->core->db->lastError();
 		if ( ! empty( $lastError ) ) {
 			return new \WP_REST_Response( [
 				'success' => false,
@@ -309,7 +366,7 @@ class PostsTerms {
 		$thePost->updated = gmdate( 'Y-m-d H:i:s' );
 		$thePost->save();
 
-		$lastError = aioseo()->db->lastError();
+		$lastError = aioseo()->core->db->lastError();
 		if ( ! empty( $lastError ) ) {
 			return new \WP_REST_Response( [
 				'success' => false,
@@ -320,6 +377,62 @@ class PostsTerms {
 		return new \WP_REST_Response( [
 			'success' => true,
 			'post'    => $postId
+		], 200 );
+	}
+
+	/**
+	 * Disable the link format education.
+	 *
+	 * @since 4.2.2
+	 *
+	 * @param  \WP_REST_Request  $request The REST Request
+	 * @return \WP_REST_Response          The response.
+	 */
+	public static function disableLinkFormatEducation( $request ) {
+		$args = $request->get_params();
+
+		if ( empty( $args['postId'] ) ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => __( 'No post ID was provided.', 'all-in-one-seo-pack' )
+			], 400 );
+		}
+
+		$thePost = Models\Post::getPost( $args['postId'] );
+		$thePost->options->linkFormat->linkAssistantDismissed = true;
+		$thePost->save();
+
+		return new \WP_REST_Response( [
+			'success' => true
+		], 200 );
+	}
+
+	/**
+	 * Increment the internal link count.
+	 *
+	 * @since 4.2.2
+	 *
+	 * @param  \WP_REST_Request  $request The REST Request
+	 * @return \WP_REST_Response          The response.
+	 */
+	public static function updateInternalLinkCount( $request ) {
+		$args  = $request->get_params();
+		$body  = $request->get_json_params();
+		$count = ! empty( $body['count'] ) ? intval( $body['count'] ) : null;
+
+		if ( empty( $args['postId'] ) || null === $count ) {
+			return new \WP_REST_Response( [
+				'success' => false,
+				'message' => __( 'No post ID or count was provided.', 'all-in-one-seo-pack' )
+			], 400 );
+		}
+
+		$thePost = Models\Post::getPost( $args['postId'] );
+		$thePost->options->linkFormat->internalLinkCount = $count;
+		$thePost->save();
+
+		return new \WP_REST_Response( [
+			'success' => true
 		], 200 );
 	}
 }

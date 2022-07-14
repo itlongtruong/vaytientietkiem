@@ -18,11 +18,17 @@ use Nextend\Framework\Plugin;
 
 /*
 jQuery.getJSON('https://www.googleapis.com/webfonts/v1/webfonts?sort=alpha&key=AIzaSyBIzBtder0-ef5a6kX-Ri9IfzVwFu21PGw').done(function(data){
-var f = [];
-for(var i = 0; i < data.items.length; i++){
-f.push(data.items[i].family);
-}
-console.log(JSON.stringify(f));
+    var f = [];
+    for(var i = 0; i < data.items.length; i++){
+    f.push(data.items[i].family);
+    }
+
+    var fontString='';
+    f.forEach(function(font){
+        fontString+= font+'\n';
+    });
+
+    console.log(fontString);
 });
 */
 
@@ -52,8 +58,16 @@ class GoogleFonts extends AbstractFontSource {
 
         $row1 = new FieldsetRow($container, 'fonts-google-1');
         new OnOff($row1, 'google-enabled', n2_('Frontend'), 1, array(
-            'tipLabel'       => n2_('Frontend'),
-            'tipDescription' => n2_('You can load Google Fonts on the frontend.')
+            'tipLabel'        => n2_('Frontend'),
+            'tipDescription'  => n2_('You can load Google Fonts on the frontend.'),
+            'relatedFieldsOn' => array(
+                'fontsgoogle-cache'
+            )
+        ));
+        new OnOff($row1, 'google-cache', n2_('Save fonts locally'), 0, array(
+            'tipLabel'       => n2_('Save fonts locally'),
+            'tipDescription' => n2_('You can store the used Google Fonts on your server. This way all Google Fonts will load from your own domain.'),
+            'tipLink'        => 'https://smartslider.helpscoutdocs.com/article/1787-fonts#google'
         ));
         new OnOff($row1, 'google-enabled-backend', n2_('Backend'), 1, array(
             'tipLabel'       => n2_('Backend'),

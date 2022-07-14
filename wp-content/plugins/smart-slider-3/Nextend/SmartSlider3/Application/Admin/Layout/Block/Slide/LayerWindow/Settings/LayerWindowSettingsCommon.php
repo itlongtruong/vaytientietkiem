@@ -107,7 +107,7 @@ class LayerWindowSettingsCommon extends AbstractLayerWindowSettings {
 
         $margin = new MarginPadding($size, 'normal-margin', n2_('Margin'), '0|*|0|*|0|*|0', array(
             'rowAttributes'  => array(
-                'data-devicespecific' => 'right'
+                'data-devicespecific' => ''
             ),
             'tipLabel'       => n2_('Margin'),
             'tipDescription' => n2_('With margins you can create distance between your layers.')
@@ -230,7 +230,7 @@ class LayerWindowSettingsCommon extends AbstractLayerWindowSettings {
             'unit'          => '%',
             'wide'          => 3,
             'rowAttributes' => array(
-                'data-devicespecific' => 'right'
+                'data-devicespecific' => ''
             )
         ));
 

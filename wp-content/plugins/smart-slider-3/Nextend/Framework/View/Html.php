@@ -236,7 +236,13 @@ class Html {
         if ($attributes === null) {
             if (class_exists('\\Nextend\\Framework\\Settings', false)) {
                 $value       = trim(html_entity_decode(strip_tags(Settings::get('scriptattributes', ''))));
-                $_attributes = explode(' ', str_replace('\'', "", str_replace("\"", "", $value)));
+                $_attributes = explode(' ', str_replace(array(
+                    '\'',
+                    "\""
+                ), "", str_replace(array(
+                    "onload",
+                    "onerror"
+                ), "not-allowed", $value)));
                 if (!empty($value) && !empty($_attributes)) {
                     foreach ($_attributes as $attr) {
                         if (strpos($attr, '=') !== false) {
@@ -309,6 +315,10 @@ class Html {
 
             if (defined('JETPACK__VERSION')) {
                 $attrs['class'] .= ' jetpack-lazy-image';
+            }
+
+            if (defined('PERFMATTERS_VERSION')) {
+                $attrs['class'] .= ' no-lazy';
             }
         }
 

@@ -58,6 +58,10 @@ class PlatformWordPress extends AbstractPlatform {
         return current_time('timestamp');
     }
 
+    public function localizeDate($date) {
+        return date_i18n(get_option('date_format'), $date);
+    }
+
     public function filterAssetsPath($assetsPath) {
 
         return str_replace(SMARTSLIDER3_LIBRARY_PATH, NEXTEND_SMARTSLIDER_3 . 'Public', $assetsPath);
@@ -71,7 +75,14 @@ class PlatformWordPress extends AbstractPlatform {
             return $upload_dir['basedir'];
         }
 
-        return Filesystem::convertToRealDirectorySeparator(str_replace('//', '/', $upload_dir['basedir']));
+        /**
+         * We need to use realpath() to resolve the basedir values where some parts point to the parent folder ( e.g.: ../)
+         */
+        $upload_base_dir_real_path = realpath($upload_dir['basedir']);
+
+        $upload_base_dir = $upload_base_dir_real_path ? $upload_base_dir_real_path : $upload_dir['basedir'];
+
+        return Filesystem::convertToRealDirectorySeparator(str_replace('//', '/', $upload_base_dir));
     }
 
     public function getUserEmail() {

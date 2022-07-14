@@ -71,7 +71,7 @@ class DiviModuleSmartSlider extends ET_Builder_Module {
         return $fields;
     }
 
-    function shortcode_callback($atts, $content = null, $function_name) {
+    function shortcode_callback($atts, $content, $function_name) {
         $sliderIdOrAlias = $this->shortcode_atts['slider'];
         $module_class    = '';
         $module_class    = ET_Builder_Element::add_module_order_class($module_class, $function_name);
@@ -84,7 +84,7 @@ class DiviModuleSmartSlider extends ET_Builder_Module {
     }
 
     public function field_smart_slider_renderer() {
-        $output = sprintf('<input type="button" class="button button-upload" value="%1$s" onclick="NextendSmartSliderSelectModal(jQuery(this).siblings(\'.regular-text\')); return false;">', n2_('Select slider'));
+        $output = sprintf('<input type="button" class="button button-upload" value="%1$s" onclick="NextendSmartSliderSelectModal(jQuery(this).siblings(\'.regular-text\')); return false;">', n2_('Select Slider'));
 
         return $output;
     }

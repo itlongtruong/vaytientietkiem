@@ -111,7 +111,7 @@ class PodsMigrate {
 
 		$this->data = array_merge( $defaults, (array) $data );
 	}
-	
+
 	/**
 	 * Get items.
 	 *
@@ -120,9 +120,9 @@ class PodsMigrate {
 	 * @return array List of data items.
 	 */
 	private function get_items() {
-		
-		return empty( $this->data['single'] ) ? 
-			$this->data['items'] : 
+
+		return empty( $this->data['single'] ) ?
+			$this->data['items'] :
 			array( $this->data['items'] );
 
 	}
@@ -273,11 +273,22 @@ class PodsMigrate {
 				$data['items'][ $key ] = array();
 
 				foreach ( $data['columns'] as $ckey => $column ) {
-					$data['items'][ $key ][ $column ] = ( isset( $row[ $ckey ] ) ? $row[ $ckey ] : '' );
+					$column_value = ( isset( $row[ $ckey ] ) ? $row[ $ckey ] : '' );
 
-					if ( 'NULL' === $data['items'][ $key ][ $column ] ) {
-						$data['items'][ $key ][ $column ] = null;
+					if ( 'NULL' === $column_value ) {
+						// Maybe set the value as null.
+						$column_value = null;
+					} elseif (
+						0 === strpos( $column_value, '\\=' )
+						|| 0 === strpos( $column_value, '\\+' )
+						|| 0 === strpos( $column_value, '\\-' )
+						|| 0 === strpos( $column_value, '\\@' )
+					) {
+						// Maybe remove the first backslash.
+						$column_value = substr( $column_value, 1 );
 					}
+
+					$data['items'][ $key ][ $column ] = $column_value;
 				}
 			}
 		}
@@ -622,6 +633,16 @@ class PodsMigrate {
 				}
 
 				$value = str_replace( array( '"', "\r\n", "\r", "\n" ), array( '\\"', "\n", "\n", '\n' ), $value );
+
+				// Maybe escape the first character to prevent formulas from getting used when opening the file with a spreadsheet app.
+				if (
+					0 === strpos( $value, '=' )
+					|| 0 === strpos( $value, '+' )
+					|| 0 === strpos( $value, '-' )
+					|| 0 === strpos( $value, '@' )
+				) {
+					$value = '\\' . $value;
+				}
 
 				$line .= '"' . $value . '"' . $this->delimiter;
 			}//end foreach
@@ -1101,7 +1122,7 @@ class PodsMigrate {
 						$field_data = array();
 					}
 
-					$field_data = array_merge( $default_field_data, $field_data );
+					$field_data = pods_config_merge_data( $default_field_data, $field_data );
 
 					if ( null === $field_data['field'] ) {
 						$field_data['field'] = $field;

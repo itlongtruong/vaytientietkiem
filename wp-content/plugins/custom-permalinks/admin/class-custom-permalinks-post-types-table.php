@@ -148,7 +148,7 @@ final class Custom_Permalinks_Post_Types_Table extends WP_List_Table {
 				<?php
 					esc_html_e( 'Search results for: ', 'custom-permalinks' );
 					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					printf( '<strong>%s</strong>', $search_permalink );
+					printf( '<strong>%s</strong>', esc_html( $search_permalink ) );
 				?>
 				</span>
 			<?php endif; ?>
@@ -303,7 +303,7 @@ final class Custom_Permalinks_Post_Types_Table extends WP_List_Table {
 				);
 
 				if ( 1 === intval( $wpml_lang_format ) ) {
-					$home_url = $site_url;
+					$home_url = site_url();
 				}
 			}
 

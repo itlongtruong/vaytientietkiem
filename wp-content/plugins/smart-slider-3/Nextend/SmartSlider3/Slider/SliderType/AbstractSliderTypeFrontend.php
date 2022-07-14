@@ -78,7 +78,7 @@ abstract class AbstractSliderTypeFrontend {
 
     protected function getSliderClasses() {
 
-        return $this->slider->getAlias() . ' ' . implode('', $this->classes);
+        return $this->slider->getAlias() . ' ' . implode(' ', $this->classes);
     }
 
     protected function openSliderElement() {

@@ -5,6 +5,7 @@ namespace Nextend\Framework\Style;
 
 
 use Nextend\Framework\Parser\Color;
+use Nextend\Framework\Sanitize;
 
 class Style {
 
@@ -56,7 +57,10 @@ class Style {
     }
 
     public function parsePadding($v) {
-        $padding   = explode('|*|', $v);
+        $padding   = array_map(array(
+            Sanitize::class,
+            'esc_css_value'
+        ), explode('|*|', $v));
         $unit      = array_pop($padding);
         $padding[] = '';
 
@@ -64,7 +68,10 @@ class Style {
     }
 
     public function parseBoxShadow($v) {
-        $boxShadow = explode('|*|', $v);
+        $boxShadow = array_map(array(
+            Sanitize::class,
+            'esc_css_value'
+        ), explode('|*|', $v));
 
         if ($boxShadow[0] == '0' && $boxShadow[1] == '0' && $boxShadow[2] == '0' && $boxShadow[3] == '0') {
             return 'box-shadow: none;';
@@ -76,20 +83,22 @@ class Style {
     }
 
     public function parseBorder($v) {
-        $border = explode('|*|', $v);
-        $style  = 'border-width: ' . $border[0] . 'px;';
-        $style  .= 'border-style: ' . $border[1] . ';';
-        $rgba   = Color::hex2rgba($border[2]);
-        $style  .= 'border-color: #' . substr($border[2], 0, 6) . "; border-color: RGBA(" . $rgba[0] . ',' . $rgba[1] . ',' . $rgba[2] . ',' . round($rgba[3] / 127, 2) . ');';
 
-        return $style;
+        $border = array_map(array(
+            Sanitize::class,
+            'esc_css_value'
+        ), explode('|*|', $v));
+        $rgba   = Color::hex2rgba($border[2]);
+
+        return 'border: ' . $border[0] . 'px ' . $border[1] . ' RGBA(' . $rgba[0] . ',' . $rgba[1] . ',' . $rgba[2] . ',' . round($rgba[3] / 127, 2) . ');';
     }
 
     public function parseBorderRadius($v) {
-        return 'border-radius:' . $v . 'px;';
+        return 'border-radius:' . Sanitize::esc_css_value($v) . 'px;';
     }
 
     public function parseExtra($v) {
-        return $v;
+
+        return Sanitize::esc_css_string($v);
     }
 }

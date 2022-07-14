@@ -55,19 +55,17 @@ class Helpers {
 	 */
 	public function sanitize( $value, $objectId = false, $replaceTags = false ) {
 		$value = $replaceTags ? $value : aioseo()->tags->replaceTags( $value, $objectId );
-
-		if ( apply_filters( "aioseo_{$this->name}_do_shortcodes", true ) ) {
-			$value = aioseo()->helpers->doShortcodes( $value );
-		}
+		$value = aioseo()->helpers->doShortcodes( $value );
 
 		$value = aioseo()->helpers->decodeHtmlEntities( $value );
-		$value = aioseo()->helpers->encodeExceptions( $value );
+		$value = $this->encodeExceptions( $value );
 		$value = wp_strip_all_tags( strip_shortcodes( $value ) );
 		// Because we encoded the exceptions, we need to decode them again first to prevent double encoding later down the line.
 		$value = aioseo()->helpers->decodeHtmlEntities( $value );
 
 		// Trim internal and external whitespace.
 		$value = preg_replace( '/[\s]+/u', ' ', trim( $value ) );
+
 		return aioseo()->helpers->internationalize( $value );
 	}
 
@@ -82,7 +80,11 @@ class Helpers {
 	 * @return string                The sanitized value.
 	 */
 	public function prepare( $value, $objectId = false, $replaceTags = false ) {
-		if ( ! empty( $value ) && ! is_admin() && 1 < aioseo()->helpers->getPageNumber() ) {
+		if (
+			! empty( $value ) &&
+			! is_admin() &&
+			1 < aioseo()->helpers->getPageNumber()
+		) {
 			$value .= '&nbsp;' . trim( aioseo()->options->searchAppearance->advanced->pagedFormat );
 		}
 
@@ -90,5 +92,23 @@ class Helpers {
 		$value = apply_filters( $this->supportedFilters[ $this->name ], $value );
 
 		return $this->sanitize( $value, $objectId, $replaceTags );
+	}
+
+	/**
+	 * Encodes a number of exceptions before we strip tags.
+	 * We need this function to allow certain character (combinations) in the title/description.
+	 *
+	 * @since 4.1.1
+	 *
+	 * @param  string $string The string.
+	 * @return string $string The string with exceptions encoded.
+	 */
+	public function encodeExceptions( $string ) {
+		$exceptions = [ '<3' ];
+		foreach ( $exceptions as $exception ) {
+			$string = preg_replace( "/$exception/", aioseo()->helpers->encodeOutputHtml( $exception ), $string );
+		}
+
+		return $string;
 	}
 }

@@ -343,11 +343,11 @@ class Slide extends AbstractRenderableOwner {
                 'class' => 'n2-ss-slide--focus'
             );
 
-            if (isset($this->linkAttributes['role']) && $this->linkAttributes['role'] != 'button') {
+            if (!isset($this->linkAttributes['role']) || $this->linkAttributes['role'] != 'button') {
                 $attributes['tabindex'] = '-1';
             }
 
-            $this->html = Html::tag('div', $attributes, $this->getTitle());
+            $this->html = Html::tag('div', $attributes, Sanitize::remove_all_html($this->getTitle()));
             $this->html .= Html::tag('div', $this->containerAttributes, $mainContainer->render($this->sliderObject->isAdmin));
         }
     }
@@ -898,6 +898,6 @@ class Slide extends AbstractRenderableOwner {
 
         $sources[] = Html::tag('img', $attributes, false);
 
-        return HTML::tag('picture', array(), implode('', $sources));
+        return HTML::tag('picture', Html::addExcludeLazyLoadAttributes(), implode('', $sources));
     }
 }

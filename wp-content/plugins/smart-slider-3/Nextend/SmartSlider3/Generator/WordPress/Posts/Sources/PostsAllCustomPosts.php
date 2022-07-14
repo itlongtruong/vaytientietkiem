@@ -13,3 +13,4 @@ use Nextend\SmartSlider3\Generator\AbstractGenerator;
 use Nextend\SmartSlider3\Generator\WordPress\Posts\Elements\PostsAllTaxonomies;
 use Nextend\SmartSlider3\Generator\WordPress\Posts\Elements\PostsMetaKeys;
 use Nextend\SmartSlider3\Generator\WordPress\Posts\Elements\PostsPostTypes;
+use Nextend\SmartSlider3\Generator\WordPress\Posts\GeneratorGroupPosts;

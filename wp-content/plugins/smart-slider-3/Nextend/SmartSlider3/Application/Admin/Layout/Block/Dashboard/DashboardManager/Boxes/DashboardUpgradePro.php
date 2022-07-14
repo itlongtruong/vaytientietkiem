@@ -21,7 +21,7 @@ use Nextend\SmartSlider3\SmartSlider3Info;
         <div class="n2_dashboard_manager_upgrade_pro__details">
             <a target="_blank" href="<?php echo SmartSlider3Info::decorateExternalUrl('https://smartslider3.com/sample-sliders/', array('utm_source' => $this->getSource() . '-sample-sliders')); ?>" class="n2_dashboard_manager_upgrade_pro__details_option">
                 <i class="ssi_16 ssi_16--filledcheck"></i>
-                <div class="n2_dashboard_manager_upgrade_pro__details_option_label"><?php n2_e('120+ slider templates'); ?></div>
+                <div class="n2_dashboard_manager_upgrade_pro__details_option_label"><?php echo sprintf(n2_('%d+ slider templates'), '120'); ?></div>
             </a>
             <a target="_blank" href="<?php echo SmartSlider3Info::decorateExternalUrl('https://smartslider3.com/slide-library/', array('utm_source' => $this->getSource() . '-slide-library')); ?>" class="n2_dashboard_manager_upgrade_pro__details_option">
                 <i class="ssi_16 ssi_16--filledcheck"></i>
@@ -29,7 +29,7 @@ use Nextend\SmartSlider3\SmartSlider3Info;
             </a>
             <a target="_blank" href="<?php echo SmartSlider3Info::decorateExternalUrl('https://smartslider3.com/layers/', array('utm_source' => $this->getSource() . '-layers')); ?>" class="n2_dashboard_manager_upgrade_pro__details_option">
                 <i class="ssi_16 ssi_16--filledcheck"></i>
-                <div class="n2_dashboard_manager_upgrade_pro__details_option_label"><?php n2_e('20 new layers'); ?></div>
+                <div class="n2_dashboard_manager_upgrade_pro__details_option_label"><?php echo sprintf(n2_('%d new layers'), '20'); ?></div>
             </a>
             <a target="_blank" href="<?php echo SmartSlider3Info::decorateExternalUrl('https://smartslider3.com/features/', array('utm_source' => $this->getSource() . '-free-pro')); ?>" class="n2_dashboard_manager_upgrade_pro__details_option">
                 <i class="ssi_16 ssi_16--filledcheck"></i>

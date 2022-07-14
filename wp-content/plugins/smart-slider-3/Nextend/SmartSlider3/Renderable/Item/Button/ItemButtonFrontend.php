@@ -5,6 +5,7 @@ namespace Nextend\SmartSlider3\Renderable\Item\Button;
 
 
 use Nextend\Framework\Icon\Icon;
+use Nextend\Framework\Sanitize;
 use Nextend\Framework\View\Html;
 use Nextend\SmartSlider3\Renderable\AbstractRenderableOwner;
 use Nextend\SmartSlider3\Renderable\Item\AbstractItemFrontend;
@@ -30,7 +31,7 @@ class ItemButtonFrontend extends AbstractItemFrontend {
             "class" => "n2-ss-button-container n2-ss-item-content n2-ow " . $font . ($this->data->get('nowrap', 1) ? ' n2-ss-nowrap' : '') . ($this->isAuto() ? ' n2-ss-button-container--non-full-width' : '')
         ));
 
-        $content = '<div>' . $owner->fill($this->data->get("content")) . '</div>';
+        $content = '<div>' . Sanitize::filter_allowed_html($owner->fill($this->data->get("content"))) . '</div>';
 
         $attrs = array();
 

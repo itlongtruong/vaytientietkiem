@@ -41,6 +41,8 @@ class VueSettings {
 		'showUpgradeBar'  => true,
 		'showSetupWizard' => true,
 		'toggledCards'    => [
+			'dashboardOverview'            => true,
+			'dashboardSeoSetup'            => true,
 			'dashboardSeoSiteScore'        => true,
 			'dashboardNotifications'       => true,
 			'dashboardSupport'             => true,
@@ -83,6 +85,7 @@ class VueSettings {
 			'searchSchema'                 => true,
 			'searchMediaAttachments'       => true,
 			'searchAdvanced'               => true,
+			'searchAdvancedCrawlCleanup'   => true,
 			'authorArchives'               => true,
 			'dateArchives'                 => true,
 			'searchArchives'               => true,
@@ -92,6 +95,8 @@ class VueSettings {
 			'localBusinessOpeningHours'    => true,
 			'locationsSettings'            => true,
 			'advancedLocationsSettings'    => true,
+			'localBusinessMapsApiKey'      => true,
+			'localBusinessMapsSettings'    => true,
 			'robotsEditor'                 => true,
 			'badBotBlocker'                => true,
 			'databaseTools'                => true,
@@ -107,7 +112,8 @@ class VueSettings {
 			'fullSiteRedirectsHttpHeaders' => true,
 			'htmlSitemap'                  => true,
 			'htmlSitemapSettings'          => true,
-			'htmlSitemapAdvancedSettings'  => true
+			'htmlSitemapAdvancedSettings'  => true,
+			'linkAssistantSettings'        => true
 		],
 		'toggledRadio'    => [
 			'locationsShowOnWebsite'        => 'widget',
@@ -188,6 +194,7 @@ class VueSettings {
 	 */
 	public function __call( $name, $arguments = [] ) {
 		$value = isset( $this->settings[ $name ] ) ? $this->settings[ $name ] : ( ! empty( $arguments[0] ) ? $arguments[0] : $this->getDefault( $name ) );
+
 		return $value;
 	}
 
@@ -201,6 +208,7 @@ class VueSettings {
 	 */
 	public function __get( $name ) {
 		$value = isset( $this->settings[ $name ] ) ? $this->settings[ $name ] : $this->getDefault( $name );
+
 		return $value;
 	}
 

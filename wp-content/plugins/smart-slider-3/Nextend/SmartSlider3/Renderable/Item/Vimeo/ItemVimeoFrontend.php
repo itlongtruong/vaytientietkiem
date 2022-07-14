@@ -17,16 +17,31 @@ class ItemVimeoFrontend extends AbstractItemFrontend {
         $owner = $this->layer->getOwner();
 
         $url = $owner->fill($this->data->get("vimeourl"));
-        if (preg_match('/https?:\/\/(?:www\.|player\.)?vimeo.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/', $url, $matches)) {
-            $videoID = $matches[3];
+
+        $urlParts = explode('?', $url);
+
+        $privateID = '';
+        if (preg_match('/https?:\/\/(?:www\.|player\.)?vimeo.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/', $urlParts[0], $matches)) {
+            $videoID   = $matches[3];
+            $privateID = str_replace($matches, '', $urlParts[0]);
         } else {
-            $videoID = preg_replace('/\D/', '', $url);
+            $videoID = preg_replace('/\D/', '', $urlParts[0]);
         }
 
         $this->data->set("vimeocode", $videoID);
 
+        if (isset($urlParts[1])) {
+            $parsedUrl = parse_url('https://player.vimeo.com/video/' . $videoID . '?' . $urlParts[1]);
+            parse_str($parsedUrl['query'], $query);
+            if (isset($query['h'])) {
+                $privateID = $query['h'];
+            }
+        }
+
+        $this->data->set("privateid", $privateID);
+
         $hasImage      = 0;
-        $coverImageUrl = $this->data->get('image');
+        $coverImageUrl = $owner->fill($this->data->get('image'));
 
         $coverImage = '';
         if (!empty($coverImageUrl)) {
@@ -101,6 +116,8 @@ class ItemVimeoFrontend extends AbstractItemFrontend {
 
         $aspectRatio = $this->data->get('aspect-ratio', '16:9');
 
+        $owner = $this->layer->getOwner();
+
         $style = '';
         if ($aspectRatio == 'custom') {
             $style = 'style="padding-top:' . ($this->data->get('aspect-ratio-height', '9') / $this->data->get('aspect-ratio-width', '16') * 100) . '%"';
@@ -132,7 +149,7 @@ class ItemVimeoFrontend extends AbstractItemFrontend {
         return Html::tag('div', array(
             "class"             => 'n2_ss_video_player n2-ow-all',
             'data-aspect-ratio' => $aspectRatio,
-            "style"             => 'background: URL(' . ResourceTranslator::toUrl($this->data->getIfEmpty('image', '$ss3-frontend$/images/placeholder/video.png')) . ') no-repeat 50% 50%; background-size: cover;'
+            "style"             => 'background: URL(' . ResourceTranslator::toUrl($owner->fill($this->data->getIfEmpty('image', '$ss3-frontend$/images/placeholder/video.png'))) . ') no-repeat 50% 50%; background-size: cover;'
         ), '<div class="n2_ss_video_player__placeholder" ' . $style . '></div>' . '<div class="n2_ss_video_player__cover">' . $playButton . '</div>');
 
     }

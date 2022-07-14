@@ -30,12 +30,12 @@ class Organization extends Graph {
 		];
 
 		$logo = $this->logo();
-		if ( $logo ) {
+		if ( ! empty( $logo ) ) {
 			$data['logo']  = $logo;
 			$data['image'] = [ '@id' => $homeUrl . '#organizationLogo' ];
 		}
 
-		$socialUrls = $this->socialUrls();
+		$socialUrls = $this->getOrganizationProfiles();
 		if ( $socialUrls ) {
 			$data['sameAs'] = $socialUrls;
 		}
@@ -54,6 +54,7 @@ class Organization extends Graph {
 				];
 			}
 		}
+
 		return $data;
 	}
 
@@ -74,5 +75,7 @@ class Organization extends Graph {
 		if ( $imageId ) {
 			return $this->image( $imageId, 'organizationLogo' );
 		}
+
+		return [];
 	}
 }

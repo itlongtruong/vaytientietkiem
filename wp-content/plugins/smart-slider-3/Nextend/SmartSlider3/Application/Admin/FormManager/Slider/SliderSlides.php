@@ -7,6 +7,7 @@ use Nextend\Framework\Form\Container\ContainerTable;
 use Nextend\Framework\Form\Element\OnOff;
 use Nextend\Framework\Form\Element\Select;
 use Nextend\Framework\Form\Element\Text\Number;
+use Nextend\Framework\Form\Element\Text\NumberSlider;
 use Nextend\Framework\Form\FormTabbed;
 
 class SliderSlides extends AbstractSliderTab {
@@ -48,9 +49,26 @@ class SliderSlides extends AbstractSliderTab {
          * Used for field injection: /slides/slides-design/slides-design-1/backgroundMode
          */
         new Select\FillMode($row1, 'backgroundMode', n2_('Slide background image fill'), 'fill', array(
-            'tipLabel'       => n2_('Slide background image fill'),
-            'tipDescription' => n2_('If the size of your image is not the same as your slider\'s, you can improve the result with the filling modes.'),
-            'tipLink'        => 'https://smartslider.helpscoutdocs.com/article/1809-slider-settings-slides#slide-background-image-fill'
+            'tipLabel'           => n2_('Slide background image fill'),
+            'tipDescription'     => n2_('If the size of your image is not the same as your slider\'s, you can improve the result with the filling modes.'),
+            'tipLink'            => 'https://smartslider.helpscoutdocs.com/article/1809-slider-settings-slides#slide-background-image-fill',
+            'relatedValueFields' => array(
+                array(
+                    'values' => array(
+                        'blurfit'
+                    ),
+                    'field'  => array(
+                        'sliderbackgroundBlurFit'
+                    )
+                )
+            )
+        ));
+
+        new NumberSlider($row1, 'backgroundBlurFit', n2_('Background Blur'), 7, array(
+            'unit'  => 'px',
+            'min'   => 7,
+            'max'   => '50',
+            'style' => 'width:22px;'
         ));
     }
 

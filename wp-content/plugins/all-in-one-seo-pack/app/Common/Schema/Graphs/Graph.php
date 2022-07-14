@@ -12,6 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.0.0
  */
 abstract class Graph {
+	use Traits\SocialProfiles;
+
 	/**
 	 * Returns the graph data.
 	 *
@@ -44,15 +46,33 @@ abstract class Graph {
 
 		$metaData = wp_get_attachment_metadata( $attachmentId );
 		if ( $metaData ) {
-			$data['width']  = $metaData['width'];
-			$data['height'] = $metaData['height'];
+			$data['width']  = (int) $metaData['width'];
+			$data['height'] = (int) $metaData['height'];
 		}
 
-		$caption = wp_get_attachment_caption( $attachmentId );
-		if ( false !== $caption || ! empty( $caption ) ) {
+		$caption = $this->getImageCaption( $attachmentId );
+		if ( ! empty( $caption ) ) {
 			$data['caption'] = $caption;
 		}
+
 		return $data;
+	}
+
+	/**
+	 * Get the image caption.
+	 *
+	 * @since 4.1.4
+	 *
+	 * @param  int    $attachmentId The attachment ID.
+	 * @return string               The caption.
+	 */
+	private function getImageCaption( $attachmentId ) {
+		$caption = wp_get_attachment_caption( $attachmentId );
+		if ( ! empty( $caption ) ) {
+			return $caption;
+		}
+
+		return get_post_meta( $attachmentId, '_wp_attachment_image_alt', true );
 	}
 
 	/**
@@ -85,83 +105,6 @@ abstract class Graph {
 	}
 
 	/**
-	 * Returns the social media URLs for the author.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @param  int   $authorId   The author ID.
-	 * @return array $socialUrls The social media URLs.
-	 */
-	protected function socialUrls( $authorId = false ) {
-		$socialUrls = [];
-		if ( aioseo()->options->social->profiles->sameUsername->enable ) {
-			$username = aioseo()->options->social->profiles->sameUsername->username;
-			$urls = [
-				'facebookPageUrl' => "https://facebook.com/$username",
-				'twitterUrl'      => "https://twitter.com/$username",
-				'instagramUrl'    => "https://instagram.com/$username",
-				'pinterestUrl'    => "https://pinterest.com/$username",
-				'youtubeUrl'      => "https://youtube.com/$username",
-				'linkedinUrl'     => "https://linkedin.com/in/$username",
-				'tumblrUrl'       => "https://$username.tumblr.com",
-				'yelpPageUrl'     => "https://yelp.com/biz/$username",
-				'soundCloudUrl'   => "https://soundcloud.com/$username",
-				'wikipediaUrl'    => "https://en.wikipedia.org/wiki/$username",
-				'myspaceUrl'      => "https://myspace.com/$username"
-			];
-
-			$included = aioseo()->options->social->profiles->sameUsername->included;
-			foreach ( $urls as $name => $value ) {
-				if ( in_array( $name, $included, true ) ) {
-					$socialUrls[ $name ] = $value;
-				} else {
-					$notIncluded = aioseo()->options->social->profiles->urls->$name;
-					if ( ! empty( $notIncluded ) ) {
-						$socialUrls[ $name ] = $notIncluded;
-					}
-				}
-			}
-		} else {
-			$socialUrls = [
-				'facebookPageUrl' => aioseo()->options->social->profiles->urls->facebookPageUrl,
-				'twitterUrl'      => aioseo()->options->social->profiles->urls->twitterUrl,
-				'instagramUrl'    => aioseo()->options->social->profiles->urls->instagramUrl,
-				'pinterestUrl'    => aioseo()->options->social->profiles->urls->pinterestUrl,
-				'youtubeUrl'      => aioseo()->options->social->profiles->urls->youtubeUrl,
-				'linkedinUrl'     => aioseo()->options->social->profiles->urls->linkedinUrl,
-				'tumblrUrl'       => aioseo()->options->social->profiles->urls->tumblrUrl,
-				'yelpPageUrl'     => aioseo()->options->social->profiles->urls->yelpPageUrl,
-				'soundCloudUrl'   => aioseo()->options->social->profiles->urls->soundCloudUrl,
-				'wikipediaUrl'    => aioseo()->options->social->profiles->urls->wikipediaUrl,
-				'myspaceUrl'      => aioseo()->options->social->profiles->urls->myspaceUrl
-			];
-		}
-
-		if ( ! $authorId ) {
-			return array_values( array_filter( $socialUrls ) );
-		}
-
-		if ( aioseo()->options->social->facebook->general->showAuthor ) {
-			$meta = get_the_author_meta( 'aioseo_facebook', $authorId );
-			if ( $meta ) {
-				$socialUrls['facebookPageUrl'] = $meta;
-			}
-		} else {
-			$socialUrls['facebookPageUrl'] = '';
-		}
-
-		if ( aioseo()->options->social->twitter->general->showAuthor ) {
-			$meta = get_the_author_meta( 'aioseo_twitter', $authorId );
-			if ( $meta ) {
-				$socialUrls['twitterUrl'] = $meta;
-			}
-		} else {
-			$socialUrls['twitterUrl'] = '';
-		}
-		return array_values( array_filter( $socialUrls ) );
-	}
-
-	/**
 	 * Iterates over a list of functions and sets the results as graph data.
 	 *
 	 * @since 4.0.13
@@ -181,6 +124,7 @@ abstract class Graph {
 				$data[ $k ] = $value;
 			}
 		}
+
 		return $data;
 	}
 }

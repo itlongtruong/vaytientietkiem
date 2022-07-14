@@ -75,6 +75,17 @@ class Compatibility {
              */
             remove_action('admin_notices', 'hmac_admin_notice');
         }
+
+        /**
+         * Plugin: https://wordpress.org/plugins/weglot/
+         *
+         * @see SSDEV-3551
+         */
+        if (defined('WEGLOT_NAME') && isset($_GET['n2prerender']) && isset($_GET['n2app'])) {
+            add_filter('weglot_button_html', function ($button_html) {
+                return '';
+            });
+        }
     }
 
     public function removeEmoji() {

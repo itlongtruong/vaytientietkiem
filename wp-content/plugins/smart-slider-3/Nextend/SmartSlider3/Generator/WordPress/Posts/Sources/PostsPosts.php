@@ -15,6 +15,7 @@ use Nextend\SmartSlider3\Generator\AbstractGenerator;
 use Nextend\SmartSlider3\Generator\WordPress\Posts\Elements\PostsCategories;
 use Nextend\SmartSlider3\Generator\WordPress\Posts\Elements\PostsTags;
 use Nextend\SmartSlider3\Generator\WordPress\Posts\Elements\PostsTaxonomies;
+use Nextend\SmartSlider3\Generator\WordPress\Posts\GeneratorGroupPosts;
 
 class PostsPosts extends AbstractGenerator {
 
@@ -149,35 +150,6 @@ class PostsPosts extends AbstractGenerator {
         return $contents;
     }
 
-    var $ElementorCount = 0;
-    var $ElementorWidgetType = '';
-
-    function getElementorTextEditors($array) {
-        $datas = array();
-        if (!is_array($array)) {
-            $array = (array)$array;
-        }
-        foreach ($array as $key => $value) {
-            if (is_array($value) || is_object($value)) {
-                $datas = array_merge($datas, $this->getElementorTextEditors($value, $key));
-            } else {
-                if (isset($array['widgetType'])) {
-                    $this->ElementorWidgetType = $array['widgetType'];
-                }
-                if ($key == 'editor' && $this->ElementorWidgetType == 'text-editor') {
-                    $this->ElementorCount++;
-                    $datas[$key . $this->ElementorCount] = $value;
-                }
-            }
-        }
-
-        return $datas;
-    }
-
-    function removeShortcodes($variable) {
-        return preg_replace('#\[[^\]]+\]#', '', $variable);
-    }
-
     protected function _getData($count, $startIndex) {
         global $post, $wp_query;
         $tmpPost = $post;
@@ -294,8 +266,7 @@ class PostsPosts extends AbstractGenerator {
 
         $data = array();
         for ($i = 0; $i < count($posts); $i++) {
-            $this->ElementorCount = 0;
-            $record               = array();
+            $record = array();
 
             $post = $posts[$i];
             setup_postdata($post);
@@ -340,29 +311,7 @@ class PostsPosts extends AbstractGenerator {
             $record['date']          = get_the_date('Y-m-d H:i:s');
             $record['modified']      = get_the_modified_date('Y-m-d H:i:s');
 
-            $category = get_the_category($post->ID);
-            if (isset($category[0])) {
-                $record['category_name'] = $category[0]->name;
-                $record['category_link'] = get_category_link($category[0]->cat_ID);
-                $record['category_slug'] = $category[0]->slug;
-            } else {
-                $record['category_name'] = '';
-                $record['category_link'] = '';
-                $record['category_slug'] = '';
-            }
-            $j = 0;
-            if (is_array($category) && count($category) > 1) {
-                foreach ($category as $cat) {
-                    $record['category_name_' . $j] = $cat->name;
-                    $record['category_link_' . $j] = get_category_link($cat->cat_ID);
-                    $record['category_slug_' . $j] = $cat->slug;
-                    $j++;
-                }
-            } else {
-                $record['category_name_0'] = $record['category_name'];
-                $record['category_link_0'] = $record['category_link'];
-                $record['category_slug_0'] = $record['category_slug'];
-            }
+            $record = array_merge($record, GeneratorGroupPosts::getCategoryData($post->ID));
 
             $thumbnail_id             = get_post_thumbnail_id($post->ID);
             $record['featured_image'] = wp_get_attachment_image_url($thumbnail_id, 'full');
@@ -371,7 +320,7 @@ class PostsPosts extends AbstractGenerator {
             } else {
                 $thumbnail_meta = get_post_meta($thumbnail_id, '_wp_attachment_metadata', true);
                 if (isset($thumbnail_meta['sizes'])) {
-                    $sizes  = $this->getImageSizes($thumbnail_id, $thumbnail_meta['sizes']);
+                    $sizes  = GeneratorGroupPosts::getImageSizes($thumbnail_id, $thumbnail_meta['sizes']);
                     $record = array_merge($record, $sizes);
                 }
                 $record['alt'] = '';
@@ -389,109 +338,10 @@ class PostsPosts extends AbstractGenerator {
                 $record['tag_' . ($j + 1)] = $tags[$j]->name;
             }
 
-            if (class_exists('acf')) {
-                $fields = get_fields($post->ID);
-                if (is_array($fields) && !empty($fields) && count($fields)) {
-                    foreach ($fields as $k => $v) {
-                        $type = $this->getACFType($k, $post->ID);
-                        $k    = str_replace('-', '', $k);
+            $record = array_merge($record, GeneratorGroupPosts::getACFData($post->ID));
 
-                        while (isset($record[$k])) {
-                            $k = 'acf_' . $k;
-                        }
-                        if (!is_array($v) && !is_object($v)) {
-                            if ($type['type'] == "image" && is_numeric($type["value"])) {
-                                $thumbnail_meta = wp_get_attachment_metadata($type["value"]);
-                                $src            = wp_get_attachment_image_src($v, $thumbnail_meta['file']);
-                                $v              = $src[0];
-                            }
-                            $record[$k] = $v;
-                        } else if (!is_object($v)) {
-                            if (isset($v['url'])) {
-                                $record[$k] = $v['url'];
-                            } else if (is_array($v)) {
-                                foreach ($v as $v_v => $k_k) {
-                                    if (is_array($k_k) && isset($k_k['url'])) {
-                                        $record[$k . $v_v] = $k_k['url'];
-                                    }
-                                }
-                            }
-                        }
-                        if ($type['type'] == "image" && (is_numeric($type["value"]) || is_array($type['value']))) {
-                            if (is_array($type['value'])) {
-                                $sizes = $this->getImageSizes($type["value"]["id"], $type["value"]["sizes"], $k);
-                            } else {
-                                $thumbnail_meta = wp_get_attachment_metadata($type["value"]);
-                                $sizes          = $this->getImageSizes($type["value"], $thumbnail_meta['sizes'], $k);
-                            }
-                            $record = array_merge($record, $sizes);
-                        }
-                    }
-                }
-            }
+            $record = array_merge($record, GeneratorGroupPosts::extractPostMeta(get_post_meta($post->ID)));
 
-            $post_meta = get_post_meta($post->ID);
-
-            $excluded_metas = array(
-                'hc-editor-mode',
-                'techline-sidebar'
-            );
-
-            foreach ($excluded_metas as $excluded_meta) {
-                if (isset($post_meta[$excluded_meta])) {
-                    unset($post_meta[$excluded_meta]);
-                }
-            }
-
-            if (count($post_meta) && is_array($post_meta) && !empty($post_meta)) {
-                foreach ($post_meta as $key => $value) {
-                    if (count($value) && is_array($value) && !empty($value)) {
-                        foreach ($value as $v) {
-                            if (!empty($v) && !is_array($v) && !is_object($v)) {
-                                $key = str_replace(array(
-                                    '_',
-                                    '-'
-                                ), array(
-                                    '',
-                                    ''
-                                ), $key);
-                                if (array_key_exists($key, $record)) {
-                                    $key = 'meta' . $key;
-                                }
-                                if (is_serialized($v)) {
-                                    $unserialize_values = unserialize($v);
-                                    $unserialize_count  = 1;
-                                    if (!empty($unserialize_values) && is_array($unserialize_values)) {
-                                        foreach ($unserialize_values as $unserialize_value) {
-                                            if (!empty($unserialize_value) && is_string($unserialize_value)) {
-                                                $record['us_' . $key . $unserialize_count] = $unserialize_value;
-                                                $unserialize_count++;
-                                            } else if (is_array($unserialize_value)) {
-                                                foreach ($unserialize_value as $u_v) {
-                                                    if (is_string($u_v)) {
-                                                        $record['us_' . $key . $unserialize_count] = $u_v;
-                                                        $unserialize_count++;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    $record[$key] = $v;
-                                }
-                            }
-                        }
-                    }
-                }
-                if (!empty($record['elementordata'])) {
-                    $elementordatas = json_decode($record['elementordata']);
-                    foreach ($elementordatas as $elementordata) {
-                        foreach ($this->getElementorTextEditors($elementordata) as $elementorKey => $elementorVal) {
-                            $record[$elementorKey] = $elementorVal;
-                        }
-                    }
-                }
-            }
             if (isset($record['primarytermcategory'])) {
                 $primary                         = get_category($record['primarytermcategory']);
                 $record['primary_category_name'] = $primary->name;
@@ -529,7 +379,7 @@ class PostsPosts extends AbstractGenerator {
             if (!empty($remove_shortcode)) {
                 foreach ($remove_shortcode as $variable) {
                     if (isset($record[$variable])) {
-                        $record[$variable] = $this->removeShortcodes($record[$variable]);
+                        $record[$variable] = GeneratorGroupPosts::removeShortcodes($record[$variable]);
                     }
                 }
             }
@@ -548,30 +398,5 @@ class PostsPosts extends AbstractGenerator {
         wp_reset_postdata();
 
         return $data;
-    }
-
-    protected function getImageSizes($thumbnail_id, $sizes, $prefix = false) {
-        $data = array();
-        if (!$prefix) {
-            $prefix = "";
-        } else {
-            $prefix = $prefix . "_";
-        }
-        foreach ($sizes as $size => $image) {
-            $imageSrc                                               = wp_get_attachment_image_src($thumbnail_id, $size);
-            $data[$prefix . 'image_' . $this->clearSizeName($size)] = $imageSrc[0];
-        }
-
-        return $data;
-    }
-
-    protected function clearSizeName($size) {
-        return preg_replace("/-/", "_", $size);
-    }
-
-    protected function getACFType($key, $post_id) {
-        $type = get_field_object($key, $post_id);
-
-        return $type;
     }
 }

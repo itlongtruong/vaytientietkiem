@@ -84,6 +84,18 @@ class OutputBuffer {
                 ));
             });
         }
+
+        if (defined('PERFMATTERS_VERSION')) {
+            /**
+             * @see SSDEV-3398
+             */
+            add_action('template_redirect', function () {
+                ob_start(array(
+                    $this,
+                    "outputCallback"
+                ));
+            }, 11);
+        }
     }
 
     /**

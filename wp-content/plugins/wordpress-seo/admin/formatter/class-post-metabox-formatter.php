@@ -68,7 +68,6 @@ class WPSEO_Post_Metabox_Formatter implements WPSEO_Metabox_Formatter_Interface 
 			'post_edit_url'       => $this->edit_url(),
 			'base_url'            => $this->base_url_for_js(),
 			'metaDescriptionDate' => '',
-
 		];
 
 		if ( $this->post instanceof WP_Post ) {
@@ -82,6 +81,7 @@ class WPSEO_Post_Metabox_Formatter implements WPSEO_Metabox_Formatter_Interface 
 				'social_title_template'       => $this->get_social_title_template(),
 				'social_description_template' => $this->get_social_description_template(),
 				'social_image_template'       => $this->get_social_image_template(),
+				'isInsightsEnabled'           => $this->is_insights_enabled(),
 			];
 
 			$values = ( $values_to_set + $values );
@@ -135,6 +135,11 @@ class WPSEO_Post_Metabox_Formatter implements WPSEO_Metabox_Formatter_Interface 
 		// If %postname% is the last tag, just strip it and use that as a base.
 		if ( preg_match( '#%postname%/?$#', $this->permalink ) === 1 ) {
 			$base_url = preg_replace( '#%postname%/?$#', '', $this->permalink );
+		}
+
+		// If %pagename% is the last tag, just strip it and use that as a base.
+		if ( preg_match( '#%pagename%/?$#', $this->permalink ) === 1 ) {
+			$base_url = preg_replace( '#%pagename%/?$#', '', $this->permalink );
 		}
 
 		return $base_url;
@@ -279,5 +284,14 @@ class WPSEO_Post_Metabox_Formatter implements WPSEO_Metabox_Formatter_Interface 
 	 */
 	private function get_metadesc_date() {
 		return YoastSEO()->helpers->date->format_translated( $this->post->post_date, 'M j, Y' );
+	}
+
+	/**
+	 * Determines whether the insights feature is enabled for this post.
+	 *
+	 * @return bool
+	 */
+	protected function is_insights_enabled() {
+		return WPSEO_Options::get( 'enable_metabox_insights', false );
 	}
 }

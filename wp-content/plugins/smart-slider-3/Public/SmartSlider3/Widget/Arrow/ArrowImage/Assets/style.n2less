@@ -4,6 +4,7 @@
     overflow: hidden;
     line-height: 0 !important;
     z-index: 18;
+    -webkit-user-select: none;
   }
 
   .nextend-arrow img {
@@ -15,10 +16,12 @@
     display: none;
   }
 
+  .nextend-arrow:FOCUS img.n2-arrow-hover-img,
   .nextend-arrow:HOVER img.n2-arrow-hover-img {
     display: inline;
   }
 
+  .nextend-arrow:FOCUS img.n2-arrow-normal-img,
   .nextend-arrow:HOVER img.n2-arrow-normal-img {
     display: none;
   }

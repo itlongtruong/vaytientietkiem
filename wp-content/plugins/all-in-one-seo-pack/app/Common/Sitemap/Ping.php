@@ -6,6 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use AIOSEO\Plugin\Common\Models;
+
 /**
  * Handles our sitemap search engine ping feature.
  *
@@ -47,15 +49,16 @@ class Ping {
 			return;
 		}
 
-		try {
-			if ( as_next_scheduled_action( 'aioseo_sitemap_ping' ) ) {
-				as_unschedule_action( 'aioseo_sitemap_ping', [], 'aioseo' );
-			}
-
-			as_schedule_single_action( time() + 30, 'aioseo_sitemap_ping', [], 'aioseo' );
-		} catch ( \Exception $e ) {
-			// Do nothing.
+		// If Limit Modified Date is enabled, let's return early.
+		$aioseoPost = Models\Post::getPost( $postId );
+		if ( $aioseoPost->limit_modified_date ) {
+			return;
 		}
+
+		// First, unschedule any ping actions that might already be enqueued.
+		aioseo()->helpers->unscheduleAction( 'aioseo_sitemap_ping' );
+		// Then, schedule the new ping.
+		aioseo()->helpers->scheduleSingleAction( 'aioseo_sitemap_ping', 30 );
 	}
 
 	/**
@@ -87,21 +90,19 @@ class Ping {
 	 */
 	public function ping( $sitemapUrls = [] ) {
 		$endpoints = apply_filters( 'aioseo_sitemap_ping_urls', [
-			'https://www.google.com/ping?sitemap=',
-			'https://www.bing.com/ping?sitemap='
+			'https://www.google.com/ping?sitemap='
 		] );
 
 		if ( aioseo()->options->sitemap->general->enable ) {
-			// Check if user has a custom filename from the V3 migration.
-			$sitemapUrls[] = trailingslashit( home_url() ) . aioseo()->sitemap->helpers->filename() . '.xml';
+			$sitemapUrls[] = aioseo()->sitemap->helpers->getUrl( 'general' );
 		}
 		if ( aioseo()->options->sitemap->rss->enable ) {
-			$sitemapUrls[] = trailingslashit( home_url() ) . 'sitemap.rss';
+			$sitemapUrls[] = aioseo()->sitemap->helpers->getUrl( 'rss' );
 		}
 
-		foreach ( aioseo()->sitemap->addons as $addon => $classes ) {
-			if ( ! empty( $classes['ping'] ) ) {
-				$sitemapUrls = $sitemapUrls + $classes['ping']->getPingUrls();
+		foreach ( aioseo()->addons->getLoadedAddons() as $loadedAddon ) {
+			if ( ! empty( $loadedAddon->ping ) && method_exists( $loadedAddon->ping, 'getPingUrls' ) ) {
+				$sitemapUrls = $sitemapUrls + $loadedAddon->ping->getPingUrls();
 			}
 		}
 

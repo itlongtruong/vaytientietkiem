@@ -3,6 +3,7 @@
 namespace Nextend\SmartSlider3\Application\Frontend\Slider;
 
 use Nextend\Framework\Asset\AssetManager;
+use Nextend\Framework\Sanitize;
 use Nextend\SmartSlider3\Settings;
 use Nextend\WordPress\OutputBuffer;
 
@@ -57,7 +58,7 @@ use Nextend\WordPress\OutputBuffer;
         }
     }
 
-    $externals = Settings::get('external-css-files');
+    $externals = Sanitize::esc_attr(Settings::get('external-css-files'));
     if (!empty($externals)) {
         $externals = explode("\n", $externals);
         foreach ($externals as $external) {

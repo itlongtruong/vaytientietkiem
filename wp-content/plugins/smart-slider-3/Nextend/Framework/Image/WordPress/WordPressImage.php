@@ -3,6 +3,7 @@
 namespace Nextend\Framework\Image\WordPress;
 
 use Nextend\Framework\Image\AbstractPlatformImage;
+use Nextend\Framework\Platform\Platform;
 use Nextend\Framework\ResourceTranslator\ResourceTranslator;
 use function wp_check_filetype;
 use function wp_upload_dir;
@@ -11,7 +12,8 @@ class WordPressImage extends AbstractPlatformImage {
 
     public function __construct() {
         $wp_upload_dir = wp_upload_dir();
-        ResourceTranslator::createResource('$upload$', rtrim($wp_upload_dir['basedir'], "/\\"), rtrim($wp_upload_dir['baseurl'], "/\\"));
+
+        ResourceTranslator::createResource('$upload$', rtrim(Platform::getPublicDirectory(), "/\\"), rtrim($wp_upload_dir['baseurl'], "/\\"));
     }
 
     public function initLightbox() {

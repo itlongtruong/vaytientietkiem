@@ -21,6 +21,7 @@ use Nextend\SmartSlider3\Platform\WordPress\Integration\NimbleBuilder\NimbleBuil
 use Nextend\SmartSlider3\Platform\WordPress\Integration\OxygenBuilder\OxygenBuilder;
 use Nextend\SmartSlider3\Platform\WordPress\Integration\RankMath\RankMath;
 use Nextend\SmartSlider3\Platform\WordPress\Integration\TablePress\TablePress;
+use Nextend\SmartSlider3\Platform\WordPress\Integration\TatsuBuilder\TatsuBuilder;
 use Nextend\SmartSlider3\Platform\WordPress\Integration\ThemifyBuilder\ThemifyBuilder;
 use Nextend\SmartSlider3\Platform\WordPress\Integration\Unyson\Unyson;
 use Nextend\SmartSlider3\Platform\WordPress\Integration\VisualComposer1\VisualComposer1;
@@ -129,6 +130,8 @@ class SmartSlider3PlatformWordPress extends AbstractSmartSlider3Platform {
         new RankMath();
 
         new ThemifyBuilder();
+
+        new TatsuBuilder();
     }
 
     /**

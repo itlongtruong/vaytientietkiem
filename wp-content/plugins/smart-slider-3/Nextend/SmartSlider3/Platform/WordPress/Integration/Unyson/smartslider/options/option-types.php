@@ -56,7 +56,7 @@ class FW_Option_Type_SmartSliderChooser extends FW_Option_Type_Select {
 
         $option['attr']['style'] = 'width:240px;vertical-align: middle';
 
-        return Html::tag('div', array(), Html::link(n2_('Select slider'), '#', array(
+        return Html::tag('div', array(), Html::link(n2_('Select Slider'), '#', array(
                 'style'   => 'vertical-align:middle;',
                 'class'   => 'button button-primary',
                 'onclick' => "NextendSmartSliderSelectModal(jQuery('#fw-edit-options-modal-id')); return false;"

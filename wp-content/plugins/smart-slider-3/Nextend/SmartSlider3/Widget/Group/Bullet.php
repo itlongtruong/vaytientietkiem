@@ -45,7 +45,7 @@ class Bullet extends AbstractWidgetGroup {
         /**
          * Used for field removal: /controls/widget-bullet
          */
-        $table = new ContainerTable($container, 'widget-bullet', n2_('Bullet'));
+        $table = new ContainerTable($container, 'widget-bullet', n2_('Bullets'));
 
         new OnOff($table->getFieldsetLabel(), 'widget-bullet-enabled', false, 0, array(
             'relatedFieldsOn' => array(

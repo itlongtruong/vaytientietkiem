@@ -98,7 +98,10 @@ class SliderTypeSimpleAdmin extends AbstractSliderTypeAdmin {
             'relatedFields' => array(
                 'sliderbackground-animation-speed',
                 'slideranimation-shifted-background-animation'
-            )
+            ),
+            'tipLabel' => n2_('Background animation'),
+            'tipDescription' => n2_('Background animations only work on the slide background images, which have Fill selected at their Fill mode. They don\'t affect any images if the background parallax is enabled.'),
+            'tipLink' => 'https://smartslider.helpscoutdocs.com/article/1780-simple-slider-type#background-animation',
         ));
         new Hidden($rowBackgroundAnimation, 'background-animation-color', '333333ff');
 

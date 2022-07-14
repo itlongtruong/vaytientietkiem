@@ -57,7 +57,7 @@ class ViewHelpIndex extends AbstractView {
                 'label' => 'Free vs Pro'
             ),
             array(
-                'url'   => 'https://smartslider.helpscoutdocs.com/article/1918-moving-from-free-to-pro',
+                'url'   => 'https://smartslider.helpscoutdocs.com/article/1918-upgrading-from-free-to-pro',
                 'label' => 'How to update to the Pro version?'
             )
         );
@@ -65,11 +65,15 @@ class ViewHelpIndex extends AbstractView {
 
         return array_merge($arr, array(
             array(
+                'url'   => 'https://smartslider.helpscoutdocs.com/article/1916-slide-editing-in-smart-slider-3#why-is-the-slider-so-tall-on-mobile',
+                'label' => 'Why is the slider tall on mobile?'
+            ), 
+            array(
                 'url'   => 'https://smartslider.helpscoutdocs.com/article/1916-slide-editing-in-smart-slider-3',
                 'label' => 'Slide editing in Smart Slider 3'
             ),
             array(
-                'url'   => 'https://smartslider.helpscoutdocs.com/article/1809-slider-settings-slides#slides-design',
+                'url'   => 'https://smartslider.helpscoutdocs.com/article/1922-how-to-set-your-background-image#cropped',
                 'label' => 'Why are my images cropped?'
             ),
             array(

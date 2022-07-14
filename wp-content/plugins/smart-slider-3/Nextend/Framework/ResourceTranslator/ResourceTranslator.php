@@ -56,7 +56,7 @@ class ResourceTranslator {
             $keyword = $resourceIdentifier->getKeyword();
             if (strpos($resourcePath, $keyword) === 0) {
 
-                return $resourceIdentifier->getUrl() . substr($resourcePath, strlen($keyword));
+                return str_replace(DIRECTORY_SEPARATOR, '/', $resourceIdentifier->getUrl() . substr($resourcePath, strlen($keyword)));
             }
         }
 
@@ -77,9 +77,9 @@ class ResourceTranslator {
         return $resourcePath;
     }
 
-    public static function urlToResource($url) {
+    public static function urlToResource($originalUrl) {
 
-        $url = self::convertUrl($url);
+        $url = self::convertUrl($originalUrl);
 
         foreach (self::$resources as $resourceIdentifier) {
 
@@ -89,7 +89,7 @@ class ResourceTranslator {
             }
         }
 
-        return $url;
+        return $originalUrl;
     }
 
     public static function pathToResource($path) {

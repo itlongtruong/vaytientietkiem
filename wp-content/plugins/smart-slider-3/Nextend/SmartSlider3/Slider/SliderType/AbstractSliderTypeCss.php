@@ -8,9 +8,8 @@ use Nextend\Framework\Asset\Builder\BuilderCss;
 use Nextend\Framework\Asset\Css\Css;
 use Nextend\Framework\Asset\Css\Less\LessCompiler;
 use Nextend\Framework\Notification\Notification;
-use Nextend\Framework\Parser\Font;
-use Nextend\Framework\Parser\Style;
 use Nextend\Framework\Platform\Platform;
+use Nextend\Framework\Sanitize;
 use Nextend\SmartSlider3\Application\Frontend\ApplicationTypeFrontend;
 use Nextend\SmartSlider3\Slider\Feature\Responsive;
 use Nextend\SmartSlider3\Slider\Slider;
@@ -111,7 +110,7 @@ abstract class AbstractSliderTypeCss {
             ), $css);
         }
 
-        $css .= $this->slider->params->get('custom-css-codes', '');
+        $css .= Sanitize::remove_closing_style_tag($this->slider->params->get('custom-css-codes', ''));
 
         return $css;
     }
@@ -125,28 +124,5 @@ abstract class AbstractSliderTypeCss {
         $this->sizes['height']       = intval($this->context['height']);
         $this->sizes['canvasWidth']  = intval($this->context['canvaswidth']);
         $this->sizes['canvasHeight'] = intval($this->context['canvasheight']);
-    }
-
-
-    protected function setContextFonts($matches, $fonts, $value) {
-        $this->context['font' . $fonts] = '~".' . $matches[0] . '"';
-
-        $font = new Font($value);
-
-        $this->context['font' . $fonts . 'text'] = '";' . $font->printTab() . '"';
-        $font->mixinTab('Link');
-        $this->context['font' . $fonts . 'link'] = '";' . $font->printTab('Link') . '"';
-        $font->mixinTab('Link:Hover', 'Link');
-        $this->context['font' . $fonts . 'hover'] = '";' . $font->printTab('Link:Hover') . '"';
-    }
-
-    protected function setContextStyles($selector, $styles, $value) {
-        $this->context['style' . $styles] = '~".' . $selector . '"';
-
-        $style = new Style($value);
-
-        $this->context['style' . $styles . 'normal'] = '";' . $style->printTab('Normal') . '"';
-        $this->context['style' . $styles . 'hover']  = '";' . $style->printTab('Hover') . '"';
-
     }
 }

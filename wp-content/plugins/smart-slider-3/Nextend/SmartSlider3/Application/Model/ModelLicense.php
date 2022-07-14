@@ -71,7 +71,7 @@ class ModelLicense {
     }
 
     public function checkKey($license, $action = 'licensecheck') {
-        return 0;
+        return 'OK';
     
     }
 

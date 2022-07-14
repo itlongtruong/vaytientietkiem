@@ -21,15 +21,20 @@ class Link {
         if ($url == '#' || $isEditor) {
             $attributes['onclick'] = "return false;";
         } else {
-            preg_match('/^([a-zA-Z]+)\[(.*)]$/', $url, $matches);
-            if (!empty($matches)) {
-                $matches[1] = ucfirst($matches[1]);
-                $parser     = self::getParser($matches[1]);
-                if ($parser) {
-                    $url = $parser->parse($matches[2], $attributes);
-                }
+            $url = trim($url);
+            if (substr($url, 0, 11) === "javascript:") {
+                return '#';
             } else {
-                $url = ResourceTranslator::toUrl($url);
+                preg_match('/^([a-zA-Z]+)\[(.*)]$/', $url, $matches);
+                if (!empty($matches)) {
+                    $matches[1] = ucfirst($matches[1]);
+                    $parser     = self::getParser($matches[1]);
+                    if ($parser) {
+                        $url = $parser->parse($matches[2], $attributes);
+                    }
+                } else {
+                    $url = ResourceTranslator::toUrl($url);
+                }
             }
         }
 

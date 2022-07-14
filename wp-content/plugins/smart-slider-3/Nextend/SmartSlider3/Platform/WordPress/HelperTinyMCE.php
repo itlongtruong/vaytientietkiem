@@ -105,7 +105,7 @@ class HelperTinyMCE {
         ?>
         <script>
             window.NextendSmartSliderWPTinyMCEModal = function (ed) {
-                _N2.SelectSlider(n2_('Select A Slider'), function (id, alias) {
+                _N2.SelectSlider(n2_('Select Slider'), function (id, alias) {
                     if (alias) {
                         ed.execCommand('mceInsertContent', false, '<div>[smartslider3 alias="' + alias + '"]</div>');
                     } else if (id) {
@@ -116,7 +116,7 @@ class HelperTinyMCE {
 
             if (typeof QTags !== 'undefined') {
                 QTags.addButton('smart-slider-3', 'Smart Slider', function () {
-                    _N2.SelectSlider(n2_('Select A Slider'), function (id, alias) {
+                    _N2.SelectSlider(n2_('Select Slider'), function (id, alias) {
                         if (alias) {
                             QTags.insertContent("\n" + '<div>[smartslider3 alias="' + alias + '"]</div>');
                         } else if (id) {
@@ -127,7 +127,7 @@ class HelperTinyMCE {
             }
 
             window.NextendSmartSliderSelectModal = function ($input) {
-                _N2.SelectSlider(n2_('Select A Slider'), function (id, alias) {
+                _N2.SelectSlider(n2_('Select Slider'), function (id, alias) {
                     var idOrAlias = false;
                     if (alias) {
                         idOrAlias = alias;
@@ -147,7 +147,7 @@ class HelperTinyMCE {
             };
 
             window.NextendSmartSliderSelectModalCallback = function (cb) {
-                _N2.SelectSlider(n2_('Select A Slider'), function (id, alias) {
+                _N2.SelectSlider(n2_('Select Slider'), function (id, alias) {
                     var idOrAlias = false;
                     if (alias) {
                         idOrAlias = alias;

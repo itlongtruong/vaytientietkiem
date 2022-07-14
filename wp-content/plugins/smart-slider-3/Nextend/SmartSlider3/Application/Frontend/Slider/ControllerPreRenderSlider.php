@@ -17,16 +17,15 @@ class ControllerPreRenderSlider extends AbstractController {
 
         if (empty($sliderIDorAlias)) {
             echo 'Slider ID or alias is empty.';
+        } else {
+            Css::addStaticGroup(ResourceTranslator::toPath('$ss3-frontend$/dist/normalize.min.css'), 'normalize');
+
+
+            $view = new ViewIframe($this);
+
+            $view->setSliderIDorAlias($sliderIDorAlias);
+
+            $view->display();
         }
-
-        Css::addStaticGroup(ResourceTranslator::toPath('$ss3-frontend$/dist/normalize.min.css'), 'normalize');
-
-
-        $view = new ViewIframe($this);
-
-        $view->setSliderIDorAlias($sliderIDorAlias);
-
-        $view->display();
-
     }
 }

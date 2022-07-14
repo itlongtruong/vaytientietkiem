@@ -210,16 +210,6 @@ class WPSEO_Admin_Bar_Menu implements WPSEO_WordPress_Integration {
 			];
 			$wp_admin_bar->add_menu( $admin_bar_menu_args );
 		}
-
-		if ( ! is_network_admin() && $can_manage_options ) {
-			$admin_bar_menu_args = [
-				'parent' => self::MENU_IDENTIFIER,
-				'id'     => 'wpseo-configuration-wizard',
-				'title'  => __( 'Configuration Wizard', 'wordpress-seo' ),
-				'href'   => admin_url( 'admin.php?page=' . WPSEO_Configuration_Page::PAGE_IDENTIFIER ),
-			];
-			$wp_admin_bar->add_menu( $admin_bar_menu_args );
-		}
 	}
 
 	/**
@@ -319,7 +309,7 @@ class WPSEO_Admin_Bar_Menu implements WPSEO_WordPress_Integration {
 			[
 				'id'     => 'wpseo-inlinks',
 				'title'  => __( 'Check links to this URL', 'wordpress-seo' ),
-				'href'   => 'https://search.google.com/search-console/links/drilldown?resource_id=' . urlencode( get_option( 'siteurl' ) ) . '&type=EXTERNAL&target=' . $encoded_url . '&domain=',
+				'href'   => 'https://search.google.com/search-console/links/drilldown?resource_id=' . urlencode( get_option( 'home' ) ) . '&type=EXTERNAL&target=' . $encoded_url . '&domain=',
 			],
 			[
 				'id'     => 'wpseo-kwdensity',

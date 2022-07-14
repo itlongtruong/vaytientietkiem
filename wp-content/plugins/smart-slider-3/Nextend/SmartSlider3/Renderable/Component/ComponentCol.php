@@ -169,8 +169,8 @@ class ComponentCol extends AbstractComponent {
         }
     }
 
-    public function setWidth($device, $gutter) {
-        $this->style->add($device, '', 'width:calc(' . $this->width . '% - ' . $gutter . 'px)');
+    public function setWidth($device) {
+        $this->style->add($device, '', 'width:' . $this->width . '%');
     }
 
     public function setWidthAuto($device) {

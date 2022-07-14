@@ -232,7 +232,7 @@ class ModelGenerator extends AbstractModelTable {
                 ));
                 $vimeo->item->set(array(
                     "vimeourl" => "{url}",
-                    'image'    => ''
+                    'image'    => '{image}'
                 ));
 
                 break;
@@ -404,7 +404,7 @@ class ModelGenerator extends AbstractModelTable {
 
         new Number($generatorRow, 'cache-expiration', n2_('Cache expiration'), 24, array(
             'wide' => 3,
-            'unit' => n2_('hours')
+            'unit' => n2_('Hours')
         ));
 
         new ButtonRecordViewer($generatorRow, 'record-viewer');

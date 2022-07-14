@@ -1,8 +1,8 @@
 === Custom Permalinks ===
 Contributors: sasiddiqui
 Tags: permalink, url, link, address, custom, redirect, custom post type, GDPR, GDPR Compliant
-Tested up to: 5.8
-Stable tag: 2.0.1
+Tested up to: 6.0
+Stable tag: 2.4.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -10,7 +10,7 @@ Set custom permalinks on a per-post, per-tag or per-category basis.
 
 == Description ==
 
-> Incase of found any site breaking issue after upgrading to the latest version then please report the issue on [WordPress Forum](https://wordpress.org/support/plugin/custom-permalinks/) OR [GitHub](https://github.com/samiahmedsiddiqui/custom-permalinks) with complete information to reproduce the issue and move back to the old version. You can download any of the old version from here: https://wordpress.org/plugins/custom-permalinks/advanced/
+> In case of found any site breaking issue after upgrading to the latest version then please report the issue on [WordPress Forum](https://wordpress.org/support/plugin/custom-permalinks/) OR [GitHub](https://github.com/samiahmedsiddiqui/custom-permalinks) with complete information to reproduce the issue and move back to the old version. You can download any of the old version from here: https://wordpress.org/plugins/custom-permalinks/advanced/
 
 Lay out your site the way *you* want it. Set the URL of any post, page, tag or category to anything you want. Old permalinks will redirect properly to the new address. Custom Permalinks give you ultimate control over your site structure.
 
@@ -137,6 +137,17 @@ function yasglobal_allow_uppercaps() {
 add_filter( 'custom_permalinks_allow_caps', 'yasglobal_allow_uppercaps' );
 `
 
+=== Allow Redundant Hyphens ===
+
+To allow redundant hyphens, please add below-mentioned line in your theme `functions.php`:
+
+`
+function yasglobal_redundant_hyphens() {
+  return true;
+}
+add_filter( 'custom_permalinks_redundant_hyphens', 'yasglobal_redundant_hyphens' );
+`
+
 === Manipulate Permalink Before Saving ===
 
 To make changes in permalink before saving, please use `custom_permalink_before_saving` filter. Here is an example to see how it works.
@@ -188,35 +199,25 @@ This process defines you the steps to follow either you are installing through W
 
 == Changelog ==
 
-= 2.0.1 - Aug 02, 2021 =
+= 2.4.0 - Nov 26, 2021 =
 
 * Bugs
-  * [Plugin not save persian alphabet](https://wordpress.org/support/topic/plugin-not-save-persian-alphabet/)
-  * [404 error when post/page custom permalink is part of category custom permalink](https://github.com/samiahmedsiddiqui/custom-permalinks/issues/49)
-
-= 2.0.0 - Jul 30, 2021 =
-
-* Bugs
-  * [Bug with AMP plugin](https://wordpress.org/support/topic/bug-with-amp-plugin/)
-  * [Oembed links not working](https://wordpress.org/support/topic/oembed-links-not-working/)
-  * [Uncaught (in promise) TypeError: getHomeURL is null](https://wordpress.org/support/topic/uncaught-in-promise-typeerror-gethomeurl-is-null/)
-  * [Plugin stop saving uppercase slugs](https://wordpress.org/support/topic/plugin-stop-saving-upppercase-slugs/)
-  * [template_redirect](https://wordpress.org/support/topic/make-redirect/)
-  * conflict with WooCommerce Paid courses
-  * Fix creating duplicated permalink while creating multiple `Categories` and/or `Tags`
+  * [filter for leading special characters](https://wordpress.org/support/topic/filter-for-leading-special-characters/)
+  * [“search Permalinks” button doesn’t work. (part2)](https://wordpress.org/support/topic/search-permalinks-button-doesnt-work-part2/)
+  * [PHP 8 errors on first visit of Taxonomy Permalinks tab](https://github.com/samiahmedsiddiqui/custom-permalinks/issues/59)
+  * [Notice: Undefined variable: site_url in custom-permalinks/admin/class-custom-permalinks-post-types-table.php on line 306](https://github.com/samiahmedsiddiqui/custom-permalinks/issues/56)
 * Enhancements
-  * Added Query caching to improve performance
-  * Changed Permalink sanitization method (Similar way as WP does)
-  * Added Nonce verification to make forms secure
-  * [Permalink Filter before saving](https://wordpress.org/support/topic/permalink-filter/)
-  * Show/Hide column and Pagination features added on Post Type Permalinks and Taxonomies Permalinks page
-  * Removed deprecated functions
-  * Applied WPCS Standards
+  * [Pending Post Preview Link](https://wordpress.org/support/topic/pending-post-preview-link/)
 
-= 1.7.1 - Aug 30, 2020 =
+= 2.3.0 - Sep 21, 2021 =
 
-  * Bugs
-    * Fix PHP notice (start reporting with WordPress 5.5)
+* Bugs
+  * [is_numeric warning in plugin API](https://wordpress.org/support/topic/is_numeric-error-for-plugin-api/)
+  * [Missing default WP redirect from URLs with no ending trailing slash](https://wordpress.org/support/topic/missing-default-wp-redirect-from-urls-with-no-ending-trailing-slash/)
+  * [trailing slash](https://wordpress.org/support/topic/trailing-slash-9/)
+  * Fixed JS Error on updating Static page
+* Enhancements
+  * Allow period in the permalink
 
 = Earlier versions =
 

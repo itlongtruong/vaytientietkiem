@@ -15,37 +15,25 @@ use AIOSEO\Plugin\Common\Models;
  */
 class Sitemap {
 	/**
-	 * Holds all active addons and their classes.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @var array
-	 */
-	public $addons = [];
-
-	/**
 	 * Class constructor.
 	 *
 	 * @since 4.0.0
 	 */
 	public function __construct() {
-		$this->content  = new Content();
-		$this->root     = new Root();
-		$this->query    = new Query();
-		$this->file     = new File();
-		$this->image    = new Image();
-		$this->ping     = new Ping();
-		$this->priority = new Priority();
-		$this->output   = new Output();
-		$this->helpers  = new Helpers();
+		$this->content       = new Content();
+		$this->root          = new Root();
+		$this->query         = new Query();
+		$this->file          = new File();
+		$this->image         = new Image\Image();
+		$this->ping          = new Ping();
+		$this->priority      = new Priority();
+		$this->output        = new Output();
+		$this->helpers       = new Helpers();
+		$this->requestParser = new RequestParser();
+		$this->xsl           = new Xsl();
+		$this->localization  = new Localization();
 
-		// Disables the built-in WP sitemap.
-		if ( aioseo()->options->sitemap->general->enable ) {
-			remove_action( 'init', 'wp_sitemaps_get_server' );
-			add_filter( 'wp_sitemaps_enabled', '__return_false' );
-		}
-
-		add_action( 'aioseo_static_sitemap_regeneration', [ $this, 'regenerateStaticSitemap' ] );
+		$this->disableWpSitemap();
 	}
 
 	/**
@@ -56,26 +44,29 @@ class Sitemap {
 	 * @return void
 	 */
 	public function init() {
-		// Watch for XSL requests.
-		add_action( 'wp_loaded', [ $this, 'xsl' ] );
-
-		// Add rewrite rules.
-		$class = new \ReflectionClass( new Rewrite );
-		add_action( 'wp_loaded', [ $class->getName(), 'updateRewriteRules' ] );
-
-		// Remove trailing slash if the sitemap is requested.
-		add_filter( 'redirect_canonical', [ $this, 'untrailUrl' ], 10, 2 );
-
-		// Parse the request to see if the sitemap should be returned.
-		// This doesn't run if a static file is requested.
-		add_filter( 'query_vars', [ $this, 'addWhitelistParams' ] );
-		add_action( 'template_redirect', [ $this, 'checkUrlParams' ], 10, 1 );
+		add_action( 'aioseo_static_sitemap_regeneration', [ $this, 'regenerateStaticSitemap' ] );
 
 		// Check if static files need to be updated.
 		add_action( 'wp_insert_post', [ $this, 'regenerateOnUpdate' ] );
 		add_action( 'edited_term', [ $this, 'regenerateStaticSitemap' ] );
 
 		add_action( 'admin_init', [ $this, 'detectStatic' ] );
+	}
+
+	/**
+	 * Disables the WP Core sitemap if our general sitemap is enabled.
+	 *
+	 * @since 4.2.1
+	 *
+	 * @return void
+	 */
+	protected function disableWpSitemap() {
+		if ( ! aioseo()->options->sitemap->general->enable ) {
+			return;
+		}
+
+		remove_action( 'init', 'wp_sitemaps_get_server' );
+		add_filter( 'wp_sitemaps_enabled', '__return_false' );
 	}
 
 	/**
@@ -92,6 +83,7 @@ class Sitemap {
 
 		if ( $isGeneralSitemapStatic ) {
 			Models\Notification::deleteNotificationByName( 'sitemap-static-files' );
+
 			return;
 		}
 
@@ -103,7 +95,7 @@ class Sitemap {
 
 		$detectedFiles = [];
 		if ( ! $isGeneralSitemapStatic ) {
-			foreach ( $files as $index => $filename ) {
+			foreach ( $files as $filename ) {
 				if ( preg_match( '#.*sitemap.*#', $filename ) ) {
 					// We don't want to delete the video sitemap here at all.
 					$isVideoSitemap = preg_match( '#.*video.*#', $filename ) ? true : false;
@@ -128,6 +120,7 @@ class Sitemap {
 	protected function maybeShowStaticSitemapNotification( $detectedFiles ) {
 		if ( ! count( $detectedFiles ) ) {
 			Models\Notification::deleteNotificationByName( 'sitemap-static-files' );
+
 			return;
 		}
 
@@ -201,84 +194,51 @@ class Sitemap {
 	}
 
 	/**
-	 * Removes the trailing slash from the redirect URL.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @param  string $redirect The redirect URL.
-	 * @param  string $request  The requested URL.
-	 * @return string           Either the original requested URL for the sitemap or the redirect URL.
-	 */
-	public function untrailUrl( $redirect, $request ) {
-		if ( preg_match( '#(.*sitemap[0-9]*?.xml|.*sitemap[0-9]*?.xml.gz|.*sitemap.rss)$#i', $request ) ) {
-			return $request;
-		}
-		return $redirect;
-	}
-
-	/**
-	 * Adds our sitemap params to the query vars whitelist.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @param  array $params The array of whitelisted query variable names.
-	 * @return array $params The filtered array of whitelisted query variable names.
-	 */
-	public function addWhitelistParams( $params ) {
-		$params[] = 'aiosp_sitemap_path';
-		if ( aioseo()->options->sitemap->general->indexes && ! isset( $params['aiosp_sitemap_page'] ) ) {
-			$params[] = 'aiosp_sitemap_page';
-		}
-
-		foreach ( $this->addons as $addon => $classes ) {
-			if ( ! empty( $classes['sitemap'] ) ) {
-				$params = $classes['sitemap']->addWhitelistParams( $params );
-			}
-		}
-		return $params;
-	}
-
-	/**
-	 * Checks whether one of our sitemaps is being requested.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @return void
-	 */
-	public function checkUrlParams() {
-		global $wp_query;
-		if ( ! empty( $wp_query->query_vars['aiosp_sitemap_path'] ) ) {
-			$this->generate();
-		}
-	}
-
-	/**
 	 * Generates the requested sitemap.
 	 *
 	 * @since 4.0.0
 	 *
 	 * @return void
 	 */
-	private function generate() {
+	public function generate() {
+		if ( empty( $this->type ) ) {
+			return;
+		}
+
 		// This is a hack to prevent WordPress from running it's default stuff during our processing.
 		global $wp_query;
 		$wp_query->is_home = false;
 
-		if ( isset( $_GET['aioseo-dev'] ) ) {
-			aioseo()->sitemap->helpers->logPerformance();
+		// This prevents the sitemap from including terms twice when WPML is active.
+		if ( class_exists( 'SitePress' ) ) {
+			global $sitepress_settings;
+			// Before building the sitemap make sure links aren't translated.
+			// The setting should not be updated in the DB.
+			$sitepress_settings['auto_adjust_ids'] = 0;
 		}
 
-		// Sets context class properties.
-		$this->determineContext();
 		// If requested sitemap should be static and doesn't exist, then generate it.
 		// We'll then serve it dynamically for the current request so that we don't serve a blank page.
 		$this->doesFileExist();
 
+		$options = aioseo()->options->noConflict();
+		if ( ! $options->sitemap->{aioseo()->sitemap->type}->enable ) {
+			$this->notFoundPage();
+
+			return;
+		}
+
 		$entries = aioseo()->sitemap->content->get();
+		$total   = aioseo()->sitemap->content->getTotal();
 		if ( ! $entries ) {
-			foreach ( $this->addons as $addon => $classes ) {
-				if ( ! empty( $classes['content'] ) ) {
-					$entries = $classes['content']->get();
+			foreach ( aioseo()->addons->getLoadedAddons() as $loadedAddon ) {
+				if ( ! empty( $loadedAddon->content ) && method_exists( $loadedAddon->content, 'get' ) ) {
+					$entries = $loadedAddon->content->get();
+					$total   = count( $entries );
+					if ( method_exists( $loadedAddon->content, 'getTotal' ) ) {
+						$total = $loadedAddon->content->getTotal();
+					}
+
 					if ( $entries ) {
 						break;
 					}
@@ -286,53 +246,25 @@ class Sitemap {
 			}
 		}
 
-		if ( ! $entries ) {
-			$this->notFoundPage();
-			return;
+		if ( 0 === $total && empty( $entries ) ) {
+			status_header( 404 );
 		}
+
+		global $wp;
+		$this->xsl->saveXslData(
+			$wp->request,
+			$entries,
+			$total
+		);
 
 		$this->headers();
 		aioseo()->sitemap->output->output( $entries );
-		foreach ( $this->addons as $addon => $classes ) {
-			if ( ! empty( $classes['output'] ) ) {
-				$classes['output']->output( $entries );
+		foreach ( aioseo()->addons->getLoadedAddons() as $loadedAddon ) {
+			if ( ! empty( $loadedAddon->output ) && method_exists( $loadedAddon->output, 'output' ) ) {
+				$loadedAddon->output->output( $entries );
 			}
-		}
-
-		if ( isset( $_GET['aioseo-dev'] ) ) {
-			aioseo()->sitemap->helpers->logPerformance();
 		}
 		exit();
-	}
-
-	/**
-	 * Determines the current sitemap context.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @return void
-	 */
-	protected function determineContext() {
-		global $wp_query;
-		$this->type          = 'rss' === $wp_query->query_vars['aiosp_sitemap_path'] ? 'rss' : 'general';
-		$this->filename      = 'sitemap';
-		$this->indexName     = $wp_query->query_vars['aiosp_sitemap_path'];
-		$this->pageNumber    = ! empty( $wp_query->query_vars['aiosp_sitemap_page'] ) ? $wp_query->query_vars['aiosp_sitemap_page'] - 1 : 0;
-		$this->indexes       = aioseo()->options->sitemap->general->indexes;
-		$this->linksPerIndex = aioseo()->options->sitemap->{$this->type}->linksPerIndex;
-		$this->offset        = $this->linksPerIndex * $this->pageNumber;
-		// The sitemap isn't statically generated if we get here.
-		$this->isStatic = false;
-
-		foreach ( $this->addons as $addon => $classes ) {
-			if ( ! empty( $classes['sitemap'] ) ) {
-				$classes['sitemap']->determineContext();
-			}
-		}
-
-		if ( $this->linksPerIndex > 50000 ) {
-			$this->linksPerIndex = 50000;
-		}
 	}
 
 	/**
@@ -345,9 +277,9 @@ class Sitemap {
 	 * @return void
 	 */
 	protected function doesFileExist() {
-		foreach ( $this->addons as $addon => $classes ) {
-			if ( ! empty( $classes['sitemap'] ) ) {
-				$classes['sitemap']->doesFileExist();
+		foreach ( aioseo()->addons->getLoadedAddons() as $loadedAddon ) {
+			if ( ! empty( $loadedAddon->sitemap ) && method_exists( $loadedAddon->sitemap, 'doesFileExist' ) ) {
+				$loadedAddon->sitemap->doesFileExist();
 			}
 		}
 
@@ -361,7 +293,7 @@ class Sitemap {
 		}
 
 		require_once( ABSPATH . 'wp-admin/includes/file.php' );
-		if ( ! file_exists( get_home_path() . $_SERVER['REQUEST_URI'] ) ) {
+		if ( ! aioseo()->core->fs->exists( get_home_path() . $_SERVER['REQUEST_URI'] ) ) {
 			$this->scheduleRegeneration();
 		}
 	}
@@ -380,7 +312,7 @@ class Sitemap {
 	}
 
 	/**
-	 * Redirects to a 404 Not Found page if the sitemap is empty or disabled.
+	 * Redirects to a 404 Not Found page if the sitemap is disabled.
 	 *
 	 * @since 4.0.0
 	 *
@@ -395,41 +327,13 @@ class Sitemap {
 	}
 
 	/**
-	 * Returns the sitemap stylesheet.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @return void
-	 */
-	public function xsl() {
-		if ( preg_match( '#(/default\.xsl)$#i', $_SERVER['REQUEST_URI'] ) ) {
-			$this->headers();
-			$charset = get_option( 'blog_charset' );
-			// phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
-			$advanced      = aioseo()->options->sitemap->general->advancedSettings->enable;
-			$excludeImages = aioseo()->options->sitemap->general->advancedSettings->excludeImages;
-			// phpcs:enable VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
-
-			echo '<?xml version="1.0" encoding="' . esc_attr( $charset ) . '"?>';
-			include_once( AIOSEO_DIR . '/app/Common/Views/sitemap/xsl/default.php' );
-			exit;
-		}
-
-		foreach ( $this->addons as $addon => $classes ) {
-			if ( ! empty( $classes['sitemap'] ) ) {
-				$classes['sitemap']->xsl();
-			}
-		}
-	}
-
-	/**
 	 * Registers an active sitemap addon and its classes.
+	 * NOTE: This is deprecated and only there for users who already were using the previous sitemap addons version.
 	 *
+	 * @final 4.2.7
 	 * @since 4.0.0
 	 *
 	 * @return void
 	 */
-	public function addAddon( $name, $classes ) {
-		$this->addons[ $name ] = $classes;
-	}
+	public function addAddon() {}
 }

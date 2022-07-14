@@ -1,6 +1,8 @@
 <?php
 namespace AIOSEO\Plugin\Common\Sitemap;
 
+use AIOSEO\Plugin\Common\Utils as CommonUtils;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -19,17 +21,18 @@ class Query {
 	 *
 	 * @param  mixed $postTypes      The post type(s). Either a singular string or an array of strings.
 	 * @param  array $additionalArgs Any additional arguments for the post query.
-	 * @return array                 The post objects.
+	 * @return array|int             The post objects or the post count.
 	 */
 	public function posts( $postTypes, $additionalArgs = [] ) {
 		$includedPostTypes = $postTypes;
+		$postTypesArray    = ! is_array( $postTypes ) ? [ $postTypes ] : $postTypes;
 		if ( is_array( $postTypes ) ) {
 			$includedPostTypes = implode( "', '", $postTypes );
 		}
 
 		if (
 			empty( $includedPostTypes ) ||
-			( 'attachment' === $includedPostTypes && 'disabled' !== aioseo()->options->searchAppearance->dynamic->postTypes->attachment->redirectAttachmentUrls )
+			( 'attachment' === $includedPostTypes && 'disabled' !== aioseo()->dynamicOptions->searchAppearance->postTypes->attachment->redirectAttachmentUrls )
 		) {
 			return [];
 		}
@@ -38,7 +41,10 @@ class Query {
 		$fields  = '`p`.`ID`, `p`.`post_title`, `p`.`post_content`, `p`.`post_excerpt`, `p`.`post_type`, `p`.`post_password`, ';
 		$fields .= '`p`.`post_parent`, `p`.`post_date_gmt`, `p`.`post_modified_gmt`, `ap`.`priority`, `ap`.`frequency`';
 		$maxAge  = '';
-		$orderBy = '`p`.`ID` ASC';
+
+		// Order by highest priority first (highest priority at the top),
+		// then by post modified date (most recently updated at the top).
+		$orderBy = '`ap`.`priority` DESC, `p`.`post_modified_gmt` DESC';
 
 		// Override defaults if passed as additional arg.
 		foreach ( $additionalArgs as $name => $value ) {
@@ -47,10 +53,13 @@ class Query {
 			if ( 'root' === $name && $value && 'attachment' !== $includedPostTypes ) {
 				$fields = '`p`.`ID`, `p`.`post_type`';
 			}
+			if ( 'count' === $name && $value ) {
+				$fields = 'count(`p`.`ID`) as total';
+			}
 		}
 
-		$query = aioseo()->db
-			->start( aioseo()->db->db->posts . ' as p', true )
+		$query = aioseo()->core->db
+			->start( aioseo()->core->db->db->posts . ' as p', true )
 			->select( $fields )
 			->leftJoin( 'aioseo_posts as ap', '`ap`.`post_id` = `p`.`ID`' )
 			->where( 'p.post_status', 'attachment' === $includedPostTypes ? 'inherit' : 'publish' )
@@ -75,6 +84,41 @@ class Query {
 		}
 
 		$excludedPosts = aioseo()->sitemap->helpers->excludedPosts();
+
+		$isStaticHomepage = 'page' === get_option( 'show_on_front' );
+		if ( $isStaticHomepage ) {
+			$excludedPostIds = explode( ',', $excludedPosts );
+			$homePageId      = (int) get_option( 'page_on_front' );
+			$blogPageId      = (int) get_option( 'page_for_posts' );
+
+			if ( in_array( 'page', $postTypesArray, true ) ) {
+				// Exclude the blog page from the pages post type.
+				if ( $blogPageId ) {
+					$query->whereRaw( "`p`.`ID` != $blogPageId" );
+				}
+
+				// Custom order by statement to always move the home page to the top.
+				if ( $homePageId ) {
+					$orderBy = "case when `p`.`ID` = $homePageId then 0 else 1 end, $orderBy";
+				}
+			}
+
+			// Include the blog page in the posts post type unless manually excluded.
+			if (
+				$blogPageId &&
+				! in_array( $blogPageId, $excludedPostIds, true ) &&
+				in_array( 'post', $postTypesArray, true )
+			) {
+				// We are using a database class hack to get in an OR clause to
+				// bypass all the other WHERE statements and just include the
+				// blog page ID manually.
+				$query->whereRaw( "1=1 OR `p`.`ID` = $blogPageId" );
+
+				// Custom order by statement to always move the blog posts page to the top.
+				$orderBy = "case when `p`.`ID` = $blogPageId then 0 else 1 end, $orderBy";
+			}
+		}
+
 		if ( $excludedPosts ) {
 			$query->whereRaw( "( `p`.`ID` NOT IN ( $excludedPosts ) )" );
 		}
@@ -82,7 +126,7 @@ class Query {
 		// Exclude posts assigned to excluded terms.
 		$excludedTerms = aioseo()->sitemap->helpers->excludedTerms();
 		if ( $excludedTerms ) {
-			$termRelationshipsTable = aioseo()->db->db->prefix . 'term_relationships';
+			$termRelationshipsTable = aioseo()->core->db->db->prefix . 'term_relationships';
 			$query->whereRaw("
 				( `p`.`ID` NOT IN
 					(
@@ -97,20 +141,98 @@ class Query {
 			$query->whereRaw( "( `p`.`post_date_gmt` >= '$maxAge' )" );
 		}
 
-		if ( aioseo()->sitemap->indexes && empty( $additionalArgs['root'] ) ) {
+		if (
+			'rss' === aioseo()->sitemap->type ||
+			(
+				aioseo()->sitemap->indexes &&
+				empty( $additionalArgs['root'] ) &&
+				( empty( $additionalArgs['count'] ) || ! $additionalArgs['count'] )
+			)
+		) {
 			$query->limit( aioseo()->sitemap->linksPerIndex, aioseo()->sitemap->offset );
 		}
 
-		$posts = $query->orderBy( $orderBy )
-			->run()
+		$query->orderBy( $orderBy );
+		$query = $this->filterPostQuery( $query, $postTypes );
+
+		// Return the total if we are just counting the posts.
+		if ( ! empty( $additionalArgs['count'] ) && $additionalArgs['count'] ) {
+			return (int) $query->run( true, 'var' )
+				->result();
+		}
+
+		$posts = $query->run()
 			->result();
 
 		// Convert ID from string to int.
 		foreach ( $posts as $post ) {
-			$post->ID = intval( $post->ID );
+			$post->ID = (int) $post->ID;
 		}
 
 		return $this->filterPosts( $posts );
+	}
+
+	/**
+	 * Filters the post query.
+	 *
+	 * @since 4.1.4
+	 *
+	 * @param  \AIOSEO\Plugin\Common\Utils\Database $query    The query.
+	 * @param  string                               $postType The post type.
+	 * @return \AIOSEO\Plugin\Common\Utils\Database           The filtered query.
+	 */
+	private function filterPostQuery( $query, $postType ) {
+		switch ( $postType ) {
+			case 'product':
+				return $this->excludeHiddenProducts( $query );
+			default:
+				break;
+		}
+
+		return $query;
+	}
+
+	/**
+	 * Adds a condition to the query to exclude hidden WooCommerce products.
+	 *
+	 * @since 4.1.4
+	 *
+	 * @param  \AIOSEO\Plugin\Common\Utils\Database $query The query.
+	 * @return \AIOSEO\Plugin\Common\Utils\Database        The filtered query.
+	 */
+	private function excludeHiddenProducts( $query ) {
+		if (
+			! aioseo()->helpers->isWooCommerceActive() ||
+			! apply_filters( 'aioseo_sitemap_woocommerce_exclude_hidden_products', true )
+		) {
+			return $query;
+		}
+
+		static $hiddenProductIds = null;
+		if ( null === $hiddenProductIds ) {
+			$tempDb         = new CommonUtils\Database();
+			$hiddenProducts = $tempDb->start( 'term_relationships as tr' )
+				->select( 'tr.object_id' )
+				->join( 'term_taxonomy as tt', 'tr.term_taxonomy_id = tt.term_taxonomy_id' )
+				->join( 'terms as t', 'tt.term_id = t.term_id' )
+				->where( 't.name', 'exclude-from-catalog' )
+				->run()
+				->result();
+
+			if ( empty( $hiddenProducts ) ) {
+				return $query;
+			}
+
+			$hiddenProductIds = [];
+			foreach ( $hiddenProducts as $hiddenProduct ) {
+				$hiddenProductIds[] = (int) $hiddenProduct->object_id;
+			}
+			$hiddenProductIds = esc_sql( implode( ', ', $hiddenProductIds ) );
+		}
+
+		$query->whereRaw( "p.ID NOT IN ( $hiddenProductIds )" );
+
+		return $query;
 	}
 
 	/**
@@ -122,22 +244,9 @@ class Query {
 	 * @return array $remainingPosts The remaining posts.
 	 */
 	public function filterPosts( $posts ) {
-		$remainingPosts        = [];
-		$isWooCommerceActive   = aioseo()->helpers->isWooCommerceActive();
-		$excludeHiddenProducts = apply_filters( 'aioseo_sitemap_woocommerce_exclude_hidden_products', true );
-
+		$remainingPosts = [];
 		foreach ( $posts as $post ) {
-			if ( 'product' !== $post->post_type && is_numeric( $post ) ) {
-				$remainingPosts[] = $post;
-				continue;
-			}
-
 			switch ( $post->post_type ) {
-				case 'product':
-					if ( ! $isWooCommerceActive || ! $excludeHiddenProducts || ! $this->isHiddenProduct( $post ) ) {
-						$remainingPosts[] = $post;
-					}
-					break;
 				case 'attachment':
 					if ( ! $this->isInvalidAttachment( $post ) ) {
 						$remainingPosts[] = $post;
@@ -150,41 +259,6 @@ class Query {
 		}
 
 		return $remainingPosts;
-	}
-
-	/**
-	 * Whether the WooCommerce product is hidden.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @param  Object  $post The post.
-	 * @return boolean       Whether the post is a hidden product.
-	 */
-	private function isHiddenProduct( $post ) {
-		static $hiddenProductIds = null;
-		if ( null === $hiddenProductIds ) {
-			$hiddenProducts = aioseo()->db->start( 'term_relationships as tr' )
-				->select( 'tr.object_id' )
-				->join( 'term_taxonomy as tt', 'tr.term_taxonomy_id = tt.term_taxonomy_id' )
-				->join( 'terms as t', 'tt.term_id = t.term_id' )
-				->where( 't.name', 'exclude-from-catalog' )
-				->run()
-				->result();
-
-			$hiddenProductIds = [];
-			if ( ! empty( $hiddenProducts ) ) {
-				foreach ( $hiddenProducts as $hiddenProduct ) {
-					$hiddenProductIds[] = (int) $hiddenProduct->object_id;
-				}
-			}
-		}
-
-		$postId = $post;
-		if ( ! is_numeric( $post ) ) {
-			$postId = $post->ID;
-		}
-
-		return in_array( $postId, $hiddenProductIds, true );
 	}
 
 	/**
@@ -212,6 +286,7 @@ class Query {
 		) {
 			return true;
 		}
+
 		return false;
 	}
 
@@ -222,7 +297,7 @@ class Query {
 	 *
 	 * @param  string $taxonomy       The taxonomy.
 	 * @param  array  $additionalArgs Any additional arguments for the term query.
-	 * @return array                  The term objects.
+	 * @return array|int              The term objects or the term count.
 	 */
 	public function terms( $taxonomy, $additionalArgs = [] ) {
 		// Set defaults.
@@ -232,15 +307,18 @@ class Query {
 		// Override defaults if passed as additional arg.
 		foreach ( $additionalArgs as $name => $value ) {
 			$$name = esc_sql( $value );
-			if ( 'root' === $name ) {
+			if ( 'root' === $name && $value ) {
 				$fields = 't.term_id';
+			}
+			if ( 'count' === $name && $value ) {
+				$fields = 'count(t.term_id) as total';
 			}
 		}
 
-		$termRelationshipsTable = aioseo()->db->db->prefix . 'term_relationships';
-		$termTaxonomyTable      = aioseo()->db->db->prefix . 'term_taxonomy';
-		$query = aioseo()->db
-			->start( aioseo()->db->db->terms . ' as t', true )
+		$termRelationshipsTable = aioseo()->core->db->db->prefix . 'term_relationships';
+		$termTaxonomyTable      = aioseo()->core->db->db->prefix . 'term_taxonomy';
+		$query = aioseo()->core->db
+			->start( aioseo()->core->db->db->terms . ' as t', true )
 			->select( $fields )
 			->whereRaw( "
 			( `t`.`term_id` IN
@@ -264,8 +342,18 @@ class Query {
 				)" );
 		}
 
-		if ( aioseo()->sitemap->indexes && empty( $additionalArgs['root'] ) ) {
+		if (
+			aioseo()->sitemap->indexes &&
+			empty( $additionalArgs['root'] ) &&
+			( empty( $additionalArgs['count'] ) || ! $additionalArgs['count'] )
+		) {
 			$query->limit( aioseo()->sitemap->linksPerIndex, $offset );
+		}
+
+		// Return the total if we are just counting the terms.
+		if ( ! empty( $additionalArgs['count'] ) && $additionalArgs['count'] ) {
+			return (int) $query->run( true, 'var' )
+				->result();
 		}
 
 		$terms = $query->orderBy( '`t`.`term_id` ASC' )
@@ -274,10 +362,11 @@ class Query {
 
 		foreach ( $terms as $term ) {
 			// Convert ID from string to int.
-			$term->term_id = intval( $term->term_id );
+			$term->term_id = (int) $term->term_id;
 			// Add taxonomy name to object manually instead of querying it to prevent redundant join.
 			$term->taxonomy = $taxonomy;
 		}
+
 		return $terms;
 	}
 
@@ -289,7 +378,7 @@ class Query {
 	 * @return void
 	 */
 	public function resetImages() {
-		aioseo()->db
+		aioseo()->core->db
 			->update( 'aioseo_posts' )
 			->set(
 				[

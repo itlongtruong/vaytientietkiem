@@ -61,6 +61,7 @@ class ItemVimeo extends AbstractItem {
     public function getValues() {
         return parent::getValues() + array(
                 'vimeourl'         => '75251217',
+                'privateid'        => '',
                 'image'            => '$ss3-frontend$/images/placeholder/video.png',
                 'aspect-ratio'     => '16:9',
                 'autoplay'         => 0,
@@ -203,12 +204,6 @@ class ItemVimeo extends AbstractItem {
             ),
             'tipLabel'       => n2_('Pause on scroll'),
             'tipDescription' => n2_('You can pause the video when the visitor scrolls away from the slider')
-        ));
-
-        new OnOff($misc, 'privateurl', n2_('Private video'), 0, array(
-            'tipLabel'       => n2_('Private video'),
-            'tipDescription' => n2_('Turn it on to remove the admin warning that your video is not accessible.'),
-            'tipLink'        => 'https://smartslider.helpscoutdocs.com/article/1847-vimeo-layer#private-video'
         ));
 
         new OnOff($misc, 'reset', n2_('Restart on slide change'), 0, array(

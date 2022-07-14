@@ -85,7 +85,7 @@ class SliderParams extends Data {
             foreach ($slides as $slide) {
                 $layers = json_decode($slide['slide'], true);
                 foreach ($layers as $layer) {
-                    if ($layer['type'] != 'content') {
+                    if (isset($layer['type']) && $layer['type'] != 'content') {
                         if (isset($layer['adaptivefont']) && $layer['adaptivefont'] == 0 && isset($layer['item']) && in_array($layer['item']['type'], array(
                                 'button',
                                 'heading',

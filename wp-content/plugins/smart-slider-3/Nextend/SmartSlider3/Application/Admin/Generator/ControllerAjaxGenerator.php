@@ -186,6 +186,24 @@ class ControllerAjaxGenerator extends AdminAjaxController {
         }
     }
 
+    public function actionGetRefresh() {
+        $this->validateToken();
+        $this->validatePermission('smartslider_config');
+        $group = Request::$REQUEST->getVar('group');
+
+        $generatorModel = new ModelGenerator($this);
+
+        $generatorGroup = $generatorModel->getGeneratorGroup($group);
+
+        try {
+            $configuration = $generatorGroup->getConfiguration();
+            $this->response->respond(array('authUrl' => $configuration->refreshToken($this)));
+        } catch (Exception $e) {
+            Notification::error($e->getMessage());
+            $this->response->error();
+        }
+    }
+
     public function actionGetData() {
         $this->validateToken();
         $this->validatePermission('smartslider_edit');

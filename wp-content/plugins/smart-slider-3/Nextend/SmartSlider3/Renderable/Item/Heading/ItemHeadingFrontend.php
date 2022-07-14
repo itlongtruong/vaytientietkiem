@@ -5,6 +5,7 @@ namespace Nextend\SmartSlider3\Renderable\Item\Heading;
 
 
 use Nextend\Framework\Misc\Base64;
+use Nextend\Framework\Sanitize;
 use Nextend\Framework\View\Html;
 use Nextend\SmartSlider3\Renderable\Item\AbstractItemFrontend;
 
@@ -44,8 +45,7 @@ class ItemHeadingFrontend extends AbstractItemFrontend {
 
         $linkAttributes['style'] = "display:" . ($this->data->get('fullwidth', 1) ? 'block' : 'inline-block') . ";";
 
-        $allowedTags  = '<a><span><sub><sup><em><i><var><cite><b><strong><small><bdo>';
-        $strippedHtml = strip_tags($owner->fill($this->data->get('heading', '')), $allowedTags);
+        $strippedHtml = Sanitize::filter_allowed_html($owner->fill($this->data->get('heading', '')));
 
         return $this->heading($this->data->get('priority', 'div'), $attributes + array(
                 "id"    => $this->id,

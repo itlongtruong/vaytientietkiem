@@ -21,8 +21,7 @@ class ActionScheduler extends \ActionScheduler_ListTable {
 	 * @param $logger
 	 * @param $runner
 	 */
-	public function __construct( $store, $logger, $runner ) {
-		global $wpdb;
+	public function __construct( $store, $logger, $runner ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		if (
 				(
 					is_a( $store, 'ActionScheduler_HybridStore' ) ||
@@ -38,61 +37,41 @@ class ActionScheduler extends \ActionScheduler_ListTable {
 				'actionscheduler_claims',
 			];
 
-			$foundTables = $wpdb->get_col( "SHOW TABLES LIKE '{$wpdb->prefix}actionscheduler%'" );
 			foreach ( $tableList as $tableName ) {
-				if ( ! in_array( $wpdb->prefix . $tableName, $foundTables, true ) ) {
+				if ( ! aioseo()->core->db->tableExists( $tableName ) ) {
 					$this->recreate_tables();
+
 					return;
 				}
 			}
 		}
 
-		add_action( 'init', [ $this, 'cleanup' ] );
+		add_action( 'action_scheduler_after_execute', [ $this, 'cleanup' ], 1000, 2 );
 	}
 
 	/**
-	 * Begins the task of cleaning up the action scheduler items
-	 * by setting an action to do it.
+	 * Cleans up the Action Scheduler tables after one of our actions completes.
 	 *
 	 * @since 4.0.10
 	 *
 	 * @return void
 	 */
-	public function cleanup() {
-		try {
-			// Register the action handler.
-			add_action( 'aioseo_cleanup_action_scheduler', [ $this, 'processCleanup' ] );
-
-			if ( ! as_next_scheduled_action( 'aioseo_cleanup_action_scheduler' ) ) {
-				as_schedule_recurring_action( strtotime( '+24 hours' ), DAY_IN_SECONDS, 'aioseo_cleanup_action_scheduler', [], 'aioseo' );
-
-				// Run the task immediately using an async action.
-				as_enqueue_async_action( 'aioseo_cleanup_action_scheduler', [], 'aioseo' );
-			}
-		} catch ( \Exception $e ) {
-			// Do nothing.
-		}
-	}
-
-	/**
-	 * Actually runs the cleanup command.
-	 *
-	 * @since 4.0.10
-	 *
-	 * @return void
-	 */
-	public function processCleanup() {
+	public function cleanup( $actionId, $action ) {
 		if (
-			! aioseo()->db->tableExists( 'actionscheduler_actions' ) ||
-			! aioseo()->db->tableExists( 'actionscheduler_groups' )
+			// Bail if this isn't one of our actions or if we're in a dev environment.
+			'aioseo' !== $action->get_group() ||
+			defined( 'AIOSEO_DEV_VERSION' ) ||
+			// Bail if the tables don't exist.
+			! aioseo()->core->db->tableExists( 'actionscheduler_actions' ) ||
+			! aioseo()->core->db->tableExists( 'actionscheduler_groups' )
 		) {
 			return;
 		}
 
-		$prefix = aioseo()->db->db->prefix;
+		$prefix = aioseo()->core->db->db->prefix;
 
 		// Clean up logs associated with entries in the actions table.
-		aioseo()->db->execute(
+		aioseo()->core->db->execute(
 			"DELETE al FROM {$prefix}actionscheduler_logs as al
 			JOIN {$prefix}actionscheduler_actions as aa on `aa`.`action_id` = `al`.`action_id`
 			JOIN {$prefix}actionscheduler_groups as ag on `ag`.`group_id` = `aa`.`group_id`
@@ -101,7 +80,7 @@ class ActionScheduler extends \ActionScheduler_ListTable {
 		);
 
 		// Clean up actions.
-		aioseo()->db->execute(
+		aioseo()->core->db->execute(
 			"DELETE aa FROM {$prefix}actionscheduler_actions as aa
 			JOIN {$prefix}actionscheduler_groups as ag on `ag`.`group_id` = `aa`.`group_id`
 			WHERE `ag`.`slug` = 'aioseo'
@@ -109,7 +88,7 @@ class ActionScheduler extends \ActionScheduler_ListTable {
 		);
 
 		// Clean up logs where there was no group.
-		aioseo()->db->execute(
+		aioseo()->core->db->execute(
 			"DELETE al FROM {$prefix}actionscheduler_logs as al
 			JOIN {$prefix}actionscheduler_actions as aa on `aa`.`action_id` = `al`.`action_id`
 			WHERE `aa`.`hook` LIKE 'aioseo_%'
@@ -118,19 +97,11 @@ class ActionScheduler extends \ActionScheduler_ListTable {
 		);
 
 		// Clean up actions that start with aioseo_ and have no group.
-		aioseo()->db->execute(
+		aioseo()->core->db->execute(
 			"DELETE aa FROM {$prefix}actionscheduler_actions as aa
 			WHERE `aa`.`hook` LIKE 'aioseo_%'
 			AND `aa`.`group_id` = 0
 			AND `aa`.`status` IN ('complete', 'failed', 'canceled');"
 		);
-
-		// Clean up orphaned log files. @TODO: Look at adding this back in, however it was causing errors with the number of locks exceeding the lock table size.
-		// aioseo()->db->execute(
-		//  "DELETE al FROM {$prefix}actionscheduler_logs as al
-		//  LEFT JOIN {$prefix}actionscheduler_actions as aa on `aa`.`action_id` = `al`.`action_id`
-		//  WHERE `aa`.`action_id` IS NULL
-		//  LIMIT 100000;"
-		// );
 	}
 }

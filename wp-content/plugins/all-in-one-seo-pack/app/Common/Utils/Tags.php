@@ -290,6 +290,11 @@ class Tags {
 				'description' => __( 'Caption for the current media file.', 'all-in-one-seo-pack' )
 			],
 			[
+				'id'          => 'attachment_description',
+				'name'        => __( 'Media Description', 'all-in-one-seo-pack' ),
+				'description' => __( 'Description for the current media file.', 'all-in-one-seo-pack' )
+			],
+			[
 				'id'          => 'author_link',
 				'name'        => __( 'Author Link', 'all-in-one-seo-pack' ),
 				'description' => __( 'Author archive link (name as text).', 'all-in-one-seo-pack' )
@@ -690,8 +695,8 @@ class Tags {
 					unset( $context['attachmentDescription'][ $phpDescriptionKey ] );
 				}
 
-				$context['attachmentTitle'][]       = 'attachment_caption';
-				$context['attachmentDescription'][] = 'attachment_caption';
+				$context['attachmentTitle']       = array_merge( $context['attachmentTitle'], [ 'attachment_caption', 'attachment_description' ] );
+				$context['attachmentDescription'] = array_merge( $context['attachmentDescription'], [ 'attachment_caption', 'attachment_description' ] );
 
 				asort( $context['attachmentTitle'] );
 				$context['attachmentTitle'] = array_values( $context['attachmentTitle'] );
@@ -723,10 +728,6 @@ class Tags {
 
 		// Taxonomies including from CPT's.
 		foreach ( aioseo()->helpers->getPublicTaxonomies() as $taxonomy ) {
-			if ( 'post_tag' !== $taxonomy['name'] && 'category' !== $taxonomy['name'] ) {
-				continue;
-			}
-
 			$context[ $taxonomy['name'] . 'Title' ]       = $context['taxonomyTitle'];
 			$context[ $taxonomy['name'] . 'Description' ] = $context['taxonomyDescription'];
 		}
@@ -791,25 +792,25 @@ class Tags {
 			$author   = new \WP_User( $post->post_author );
 			$postId   = empty( $id ) ? $post->ID : $id;
 			$category = get_the_category( $postId );
-		} elseif ( is_author() ) {
+		} elseif ( is_author() && is_a( get_queried_object(), 'WP_User' ) ) {
 			$author = get_queried_object();
 		}
 
 		switch ( $tag['id'] ) {
 			case 'page_number':
-				global $paged;
-				$page = get_query_var( 'page' );
-				if ( $paged > $page ) {
-					$page = $paged;
-				}
-				return $page;
+				return aioseo()->helpers->getPageNumber();
 			case 'alt_tag':
 				return empty( $id )
 					? ( $sampleData ? __( 'A sample alt tag for your image', 'all-in-one-seo-pack' ) : '' )
 					: get_post_meta( $id, '_wp_attachment_image_alt', true );
 			case 'attachment_caption':
 				$caption = wp_get_attachment_caption( $postId );
+
 				return empty( $caption ) && $sampleData ? __( 'Sample caption for media.', 'all-in-one-seo-pack' ) : $caption;
+			case 'attachment_description':
+				$description = ! empty( $post->post_content ) ? $post->post_content : '';
+
+				return empty( $description ) && $sampleData ? __( 'Sample description for media.', 'all-in-one-seo-pack' ) : $description;
 			case 'site_link_alt':
 				return '<a href="' . esc_url( get_bloginfo( 'url' ) ) . '">' . esc_url( get_bloginfo( 'url' ) ) . '</a>';
 			case 'site_link':
@@ -823,12 +824,14 @@ class Tags {
 				return '<a href="' . esc_url( get_permalink( $post ) ) . '">' . esc_url( get_permalink( $post ) ) . '</a>';
 			case 'post_title':
 				$title = esc_html( get_the_title( $post ) );
+
 				return empty( $title ) && $sampleData ? __( 'Sample Post', 'all-in-one-seo-pack' ) : $title;
 			case 'parent_title':
 				if ( ! is_object( $post ) || ! $post->post_parent ) {
 					return ! is_object( $post ) && $sampleData ? __( 'Sample Parent', 'all-in-one-seo-pack' ) : '';
 				}
 				$parent = get_post( $post->post_parent );
+
 				return $parent ? $parent->post_title : '';
 			case 'current_date':
 				return $this->formatDateAsI18n( date_i18n( 'U' ) );
@@ -857,15 +860,19 @@ class Tags {
 				}
 			case 'post_date':
 				$date = $this->formatDateAsI18n( get_the_date( 'U' ) );
+
 				return empty( $date ) && $sampleData ? $this->formatDateAsI18n( date_i18n( 'U' ) ) : $date;
 			case 'post_day':
 				$day = get_the_date( 'd', $post );
+
 				return empty( $day ) && $sampleData ? date_i18n( 'd' ) : $day;
 			case 'post_year':
 				$year = get_the_date( 'Y', $post );
+
 				return empty( $year ) && $sampleData ? date_i18n( 'Y' ) : $year;
 			case 'post_month':
 				$month = get_the_date( 'F', $post );
+
 				return empty( $month ) && $sampleData ? date_i18n( 'F' ) : $month;
 			case 'post_excerpt_only':
 				return empty( $postId ) ? ( $sampleData ? __( 'Sample excerpt from a page/post.', 'all-in-one-seo-pack' ) : '' ) : $post->post_excerpt;
@@ -873,23 +880,18 @@ class Tags {
 				if ( empty( $postId ) ) {
 					return $sampleData ? __( 'Sample excerpt from a page/post.', 'all-in-one-seo-pack' ) : '';
 				}
-				try {
-					$excerpt = is_admin() ? $post->post_excerpt : get_the_excerpt( $post );
-				} catch ( \Exception $e ) {
-					$excerpt = '';
+
+				if ( $post->post_excerpt ) {
+					return $post->post_excerpt;
 				}
 
-				if ( $excerpt || ! is_admin() ) {
-					return $excerpt;
-				}
-
-				// Fall through to post content if we're in the admin.
-				// This is needed since get_the_excerpt doesn't generate an excerpt from the post content outside of the loop.
+				// Fall through if the post doesn't have an excerpt set. In that case getDescriptionFromContent() will generate it for us.
 			case 'post_content':
-				return empty( $postId ) ? ( $sampleData ? __( 'An example of content from your page/post.', 'all-in-one-seo-pack' ) : '' ) : aioseo()->helpers->getContent( $post );
+				return empty( $postId ) ? ( $sampleData ? __( 'An example of content from your page/post.', 'all-in-one-seo-pack' ) : '' ) : aioseo()->helpers->getDescriptionFromContent( $post );
 			case 'category':
 			case 'taxonomy_title':
 				$title = $this->getTaxonomyTitle( $postId );
+
 				return $sampleData ? __( 'Sample Taxonomy Title', 'all-in-one-seo-pack' ) : $title;
 			case 'categories':
 				if ( ! is_object( $post ) || 'post' !== $post->post_type ) {
@@ -905,9 +907,11 @@ class Tags {
 				foreach ( $categories as $category ) {
 					$names[] = $category->name;
 				}
+
 				return implode( ', ', $names );
 			case 'taxonomy_description':
 				$description = term_description();
+
 				return empty( $description ) && $sampleData ? __( 'Sample taxonomy description', 'all-in-one-seo-pack' ) : $description;
 			case 'category_link':
 				return '<a href="' . esc_url( get_category_link( $category ) ) . '">' . ( $category ? $category[0]->name : '' ) . '</a>';
@@ -915,9 +919,6 @@ class Tags {
 				return '<a href="' . esc_url( get_category_link( $category ) ) . '">' . esc_url( get_category_link( $category ) ) . '</a>';
 			case 'tag':
 				return single_term_title( '', false );
-			case 'tag_description':
-			case 'taxonomy_description':
-				return term_description( '' );
 			case 'site_title':
 			case 'blog_title':
 				return aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'name' ) );
@@ -927,6 +928,7 @@ class Tags {
 				return aioseo()->helpers->decodeHtmlEntities( get_bloginfo( 'description' ) );
 			case 'archive_title':
 				$title = is_post_type_archive() ? post_type_archive_title( '', false ) : get_the_archive_title();
+
 				return $sampleData ? __( 'Sample Archive Title', 'all-in-one-seo-pack' ) : wp_strip_all_tags( $title );
 			case 'author_link':
 				return '<a href="' . esc_url( get_author_posts_url( $author->ID ) ) . '">' . esc_html( $author->display_name ) . '</a>';
@@ -934,44 +936,32 @@ class Tags {
 				return '<a href="' . esc_url( get_author_posts_url( $author->ID ) ) . '">' . esc_url( get_author_posts_url( $author->ID ) ) . '</a>';
 			case 'author_bio':
 				$bio = get_the_author_meta( 'description', $author->ID );
+
 				return empty( $bio ) && $sampleData ? __( 'Sample author biography', 'all-in-one-seo-pack' ) : $bio;
 			case 'author_name':
 				$name = $author->display_name;
+
 				return empty( $name ) && $sampleData ? wp_get_current_user()->display_name : $author->display_name;
 			case 'author_first_name':
 				$name = $author->first_name;
+
 				return empty( $name ) && $sampleData ? wp_get_current_user()->first_name : $author->first_name;
 			case 'author_last_name':
 				$name = $author->last_name;
+
 				return empty( $name ) && $sampleData ? wp_get_current_user()->last_name : $author->last_name;
 			case 'separator_sa':
 				return aioseo()->helpers->decodeHtmlEntities( aioseo()->options->searchAppearance->global->separator );
-			case 'current_year':
-				return gmdate( 'Y' );
-			case 'current_month':
-				return gmdate( 'M' );
-			case 'current_month_i18n':
-				return date_i18n( 'M' );
-			case 'year':
-				return get_query_var( 'year' );
-			case 'month':
-				$monthnum = get_query_var( 'monthnum' );
-				$monthnum = ( empty( $monthnum ) || is_year() ) ? 0 : $monthnum;
-				$year     = get_query_var( 'year' );
-				return gmdate( 'F', mktime( 0, 0, 0, (int) $monthnum, 1, (int) $year ) );
-			case 'monthnum':
-				$monthnum = get_query_var( 'monthnum' );
-				return ( empty( $monthnum ) || is_year() ) ? 0 : $monthnum;
-			case 'day':
-				$day = get_query_var( 'day' );
-				return false !== $day ? $day : '';
 			case 'search_term':
 				global $s;
+
 				return empty( $s ) && $sampleData ? __( 'Example search string', 'all-in-one-seo-pack' ) : esc_attr( stripslashes( $s ) );
 			case 'custom_field':
 				return $sampleData ? __( 'Sample Custom Field Value', 'all-in-one-seo-pack' ) : '';
 			case 'tax_name':
 				return $sampleData ? __( 'Sample Taxonomy Name Value', 'all-in-one-seo-pack' ) : '';
+			default:
+				return '';
 		}
 	}
 
@@ -1062,10 +1052,11 @@ class Tags {
 	 * @param  string $string The string to parse.
 	 * @return mixed          The new title.
 	 */
-	private function parseTaxonomyNames( $string, $id ) {
+	private function parseTaxonomyNames( $string, $id ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		$pattern = '/' . $this->denotationChar . 'tax_name-([a-zA-Z0-9_]+)/im';
 		$string  = preg_replace_callback( $pattern, [ $this, 'replaceTaxonomyName' ], $string );
 		$pattern = '/' . $this->denotationChar . 'tax_name(?![a-zA-Z0-9_])/im';
+
 		return preg_replace( $pattern, '', $string );
 	}
 
@@ -1082,6 +1073,7 @@ class Tags {
 		$pattern = '/' . $this->denotationChar . 'custom_field-([a-zA-Z0-9_-]+)/im';
 		$string  = preg_replace_callback( $pattern, [ $this, 'replaceCustomField' ], $string );
 		$pattern = '/' . $this->denotationChar . 'custom_field(?![a-zA-Z0-9_-])/im';
+
 		return preg_replace( $pattern, '', $string );
 	}
 
@@ -1091,7 +1083,7 @@ class Tags {
 	 * @since 4.0.0
 	 *
 	 * @param  array $context A context array to append.
-	 * @return array          An array of context.
+	 * @return void
 	 */
 	public function addContext( $context ) {
 		$this->context = array_merge( $this->context, $context );
@@ -1103,7 +1095,7 @@ class Tags {
 	 * @since 4.0.0
 	 *
 	 * @param  array $tags A tags array to append.
-	 * @return array       An array of tags.
+	 * @return void
 	 */
 	public function addTags( $tags ) {
 		$this->tags = array_merge( $this->tags, $tags );
@@ -1131,6 +1123,7 @@ class Tags {
 			}
 			$termName = $terms[0]->name;
 		}
+
 		return '%|%' . $termName;
 	}
 

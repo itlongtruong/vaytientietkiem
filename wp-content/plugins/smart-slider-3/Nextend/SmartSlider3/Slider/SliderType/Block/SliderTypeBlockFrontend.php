@@ -45,7 +45,7 @@ class SliderTypeBlockFrontend extends AbstractSliderTypeFrontend {
         $slide->finalize();
         ?>
 
-        <div class="n2-ss-slider-1 n2-ow" style="<?php echo Sanitize::esc_attr($sliderCSS); ?>">
+        <div class="n2-ss-slider-1 n2-ow"<?php echo empty($sliderCSS) ? '' : ' style="' . Sanitize::esc_attr($sliderCSS) . '"'; ?>>
             <div class="n2-ss-slider-2 n2-ow">
                 <?php
                 echo $this->getBackgroundVideo($params);

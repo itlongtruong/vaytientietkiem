@@ -21,7 +21,8 @@ class ItemImageFrontend extends AbstractItemFrontend {
     private function getHtml() {
         $owner = $this->layer->getOwner();
 
-        $styles = array();
+        $styles     = array();
+        $linkStyles = array();
 
         $size = (array)Common::parse($this->data->get('size', ''));
         for ($i = 0; $i < 2; $i++) {
@@ -32,6 +33,9 @@ class ItemImageFrontend extends AbstractItemFrontend {
 
         if (!empty($size[0]) && $size[0] != 'auto') {
             $styles[] = 'width:' . $size[0];
+            if ($this->hasLink() && substr($size[0], -1) == '%') {
+                $linkStyles[] = 'width:100%';
+            }
             if (empty($size[1]) || $size[1] == 'auto') {
                 $styles[] = 'height:auto';
             }
@@ -62,6 +66,11 @@ class ItemImageFrontend extends AbstractItemFrontend {
             $imageAttributes['style'] = implode(';', $styles);
         }
 
+        $linkAttributes = array();
+        if (!empty($linkStyles)) {
+            $linkAttributes['style'] = implode(';', $linkStyles);
+        }
+
         $title = htmlspecialchars($owner->fill($this->data->get('title', '')));
         if (!empty($title)) {
             $imageAttributes['title'] = $title;
@@ -72,7 +81,7 @@ class ItemImageFrontend extends AbstractItemFrontend {
         $style = $owner->addStyle($this->data->get('style'), 'heading');
 
         return Html::tag("div", array(
-            "class" => $style . ' n2-ss-item-image n2-ss-item-content n2-ow-all'
-        ), $this->getLink($html));
+            "class" => $style . ' n2-ss-item-image-content n2-ss-item-content n2-ow-all'
+        ), $this->getLink($html, $linkAttributes));
     }
 }

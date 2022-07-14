@@ -140,7 +140,7 @@ class Slides {
             }
         }
 
-        if (count($slides) == 1 && $this->slider->params->get('autoplay', 0) && $this->slider->data->get('type') === 'simple') {
+        if (count($slides) == 1 && $this->slider->params->get('autoplay', 0) && $this->slider->data->get('type') === 'simple' && !$slides[0]->hasGenerator()) {
             $slides[1] = clone $slides[0];
         }
 
@@ -157,10 +157,8 @@ class Slides {
         $slidesModel = new ModelSlides($this->slider);
 
         $images = array(
-            '$ss3-frontend$/images/placeholder/image.png',
-            '$ss3-frontend$/images/placeholder/video.png',
-            '$ss3-frontend$/images/placeholder/image.png',
-            '$ss3-frontend$/images/placeholder/video.png'
+            '$ss3-frontend$/images/placeholder/placeholder1.png',
+            '$ss3-frontend$/images/placeholder/placeholder2.png'
         );
         for ($i = 0; $i < count($images); $i++) {
 
@@ -174,6 +172,8 @@ class Slides {
                 'publish_up'            => '0000-00-00 00:00:00',
                 'publish_down'          => '0000-00-00 00:00:00',
                 'backgroundImage'       => $images[$i],
+                "backgroundFocusX"      => 50,
+                "backgroundFocusY"      => 100,
                 'slide-background-type' => 'image'
             )));
         }

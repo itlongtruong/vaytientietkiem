@@ -50,7 +50,7 @@ class SliderOptimize extends AbstractSliderTab {
 
         $row1 = $table->createRow('loading-1');
 
-        new Select($row1, 'loading-type', 'Loading type', '', array(
+        new Select($row1, 'loading-type', n2_('Loading type'), '', array(
             'options'            => array(
                 ''            => n2_('Instant'),
                 'afterOnLoad' => n2_('After page loaded'),

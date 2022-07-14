@@ -228,10 +228,17 @@ class AdminHelper {
         ));
 
 
-        $query   = 'SELECT sliders.title, sliders.id, slides.thumbnail
+        $query   = 'SELECT sliders.title, sliders.id
             FROM ' . $wpdb->prefix . 'nextend2_smartslider3_sliders AS sliders
-            LEFT JOIN ' . $wpdb->prefix . 'nextend2_smartslider3_slides AS slides ON slides.id = (SELECT id FROM ' . $wpdb->prefix . 'nextend2_smartslider3_slides WHERE slider = sliders.id AND published = 1 AND generator_id = 0 AND thumbnail NOT LIKE \'\' ORDER BY ordering DESC LIMIT 1)
-            WHERE sliders.status = \'published\'
+            LEFT JOIN ' . $wpdb->prefix . 'nextend2_smartslider3_sliders_xref AS xref ON xref.slider_id = sliders.id
+                        WHERE 
+                            (
+                                xref.group_id IS NULL 
+                                OR xref.group_id = 0
+                                OR (SELECT _sliders.status FROM ' . $wpdb->prefix . 'nextend2_smartslider3_sliders AS _sliders WHERE _sliders.id = xref.group_id ) LIKE \'published\'
+                            )
+                            
+            AND sliders.status = \'published\'
             ORDER BY time DESC LIMIT 10';
         $sliders = $wpdb->get_results($query, ARRAY_A);
 

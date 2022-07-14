@@ -67,13 +67,6 @@ class ViewSettingsFramework extends AbstractViewSettings {
 
         new Text($row1, 'scriptattributes', n2_('Script attributes'), '');
 
-        new Select($row1, 'javascript-inline', n2_('Slider\'s inline JavaScript'), 'head', array(
-            'options' => array(
-                'head' => n2_('Head'),
-                'body' => n2_('Into the slider')
-            )
-        ));
-
         $table = new ContainerTable($form->getContainer(), 'css', 'CSS');
 
         $row1 = $table->createRow('css-1');

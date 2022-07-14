@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-23 09:55+0200\n"
-"PO-Revision-Date: 2021-07-23 09:58+0200\n"
+"POT-Creation-Date: 2022-05-13 07:44+0200\n"
+"PO-Revision-Date: 2022-05-17 12:58+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: hu\n"
@@ -28,14 +28,6 @@ msgstr ""
 msgid "Unable to contact with the licensing server, please try again later!"
 msgstr ""
 "Nem lehet kapcsolódni a licenszkezelő szerverhez. Próbáljuk meg később!"
-
-msgctxt "Default Google font family for admin"
-msgid "Montserrat"
-msgstr "Montserrat"
-
-msgctxt "Default Google font charset for admin"
-msgid "latin"
-msgstr "latin"
 
 msgid "You are not allowed to upload!"
 msgstr "Nincs jogosultság a feltöltéséhez."
@@ -190,6 +182,14 @@ msgstr "Webes felület"
 msgid "You can load Google Fonts on the frontend."
 msgstr ""
 
+msgid "Save fonts locally"
+msgstr ""
+
+msgid ""
+"You can store the used Google Fonts on your server. This way all Google "
+"Fonts will load from your own domain."
+msgstr ""
+
 msgid "Backend"
 msgstr "Adminisztrációs felület"
 
@@ -205,53 +205,6 @@ msgstr "Dőlt"
 
 msgid "Normal"
 msgstr "Normál"
-
-msgid "Character set"
-msgstr "Karakterkészlet"
-
-msgctxt "Character set"
-msgid "Latin"
-msgstr "Latin"
-
-msgctxt "Character set"
-msgid "Latin Extended"
-msgstr "Kiterjesztett latin"
-
-msgctxt "Character set"
-msgid "Greek"
-msgstr "Görög"
-
-msgctxt "Character set"
-msgid "Greek Extended"
-msgstr "Kiterjesztett görög"
-
-msgctxt "Character set"
-msgid "Cyrillic"
-msgstr "Cirill"
-
-msgctxt "Character set"
-msgid "Devanagari"
-msgstr "Devanagari"
-
-msgctxt "Character set"
-msgid "Arabic"
-msgstr "Arab"
-
-msgctxt "Character set"
-msgid "Khmer"
-msgstr "Khmer"
-
-msgctxt "Character set"
-msgid "Telugu"
-msgstr "Telugu"
-
-msgctxt "Character set"
-msgid "Vietnamese"
-msgstr "Vietnámi"
-
-msgctxt "Default font sets"
-msgid "latin"
-msgstr "latin"
 
 #, fuzzy
 msgid "Choose"
@@ -1202,14 +1155,22 @@ msgstr "Csoportok"
 msgid "Set"
 msgstr "Beállítás"
 
+msgid "Edit"
+msgstr "Szerkesztés"
+
+msgid "Group"
+msgstr "Csoport"
+
+#, fuzzy
+#| msgid "Slider"
+msgid "Edit Slider"
+msgstr "Diabemutató"
+
 msgid "Up"
 msgstr ""
 
 msgid "Insert group"
 msgstr "Csoport beszúrása"
-
-msgid "Group"
-msgstr "Csoport"
 
 msgid "Move to trash"
 msgstr ""
@@ -1260,6 +1221,31 @@ msgstr "Diabemutató törlése"
 #| msgid "Delete slider"
 msgid "delete this slide"
 msgstr "Diabemutató törlése"
+
+msgid "Max width"
+msgstr "Max szélesség"
+
+msgid "Margin"
+msgstr "Margin"
+
+#, fuzzy
+#| msgid "Top"
+msgid "top"
+msgstr "Fent"
+
+#, fuzzy
+msgid "right"
+msgstr "Vékony"
+
+#, fuzzy
+#| msgid "Bottom"
+msgid "bottom"
+msgstr "Lent"
+
+#, fuzzy
+#| msgid "To left"
+msgid "left"
+msgstr "Balra"
 
 msgid "Animations"
 msgstr "Animációk"
@@ -1507,6 +1493,11 @@ msgstr "Egyedi CSS osztályokat helyezhetünk a diabemutató tárolóelemébe."
 msgid "JavaScript callbacks"
 msgstr "JavaScript callback-ek"
 
+#, fuzzy
+#| msgid "Loading animation"
+msgid "Loading animation waiting time"
+msgstr "Betöltési animáció"
+
 msgid "Post IDs"
 msgstr ""
 
@@ -1514,6 +1505,19 @@ msgid "one per line"
 msgstr ""
 
 msgid "The cache of the posts with the given ID will be cleared upon save."
+msgstr ""
+
+#, fuzzy
+#| msgid "Callback url"
+msgid "Fallback slider"
+msgstr "Callback url"
+
+msgid "ID or Alias"
+msgstr ""
+
+msgid ""
+"Select another slider by its ID or Alias that displays if your current "
+"slider has no published slides."
 msgstr ""
 
 msgid "Thumbnail"
@@ -1607,9 +1611,6 @@ msgstr "Kitöltés módja"
 msgid "Align"
 msgstr "Igazítás"
 
-msgid "Margin"
-msgstr "Margin"
-
 msgid "Puts a fix margin around your slider."
 msgstr ""
 
@@ -1622,6 +1623,11 @@ msgstr "Optimalizálás"
 msgid "Loading"
 msgstr "Betöltés"
 
+#, fuzzy
+#| msgid "Loading"
+msgid "Loading type"
+msgstr "Betöltés"
+
 msgid "Instant"
 msgstr ""
 
@@ -1630,11 +1636,6 @@ msgstr ""
 
 msgid "After delay"
 msgstr ""
-
-#, fuzzy
-#| msgid "Loading"
-msgid "Loading type"
-msgstr "Betöltés"
 
 msgid ""
 "If your slider is above the fold, you can load it immediately. Otherwise, "
@@ -1826,6 +1827,11 @@ msgid ""
 "If the size of your image is not the same as your slider's, you can improve "
 "the result with the filling modes."
 msgstr ""
+
+#, fuzzy
+#| msgid "Background color"
+msgid "Background Blur"
+msgstr "Háttérszín"
 
 msgid "Randomize"
 msgstr "Véletlen sorrend"
@@ -2124,14 +2130,17 @@ msgstr ""
 msgid "Why upgrade to Smart Slider 3 Pro?"
 msgstr ""
 
-msgid "120+ slider templates"
+#, php-format
+msgid "%d+ slider templates"
 msgstr ""
 
 msgid "Full slide library access"
 msgstr ""
 
-msgid "20 new layers"
-msgstr ""
+#, fuzzy, php-format
+#| msgid "Heading layer"
+msgid "%d new layers"
+msgstr "Cím réteg"
 
 msgid "Extra advanced options"
 msgstr ""
@@ -2199,9 +2208,6 @@ msgstr "Színátmenet"
 
 msgid "Color end"
 msgstr "Végszín"
-
-msgid "Max width"
-msgstr "Max szélesség"
 
 msgid "Position"
 msgstr "Pozíció"
@@ -2376,6 +2382,11 @@ msgid ""
 "background correctly."
 msgstr ""
 
+#, fuzzy
+#| msgid "Background color"
+msgid "Background blur"
+msgstr "Háttérszín"
+
 msgid "Blur"
 msgstr "Homályosítás"
 
@@ -2534,9 +2545,6 @@ msgstr "Nagyítás"
 msgid "Scale down"
 msgstr "Zsugorítás"
 
-msgid "Edit"
-msgstr "Szerkesztés"
-
 msgid "Static overlay"
 msgstr ""
 
@@ -2594,8 +2602,10 @@ msgstr "Felfelé csúszás"
 msgid "Drop images here"
 msgstr "Az asztali kép üres."
 
-msgid "Edit slider"
-msgstr ""
+#, fuzzy
+#| msgid "Search"
+msgid "Search Project"
+msgstr "Keresés"
 
 #, fuzzy
 #| msgid "View records"
@@ -2627,7 +2637,29 @@ msgstr "Legrégebbi előre"
 msgid "Export"
 msgstr "Exportálás"
 
+#, fuzzy
+#| msgid "Showcase"
+msgid "Show"
+msgstr "Esettanulmány"
+
+#, php-format
+msgid "Showing %s to %s of %s projects"
+msgstr ""
+
+msgid "No projects to show"
+msgstr ""
+
 msgid "New project"
+msgstr ""
+
+msgid "Sorry we couldn’t find any matches"
+msgstr ""
+
+msgid "Please try searching with another term."
+msgstr ""
+
+#, php-format
+msgid "Showing %s results for %s."
 msgstr ""
 
 msgid "Module"
@@ -3157,8 +3189,8 @@ msgstr "Generátor beállítások"
 msgid "Cache expiration"
 msgstr "Cache lejárat"
 
-msgid "hours"
-msgstr "óra"
+msgid "Hours"
+msgstr "Órák"
 
 msgid "Start index"
 msgstr "Kezdő sorszám"
@@ -3253,19 +3285,19 @@ msgid "Add column"
 msgstr ""
 
 msgid "Year"
-msgstr ""
+msgstr "Év"
 
 msgid "Month"
-msgstr ""
+msgstr "Hónap"
 
 msgid "Day"
-msgstr ""
+msgstr "Nap"
 
 msgid "Hour"
-msgstr ""
+msgstr "Óra"
 
 msgid "Minute"
-msgstr ""
+msgstr "Perc"
 
 msgid "Stack"
 msgstr "Sorrend"
@@ -3625,13 +3657,18 @@ msgstr ""
 msgid "Whole group"
 msgstr ""
 
-msgid "Select slider"
-msgstr ""
+#, fuzzy
+#| msgid "Select all"
+msgid "Select Slider"
+msgstr "Mindent kijelöl"
 
 msgid "OR"
 msgstr ""
 
-msgid "Select A Slider"
+msgid "Insert a slider into your content"
+msgstr ""
+
+msgid "Select the slider you want to insert."
 msgstr ""
 
 msgctxt "Button layer default text"
@@ -3782,13 +3819,6 @@ msgid "When not visible"
 msgstr ""
 
 msgid "You can pause the video when the visitor scrolls away from the slider"
-msgstr ""
-
-msgid "Private video"
-msgstr ""
-
-msgid ""
-"Turn it on to remove the admin warning that your video is not accessible."
 msgstr ""
 
 msgid "Display"
@@ -3965,17 +3995,17 @@ msgid ""
 msgstr ""
 "Ha bekapcsolod ezt az opciót, nem tudsz az első slide-ra menni az utolsóról."
 
+msgid ""
+"Background animations only work on the slide background images, which have "
+"Fill selected at their Fill mode. They don't affect any images if the "
+"background parallax is enabled."
+msgstr ""
+
 msgid "Shifted"
 msgstr "Eltolt"
 
 msgid "The background and the main animation plays simultaneously or shifted."
 msgstr ""
-
-msgid "Loop single slide"
-msgstr "Egyetlen slide ismétlése"
-
-msgid "In case of one slide, it repeats the animation of the slide."
-msgstr "Egy slide esetén megismétli a layer animációkat ezen a slide-on."
 
 msgid "Slider CSS Preset"
 msgstr ""
@@ -4122,6 +4152,42 @@ msgid "Random elastic"
 msgstr "Véletlen rugalmas"
 
 msgid "My text animations"
+msgstr ""
+
+msgid "Morph - Wave"
+msgstr ""
+
+msgid "Morph - Brush"
+msgstr ""
+
+msgid "Morph - Flow"
+msgstr ""
+
+msgid "Morph - Noise"
+msgstr ""
+
+msgid "Distortion - Mosaic"
+msgstr ""
+
+msgid "Distortion - Triangle"
+msgstr ""
+
+msgid "Distortion - Flow"
+msgstr ""
+
+msgid "Distortion - Warp"
+msgstr ""
+
+msgid "Distortion - Storm"
+msgstr ""
+
+msgid "Distortion - Wave"
+msgstr ""
+
+msgid "Distortion - Shard"
+msgstr ""
+
+msgid "Distortion - Noise"
 msgstr ""
 
 msgid "Slices - Single"
@@ -4519,9 +4585,6 @@ msgstr "Szöveg bár"
 msgid "Bullets"
 msgstr "Bullet gombok"
 
-msgid "Bullet"
-msgstr ""
-
 msgid "Side"
 msgstr "Szélről"
 
@@ -4719,41 +4782,24 @@ msgstr ""
 msgid "Sparkling"
 msgstr ""
 
-msgid "Curve 1"
-msgstr ""
-
-msgid "Curve 2"
-msgstr ""
-
-msgid "Curve 3"
-msgstr ""
-
-msgid "Curve 4"
+#, php-format
+msgid "Curve %d"
 msgstr ""
 
 msgid "Curves"
 msgstr ""
 
-msgid "Fan 1"
-msgstr ""
-
-msgid "Fan 2"
-msgstr ""
-
-msgid "Fan 3"
+#, php-format
+msgid "Fan %d"
 msgstr ""
 
 msgid "Hills"
 msgstr ""
 
-msgid "Incline 1"
-msgstr ""
-
-msgid "Incline 2"
-msgstr ""
-
-msgid "Incline 3"
-msgstr ""
+#, fuzzy, php-format
+#| msgid "Inline"
+msgid "Incline %d"
+msgstr "Belső"
 
 msgid "Inverse arrow"
 msgstr ""
@@ -4764,25 +4810,28 @@ msgstr ""
 msgid "Slopes"
 msgstr ""
 
-msgid "Tilt 1"
+#, php-format
+msgid "Tilt %d"
 msgstr ""
 
-msgid "Tilt 2"
+#, php-format
+msgid "Triangle %d"
 msgstr ""
 
-msgid "Triangle 1"
-msgstr ""
-
-msgid "Triangle 2"
-msgstr ""
-
-msgid "Wave 1"
-msgstr ""
-
-msgid "Wave 2"
+#, php-format
+msgid "Wave %d"
 msgstr ""
 
 msgid "Waves"
+msgstr ""
+
+#, fuzzy, php-format
+#| msgid "Columns"
+msgid "Columns %d"
+msgstr "Oszlopoko"
+
+#, php-format
+msgid "Paper %d"
 msgstr ""
 
 msgid "2 Colors"
@@ -4806,8 +4855,10 @@ msgstr ""
 #, php-format
 msgid ""
 "%1$s allows HTTPS Redirect URIs only! You must move your site to HTTPS in "
-"order to use this generator! - %2$s How to get SSL for my WordPress site? "
-"%3$s"
+"order to use this generator!"
+msgstr ""
+
+msgid "How to get SSL for my website?"
 msgstr ""
 
 #, php-format
@@ -4937,6 +4988,11 @@ msgstr ""
 msgid "Source folder"
 msgstr "Forrásmappa"
 
+#, fuzzy
+#| msgid "Slide name and description"
+msgid "Filename based exclusion"
+msgstr "Slide név és leírás"
+
 msgid "Remove resized images"
 msgstr ""
 
@@ -4945,6 +5001,22 @@ msgid ""
 "pattern in the end of their file names. For example, \"myimage.jpg\" will "
 "stay in the generator result, but \"myimage-120x120.jpg\" will be removed, "
 "because it's the same image, just in a smaller size."
+msgstr ""
+
+msgid "Filename has to contain"
+msgstr ""
+
+msgid ""
+"Only those images will be asked down, which have the given texts within "
+"their filenames. You can write down multiple texts separated by comma."
+msgstr ""
+
+msgid "Filename cannot contain"
+msgstr ""
+
+msgid ""
+"Only those images will be asked down, which don't have the given texts "
+"within their filenames. You can write down multiple texts separated by comma."
 msgstr ""
 
 msgid "Filename"
@@ -4966,6 +5038,45 @@ msgstr ""
 msgid ""
 "Wrong path. This is the default upload/media folder path, so try to navigate "
 "from here:"
+msgstr ""
+
+msgid "The App ID and the Secret is empty!"
+msgstr ""
+
+msgid "The token will expire at:"
+msgstr ""
+
+msgid "Access token was not returned.Please check the credentials!"
+msgstr ""
+
+#, fuzzy
+#| msgid "The token expired. Please request new token! "
+msgid "The token expired. Please request new token!"
+msgstr "A token lejárt. Kérj új tokent! "
+
+#, fuzzy
+#| msgid "The token expired. Please request new token! "
+msgid "The token will expire in two days! Please refresh the token!"
+msgstr "A token lejárt. Kérj új tokent! "
+
+#, fuzzy
+#| msgid "Request token"
+msgid "Refresh Token"
+msgstr "Token kérés"
+
+msgid "Refresh"
+msgstr ""
+
+msgid "Album loading method"
+msgstr ""
+
+msgid "Load first images only"
+msgstr ""
+
+msgid "Load album images separately"
+msgstr ""
+
+msgid "Load Album images as record data"
 msgstr ""
 
 msgid "JSON from url"
@@ -5002,6 +5113,11 @@ msgstr ""
 
 msgid "Images"
 msgstr "Képek"
+
+#, fuzzy
+#| msgid "Offset"
+msgid "Offset hours"
+msgstr "Eltolás"
 
 msgid "Timezone offset in hours. For example: +2 or -7."
 msgstr ""
@@ -5047,54 +5163,6 @@ msgstr ""
 #, php-format
 msgid "Creates slides from %1$s content."
 msgstr ""
-
-msgid "Items"
-msgstr "Elemek"
-
-msgid "Locations"
-msgstr "Helyszínek"
-
-msgid "Types"
-msgstr ""
-
-msgid "Expired"
-msgstr "Lejárt"
-
-msgid "Started"
-msgstr "Elkezdve"
-
-msgid "Auction"
-msgstr ""
-
-msgid "Negotiable price"
-msgstr ""
-
-msgid "Blocked by User"
-msgstr ""
-
-msgid "Paid"
-msgstr ""
-
-msgid "Buynow"
-msgstr ""
-
-msgid "Menu item (item ID)"
-msgstr ""
-
-msgid ""
-"Your url will point to the item within this menu item. You will only get a "
-"good result, if you will pick one of your DJ Classifields menu items or "
-"leave it on 'Default'."
-msgstr ""
-
-msgid "Start date"
-msgstr "Kezdő dátum"
-
-msgid "Expiration date"
-msgstr ""
-
-msgid "Price"
-msgstr "Ár"
 
 msgid "Include subcategories"
 msgstr "Alkategóriákban is keressen"
@@ -5146,6 +5214,9 @@ msgstr "Válasszuk el ezeket vesszővel."
 
 msgid "Banned user IDs"
 msgstr "Kitiltott felhasználó azonosítók"
+
+msgid "Started"
+msgstr "Elkezdve"
 
 msgid "Ended"
 msgstr "Befejezve"
@@ -5232,11 +5303,17 @@ msgstr ""
 msgid "Manufacturer language"
 msgstr ""
 
+msgid "Price"
+msgstr "Ár"
+
 msgid "Product name"
 msgstr "Termék neve"
 
 msgid "Product ID"
 msgstr "Termék ID"
+
+msgid "Locations"
+msgstr "Helyszínek"
 
 msgid "Recurring"
 msgstr ""
@@ -5252,6 +5329,12 @@ msgstr ""
 
 msgid "Only not recurring events"
 msgstr ""
+
+msgid "Menu item (item ID)"
+msgstr ""
+
+msgid "Start date"
+msgstr "Kezdő dátum"
 
 msgid "End date"
 msgstr "Befejező dátum"
@@ -5295,6 +5378,12 @@ msgstr ""
 msgid "Only display items with these IDs"
 msgstr ""
 
+msgid ""
+"Timezone offset in hours. For example: +2 or -7. If you leave it empty, "
+"Joomla's System -> Global Configuration -> Server -> Server Time Zone "
+"setting will be used."
+msgstr ""
+
 msgid "Brand"
 msgstr ""
 
@@ -5333,13 +5422,10 @@ msgstr ""
 msgid "Date language"
 msgstr ""
 
-msgid "Offset value"
+msgid "Date variable offset"
 msgstr ""
 
-msgid ""
-"Timezone offset in hours. For example: +2 or -7. If you leave it empty, "
-"Joomla's System -> Global Configuration -> Server -> Server Time Zone "
-"setting will be used."
+msgid "Date filter offset"
 msgstr ""
 
 msgid "Status"
@@ -5351,6 +5437,9 @@ msgstr ""
 msgid "Ask down all product images"
 msgstr ""
 
+msgid "Items"
+msgstr "Elemek"
+
 msgid "View item"
 msgstr ""
 
@@ -5360,15 +5449,6 @@ msgstr "Megtekintve"
 msgid "View image"
 msgstr "Kép megtekintése"
 
-msgid "Supplier"
-msgstr ""
-
-msgid "On sale"
-msgstr "Akciós"
-
-msgid "Discount price"
-msgstr "Kedvezményes ár"
-
 msgid "All day event"
 msgstr "Egésznapos esemény"
 
@@ -5377,35 +5457,6 @@ msgstr ""
 
 msgid "Show parent products only"
 msgstr ""
-
-#, php-format
-msgid "Creates slides from %1$s events."
-msgstr ""
-
-msgid "Create custom date variables"
-msgstr ""
-
-msgid ""
-"You can write any date format (http://php.net/manual/en/function.date.php) "
-"in separate lines, and new variables will be created for them."
-msgstr ""
-
-msgid ""
-"Write the original text, like 'Monday' then two | signs, and the text you "
-"want it to be translated to, for example 'Montag'. Together: Monday||Montag"
-msgstr ""
-
-msgid "Event start date"
-msgstr "Esemény kezdő dátuma"
-
-msgid "Event end date"
-msgstr "Esemény befejező dátuma"
-
-msgid "Event creation date"
-msgstr "Esemény létrehozásának dátuma"
-
-msgid "Event modification date"
-msgstr "Esemény módosításának dátuma"
 
 #, php-format
 msgid "Creates slides from %1$s galleries."
@@ -5427,6 +5478,10 @@ msgid ""
 msgstr ""
 
 msgid "No options given"
+msgstr ""
+
+#, php-format
+msgid "Creates slides from %1$s events."
 msgstr ""
 
 msgid "Exclude event IDs (One ID per line)"
@@ -5483,8 +5538,20 @@ msgstr ""
 msgid "Hide From Event Listings"
 msgstr ""
 
+msgid "Event start date"
+msgstr "Esemény kezdő dátuma"
+
+msgid "Event end date"
+msgstr "Esemény befejező dátuma"
+
 msgid "Event cost"
 msgstr "Esemény ár"
+
+msgid "Event creation date"
+msgstr "Esemény létrehozásának dátuma"
+
+msgid "Event modification date"
+msgstr "Esemény módosításának dátuma"
 
 msgid "Metakey name"
 msgstr ""
@@ -5529,6 +5596,14 @@ msgstr "Almenü limit"
 
 msgid "No limit"
 msgstr ""
+
+#, fuzzy
+#| msgid "Include subcategories"
+msgid "Hide empty categories"
+msgstr "Alkategóriákban is keressen"
+
+msgid "Yes"
+msgstr "Igen"
 
 msgid "Downloadable"
 msgstr "Letölthető"
@@ -5714,6 +5789,14 @@ msgstr "3D inga"
 msgid "Vertical pendulum 3D"
 msgstr "Függőleges 3D inga"
 
+msgid "We are Passionate About"
+msgstr ""
+
+msgid ""
+"Amazing Food\n"
+"Great Hospitality"
+msgstr ""
+
 msgid "Before text"
 msgstr ""
 
@@ -5795,6 +5878,126 @@ msgstr ""
 msgid "Time"
 msgstr ""
 
+#, fuzzy
+#| msgid "Size"
+msgid "Icon Size"
+msgstr "Méret"
+
+#, fuzzy
+#| msgid "Before"
+msgid "Before After"
+msgstr "Előtte"
+
+#, fuzzy
+#| msgid "Left"
+msgid "Left top"
+msgstr "Bal"
+
+#, fuzzy
+#| msgid "Center"
+msgid "Center top"
+msgstr "Közép"
+
+#, fuzzy
+#| msgid "Right"
+msgid "Right top"
+msgstr "Jobb"
+
+#, fuzzy
+#| msgid "Mouse enter"
+msgid "Left center"
+msgstr "Egér belépés"
+
+#, fuzzy
+#| msgid "Center"
+msgid "Right Center"
+msgstr "Közép"
+
+#, fuzzy
+#| msgid "To bottom"
+msgid "Left bottom"
+msgstr "Lefelé"
+
+#, fuzzy
+#| msgid "Curtain to bottom"
+msgid "Center bottom"
+msgstr "Függöny lefelé"
+
+#, fuzzy
+#| msgid "To bottom"
+msgid "Right bottom"
+msgstr "Lefelé"
+
+#, fuzzy
+#| msgid "Before"
+msgid "Before Image"
+msgstr "Előtte"
+
+#, fuzzy
+#| msgid "Cover image"
+msgid "After Image"
+msgstr "Előnézeti kép"
+
+msgid "Labels"
+msgstr ""
+
+#, fuzzy
+#| msgid "Show label"
+msgid "Show Label"
+msgstr "Felirat mutatása"
+
+msgid "Always"
+msgstr ""
+
+#, fuzzy
+#| msgid "Before"
+msgid "Before label"
+msgstr "Előtte"
+
+#, fuzzy
+#| msgid "Previous label"
+msgid "After label"
+msgstr "Előző szöveg"
+
+msgid "Behavior"
+msgstr ""
+
+#, fuzzy
+#| msgid "Interval"
+msgid "Interaction"
+msgstr "Időköz"
+
+#, fuzzy
+#| msgid "Slider"
+msgid "Divider"
+msgstr "Diabemutató"
+
+msgid "Line"
+msgstr ""
+
+#, fuzzy
+#| msgid "Caption"
+msgid "Show Caption"
+msgstr "Képfelirat"
+
+#, fuzzy
+#| msgid "Caption"
+msgid "Caption text"
+msgstr "Képfelirat"
+
+msgid "Before image alt tag"
+msgstr ""
+
+#, fuzzy
+#| msgid "Average rating"
+msgid "After image alt tag"
+msgstr "Átlagos értékelés"
+
+#, fuzzy
+#| msgid "Optimize"
+msgid "Optimize images"
+msgstr "Optimalizálás"
+
 msgid "Full"
 msgstr "Teljes"
 
@@ -5828,9 +6031,6 @@ msgstr ""
 msgid "Stroke width"
 msgstr ""
 
-msgid "Labels"
-msgstr ""
-
 msgid "Inner before"
 msgstr ""
 
@@ -5843,67 +6043,127 @@ msgstr ""
 msgid "Animation duration"
 msgstr ""
 
-msgid "Circle 1"
+#, fuzzy
+#| msgid "Counter"
+msgid "Countdown"
+msgstr "Számláló"
+
+msgid "Days"
+msgstr "Napok"
+
+msgid "Minutes"
+msgstr "Percek"
+
+msgid "Seconds"
+msgstr "Másodpercek"
+
+#, fuzzy
+#| msgid "First slide changed."
+msgid "Use slide schedule"
+msgstr "Az első dia megváltozott."
+
+#, fuzzy
+#| msgid "You can put custom CSS classes to the slider's container."
+msgid "You can use the \"Unpublished on\" date of the slide itself."
+msgstr "Egyedi CSS osztályokat helyezhetünk a diabemutató tárolóelemébe."
+
+msgid "Use Slide Schedule"
 msgstr ""
 
-msgid "Circle 2"
+msgid "Go to Slide → Content tab and set the Unpublish on date for the slide."
 msgstr ""
 
-msgid "Circle 3"
+msgid ""
+"Displays the days, hours, minutes and seconds texts under the counter "
+"numbers. To display the labels in your own language, translate the texts in "
+"the language files."
 msgstr ""
 
-msgid "Curly 1"
+msgid "Gap"
 msgstr ""
 
-msgid "Curly 2"
+msgid "Creates vertical and horizontal distance between the counter elements."
 msgstr ""
 
-msgid "Highlight 1"
+#, fuzzy
+#| msgid "Tablet scale"
+msgid "Tablet style"
+msgstr "Tablet méret"
+
+msgid "Set custom Gap and Column for tablet."
 msgstr ""
 
-msgid "Highlight 2"
+#, fuzzy
+#| msgid "Mobile scale"
+msgid "Mobile style"
+msgstr "Mobil méret"
+
+msgid "Set custom Gap and Column for mobile."
 msgstr ""
 
-msgid "Highlight 3"
+#, fuzzy
+#| msgid "Actions"
+msgid "Action when ends"
+msgstr "Műveletek"
+
+#, fuzzy
+#| msgid "No animation"
+msgid "No action"
+msgstr "Nincs animáció"
+
+#, fuzzy
+#| msgid "Heading layer"
+msgid "Hide layer"
+msgstr "Cím réteg"
+
+msgid "Redirect to URL"
 msgstr ""
 
-msgid "Line Through 1"
+msgid "Choose what happens after the counter reached zero."
 msgstr ""
 
-msgid "Line Through 2"
+#, fuzzy
+#| msgid "The image is empty"
+msgid "This page is"
+msgstr "A kép üres."
+
+msgid "Amazing"
 msgstr ""
 
-msgid "Line Through 3"
+#, fuzzy, php-format
+#| msgid "Circle"
+msgid "Circle %d"
+msgstr "Kör"
+
+#, php-format
+msgid "Curly %d"
 msgstr ""
 
-msgid "Rectangle 1"
+#, fuzzy, php-format
+#| msgid "Highlight"
+msgid "Highlight %d"
+msgstr "Kiemelés"
+
+#, fuzzy, php-format
+#| msgid "Line height"
+msgid "Line Through %d"
+msgstr "Sormagasság"
+
+#, fuzzy, php-format
+#| msgid "Rectangle Blue"
+msgid "Rectangle %d"
+msgstr "Kék téglalap"
+
+#, php-format
+msgid "Underline %d"
 msgstr ""
 
-msgid "Rectangle 2"
+#, php-format
+msgid "Underline double %d"
 msgstr ""
 
-msgid "Underline 1"
-msgstr ""
-
-msgid "Underline 2"
-msgstr ""
-
-msgid "Underline 3"
-msgstr ""
-
-msgid "Underline double 1"
-msgstr ""
-
-msgid "Underline double 2"
-msgstr ""
-
-msgid "ZigZag 1"
-msgstr ""
-
-msgid "ZigZag 2"
-msgstr ""
-
-msgid "ZigZag 3"
+#, php-format
+msgid "ZigZag %d"
 msgstr ""
 
 msgid "Highlighted text"
@@ -5919,6 +6179,9 @@ msgid "Loop delay"
 msgstr ""
 
 msgid "HTML"
+msgstr ""
+
+msgid "Empty element"
 msgstr ""
 
 msgid ""
@@ -6031,19 +6294,11 @@ msgstr ""
 msgid "Icon not found"
 msgstr "Az ikon nem található."
 
-#, fuzzy
-#| msgid "Previous label"
-msgid "Aria label"
-msgstr "Előző szöveg"
-
 #, php-format
 msgid "Enter an %1$s aria-label attribute %2$s that describes the link."
 msgstr ""
 
 msgid "Iframe"
-msgstr ""
-
-msgid "iframe"
 msgstr ""
 
 msgid ""
@@ -6052,18 +6307,17 @@ msgid ""
 "only suggest using this layer if you are a developer!"
 msgstr ""
 
-msgid "iframe url"
+#, fuzzy
+#| msgid "iframe url"
+msgid "Iframe url"
 msgstr "iframe URL"
-
-msgid "Yes"
-msgstr "Igen"
 
 msgid "You can disable the scroll on the iframe content."
 msgstr ""
 
 #, fuzzy
 #| msgid "iframe url"
-msgid "iframe title"
+msgid "Iframe title"
 msgstr "iframe URL"
 
 msgid "Image area"
@@ -6397,9 +6651,8 @@ msgstr ""
 
 #, php-format
 msgid ""
-"%1$s %2$s does not support the full screen API %3$s so other elements of the "
-"page may overlap the slider in Fullscreen mode. To avoid such problems, we "
-"suggest hiding the Fullscreen control from mobile view!"
+"%1$s does not support the full screen API. For this reason the full screen "
+"button will not appear on %1$s devices."
 msgstr ""
 
 msgid "Indicator"
@@ -6413,6 +6666,76 @@ msgstr ""
 
 msgid "Bar color"
 msgstr ""
+
+#~ msgctxt "Default Google font family for admin"
+#~ msgid "Montserrat"
+#~ msgstr "Montserrat"
+
+#~ msgctxt "Default Google font charset for admin"
+#~ msgid "latin"
+#~ msgstr "latin"
+
+#~ msgid "Character set"
+#~ msgstr "Karakterkészlet"
+
+#~ msgctxt "Character set"
+#~ msgid "Latin"
+#~ msgstr "Latin"
+
+#~ msgctxt "Character set"
+#~ msgid "Latin Extended"
+#~ msgstr "Kiterjesztett latin"
+
+#~ msgctxt "Character set"
+#~ msgid "Greek"
+#~ msgstr "Görög"
+
+#~ msgctxt "Character set"
+#~ msgid "Greek Extended"
+#~ msgstr "Kiterjesztett görög"
+
+#~ msgctxt "Character set"
+#~ msgid "Cyrillic"
+#~ msgstr "Cirill"
+
+#~ msgctxt "Character set"
+#~ msgid "Devanagari"
+#~ msgstr "Devanagari"
+
+#~ msgctxt "Character set"
+#~ msgid "Arabic"
+#~ msgstr "Arab"
+
+#~ msgctxt "Character set"
+#~ msgid "Khmer"
+#~ msgstr "Khmer"
+
+#~ msgctxt "Character set"
+#~ msgid "Telugu"
+#~ msgstr "Telugu"
+
+#~ msgctxt "Character set"
+#~ msgid "Vietnamese"
+#~ msgstr "Vietnámi"
+
+#~ msgctxt "Default font sets"
+#~ msgid "latin"
+#~ msgstr "latin"
+
+#~ msgid "Loop single slide"
+#~ msgstr "Egyetlen slide ismétlése"
+
+#~ msgid "In case of one slide, it repeats the animation of the slide."
+#~ msgstr "Egy slide esetén megismétli a layer animációkat ezen a slide-on."
+
+#~ msgid "Expired"
+#~ msgstr "Lejárt"
+
+#~ msgid "On sale"
+#~ msgstr "Akciós"
+
+#~ msgid "Discount price"
+#~ msgstr "Kedvezményes ár"
 
 #~ msgid "Async"
 #~ msgstr "Aszinkron"
@@ -6455,17 +6778,8 @@ msgstr ""
 #~ msgid "Absolute position"
 #~ msgstr "Következő pozíció"
 
-#~ msgid "Loading animation"
-#~ msgstr "Betöltési animáció"
-
 #~ msgid "Hide until complete load"
 #~ msgstr "Befejezés amíg teljesen be nem tölt"
-
-#~ msgid "Tablet scale"
-#~ msgstr "Tablet méret"
-
-#~ msgid "Mobile scale"
-#~ msgstr "Mobil méret"
 
 #~ msgid "Load jQuery on frontend"
 #~ msgstr "JQuery betöltése a webes felületen"
@@ -6475,9 +6789,6 @@ msgstr ""
 
 #~ msgid "CSS mode"
 #~ msgstr "CSS mód"
-
-#~ msgid "Inline"
-#~ msgstr "Belső"
 
 #~ msgid "Inline at head"
 #~ msgstr "Belső a fejrészben"

@@ -23,6 +23,11 @@ if ( class_exists( 'ActionScheduler_QueueRunner' ) ) {
 	ActionScheduler_QueueRunner::instance()->unhook_dispatch_async_request();
 }
 
+// Remove all AIOSEO grouped actions.
+if ( class_exists( 'ActionScheduler_DBStore' ) ) {
+	ActionScheduler_DBStore::instance()->cancel_actions_by_group( 'aioseo' );
+}
+
 // Confirm user has decided to remove all data, otherwise stop.
 if ( ! aioseo()->options->advanced->uninstall ) {
 	return;
@@ -37,7 +42,10 @@ $tablesToDrop = [
 	'aioseo_redirects',
 	'aioseo_redirects_404_logs',
 	'aioseo_redirects_hits',
-	'aioseo_redirects_logs'
+	'aioseo_redirects_logs',
+	'aioseo_cache',
+	'aioseo_links',
+	'aioseo_links_suggestions'
 ];
 
 // Delete all our custom tables.

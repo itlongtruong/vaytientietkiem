@@ -3,19 +3,19 @@
 use Nextend\Framework\ResourceTranslator\ResourceTranslator;
 
 $current = time();
-if ($current <= mktime(0, 0, 0, 7, 28, 2021)) {
-    if (get_option('ss3_summer_2021') != '1') {
+if (mktime(0, 0, 0, 11, 23, 2021) <= $current && $current < mktime(0, 0, 0, 12, 1, 2021)) {
+    if (get_option('ss3_bf_2021') != '1') {
 
         add_action('admin_notices', function () {
             ?>
-            <div class="notice notice-info is-dismissible" data-ss3dismissable="ss3_summer_2021" style="display:grid;grid-template-columns: 100px auto;padding-top: 25px; padding-bottom: 22px;">
-                <img alt="Smart Slider 3" src="<?php echo ResourceTranslator::toUrl('$ss3-admin$/images/notice.png'); ?>" width="64" height="64" style="grid-row: 1 / 4; align-self: center;justify-self: center">
-                <h3 style="margin:0;">Do you wish to use Smart Slider Pro on your site?</h3>
-                <p style="margin:0 0 2px;">If the answer is yes, then you may be interested in our <b>Summer Sale</b>.
-                    We are excited to offer a <b>30% discount on all Smart Slider Premium plans!</b>
-                    Limited time offer expires on July 27.</p>
+            <div class="notice notice-info is-dismissible" data-ss3dismissable="ss3_bf_2021" style="display:grid;grid-template-columns: 100px auto;padding-top: 25px; padding-bottom: 22px;">
+                <img alt="Smart Slider 3" src="<?php echo ResourceTranslator::toUrl('$ss3-admin$/images/notice.png'); ?>" width="74" height="74" style="grid-row: 1 / 4; align-self: center;justify-self: center">
+                <h3 style="margin:0;">Smart Slider 3 Pro Black Friday Deal</h3>
+                <p style="margin:0 0 2px;">Don't miss out on our biggest sale of the year!
+                    Get your <b>Smart Slider 3 Pro plan</b> with <b>40% OFF</b>!
+                    Limited time offer expires on November 30.</p>
                 <p style="margin:0;">
-                    <a class="button button-primary" href="https://smartslider3.com/pricing/?coupon=SUMMER21&utm_source=wpfree&utm_medium=wp&utm_campaign=summer21" target="_blank">
+                    <a class="button button-primary" href="https://smartslider3.com/pricing/?coupon=SAVE4021&utm_source=wpfree&utm_medium=wp&utm_campaign=bf21" target="_blank">
                         Buy Now</a>
                     <a class="button button-dismiss" href="#">Dismiss</a>
                 </p>
@@ -71,7 +71,7 @@ if ($current <= mktime(0, 0, 0, 7, 28, 2021)) {
         add_action('wp_ajax_ss3_dismiss_admin_notice', function () {
             check_ajax_referer('ss3-dismissible-notice', 'nonce');
 
-            update_option('ss3_summer_2021', '1');
+            update_option('ss3_bf_2021', '1');
             wp_die();
         });
     }

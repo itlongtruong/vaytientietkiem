@@ -59,6 +59,10 @@ class Platform {
         return self::$platform->getTimestamp();
     }
 
+    public static function localizeDate($date) {
+        return self::$platform->localizeDate($date);
+    }
+
     public static function getPublicDirectory() {
         return self::$platform->getPublicDirectory();
     }

@@ -6,6 +6,7 @@ namespace Nextend\SmartSlider3\Application\Admin\Slides;
 use Nextend\Framework\Asset\Js\Js;
 use Nextend\Framework\Platform\Platform;
 use Nextend\Framework\Request\Request;
+use Nextend\Framework\Sanitize;
 use Nextend\Framework\View\Html;
 use Nextend\SmartSlider3\Application\Model\ModelLicense;
 use Nextend\SmartSlider3\Settings;
@@ -19,7 +20,7 @@ use Nextend\SmartSlider3Pro\LayerAnimation\LayerAnimationStorage;
 
 JS::addGlobalInline('document.documentElement.classList.add("n2_html--application-only");');
 
-$externals = Settings::get('external-css-files');
+$externals = Sanitize::esc_attr(Settings::get('external-css-files'));
 if (!empty($externals)) {
     $externals = explode("\n", $externals);
     foreach ($externals as $external) {

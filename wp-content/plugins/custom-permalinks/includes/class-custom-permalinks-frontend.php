@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class that passes custom link, parse the requested url and redirect.
+ * Class that passes custom link, parse the requested URL and redirect.
  */
 class Custom_Permalinks_Frontend {
 	/**
@@ -28,7 +28,7 @@ class Custom_Permalinks_Frontend {
 	private $query_string_uri = '';
 
 	/**
-	 * Preserve the url for later use in parse_request.
+	 * Preserve the URL for later use in parse_request.
 	 *
 	 * @var string
 	 */
@@ -115,11 +115,11 @@ class Custom_Permalinks_Frontend {
 	 * @access public
 	 *
 	 * @param string $permalink     Custom Permalink.
-	 * @param string $language_code The language to convert the url into.
+	 * @param string $language_code The language to convert the URL into.
 	 *
 	 * @return string permalink with language information.
 	 */
-	public function wpml_permalink_filter( $permalink = '', $language_code ) {
+	public function wpml_permalink_filter( $permalink, $language_code ) {
 		$custom_permalink   = $permalink;
 		$trailing_permalink = trailingslashit( home_url() ) . $custom_permalink;
 		if ( $language_code ) {
@@ -202,14 +202,54 @@ class Custom_Permalinks_Frontend {
 	}
 
 	/**
+	 * Check conditions if it matches then return true to stop processing the
+	 * particular query like for sitemaps.
+	 *
+	 * @since 2.1.0
+	 * @access private
+	 *
+	 * @param array $query Requested Query.
+	 *
+	 * @return bool Whether to process the query or not.
+	 */
+	private function exclude_query_proccess( $query ) {
+		$exclude = false;
+
+		/*
+		 * Return Query for Sitemap pages.
+		 */
+		if ( isset( $query )
+			&& (
+				( isset( $query['sitemap'] ) && ! empty( $query['sitemap'] ) )
+				|| (
+					isset( $query['seopress_sitemap'] )
+					&& ! empty( $query['seopress_sitemap'] )
+				)
+				|| (
+					isset( $query['seopress_cpt'] )
+					&& ! empty( $query['seopress_cpt'] )
+				)
+				|| (
+					isset( $query['seopress_sitemap_xsl'] )
+					&& 1 === (int) $query['seopress_sitemap_xsl']
+				)
+			)
+		) {
+			$exclude = true;
+		}
+
+		return $exclude;
+	}
+
+	/**
 	 * Filter to rewrite the query if we have a matching post.
 	 *
 	 * @since 0.1.0
 	 * @access public
 	 *
-	 * @param string $query Requested URL.
+	 * @param array $query The array of requested query variables.
 	 *
-	 * @return string the URL which has to be parsed.
+	 * @return array the URL which has to be parsed.
 	 */
 	public function parse_request( $query ) {
 		global $wpdb;
@@ -222,8 +262,18 @@ class Custom_Permalinks_Frontend {
 		}
 
 		/*
-		 * First, search for a matching custom permalink, and if found
-		 * generate the corresponding original URL.
+		 * Return Query for Sitemap pages.
+		 */
+		$stop_query = $this->exclude_query_proccess( $query );
+		if ( $stop_query ) {
+			// Making it true to avoid redirect if query doesn't needs to be processed.
+			$this->parse_request_status = true;
+			return $query;
+		}
+
+		/*
+		 * First, search for a matching custom permalink, and if found generate the
+		 * corresponding original URL.
 		 */
 		$original_url = null;
 
@@ -254,10 +304,11 @@ class Custom_Permalinks_Frontend {
 		$request_no_slash  = preg_replace( '@/+@', '/', trim( $request, '/' ) );
 		$posts             = $this->query_post( $request_no_slash );
 		$permalink_matched = false;
+		$found_permalink   = '';
 
 		if ( $posts ) {
 			/*
-			 * A post matches our request. Preserve this url for later use. If it's
+			 * A post matches our request. Preserve this URL for later use. If it's
 			 * the same as the permalink (no extra stuff).
 			 */
 			if ( trim( $posts[0]->meta_value, '/' ) === $request_no_slash ) {
@@ -265,7 +316,10 @@ class Custom_Permalinks_Frontend {
 				$permalink_matched    = true;
 			}
 
-			if ( 'draft' === $posts[0]->post_status ) {
+			$found_permalink = $posts[0]->meta_value;
+			if ( 'draft' === $posts[0]->post_status
+				|| 'pending' === $posts[0]->post_status
+			) {
 				if ( 'page' === $posts[0]->post_type ) {
 					$original_url = '?page_id=' . $posts[0]->ID;
 				} else {
@@ -322,15 +376,16 @@ class Custom_Permalinks_Frontend {
 						$term_permalink = true;
 
 						/*
-						* Preserve this url for later if it's the same as the
-						* permalink (no extra stuff).
-						*/
+						 * Preserve this URL for later if it's the same as the
+						 * permalink (no extra stuff).
+						 */
 						if ( trim( $permalink, '/' ) === $request_no_slash ) {
 							$this->registered_url = $request;
 						}
 
-						$term_link    = $this->original_term_link( $term['id'] );
-						$original_url = str_replace(
+						$found_permalink = $permalink;
+						$term_link       = $this->original_term_link( $term['id'] );
+						$original_url    = str_replace(
 							trim( $permalink, '/' ),
 							$term_link,
 							trim( $request, '/' )
@@ -343,6 +398,16 @@ class Custom_Permalinks_Frontend {
 		$this->parse_request_status = false;
 		if ( null !== $original_url ) {
 			$this->parse_request_status = true;
+
+			/*
+			 * Allow redirect function to work if permalink is not exactly matched
+			 * with the requested URL. Like Trailing slash (Requested URL doesn't
+			 * contain trailing slash but permalink has trailing slash or vice versa)
+			 * and letter-case issue etc.
+			 */
+			if ( ! empty( $found_permalink ) && $found_permalink !== $request ) {
+				$this->parse_request_status = false;
+			}
 
 			$original_url = str_replace( '//', '/', $original_url );
 			$pos          = strpos( $this->request_uri, '?' );
@@ -357,8 +422,8 @@ class Custom_Permalinks_Frontend {
 
 			/*
 			 * Now we have the original URL, run this back through WP->parse_request,
-			 * in order to parse parameters properly.
-			 * We set $_SERVER variables to fool the function.
+			 * in order to parse parameters properly. We set `$_SERVER` variables to
+			 * fool the function.
 			 */
 			$_SERVER['REQUEST_URI'] = '/' . ltrim( $original_url, '/' );
 			$path_info              = apply_filters(
@@ -580,7 +645,7 @@ class Custom_Permalinks_Frontend {
 			if ( substr( $request, 0, $original_length ) === $original_permalink
 				&& trim( $request, '/' ) !== trim( $original_permalink, '/' )
 			) {
-				// This is the original link; we can use this url to derive the new one.
+				// This is the original link; we can use this URL to derive the new one.
 				$url = preg_replace(
 					'@//*@',
 					'/',

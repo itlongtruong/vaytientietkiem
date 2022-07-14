@@ -2,6 +2,7 @@
 
 namespace Nextend\Framework\Localization;
 
+use Nextend\Framework\Filesystem\Filesystem;
 use Nextend\Framework\Localization\Joomla\JoomlaLocalization;
 use Nextend\Framework\Localization\WordPress\WordPressLocalization;
 use Nextend\Framework\Pattern\SingletonTrait;
@@ -31,8 +32,20 @@ class Localization {
         return self::$platformLocalization->getLocale();
     }
 
+    private static function checkMoFile($path, $locale) {
+        if (Filesystem::fileexists($path . '/' . $locale . '.mo')) return $locale . '.mo';
+
+        if (strpos($locale, '_')) {
+            $nextLangStep = implode('_', explode('_', $locale, -1));
+
+            return self::checkMoFile($path, $nextLangStep);
+        }
+
+        return false;
+
+    }
+
     private static function loadTextDomain($domain, $mofile) {
-        if (!is_readable($mofile)) return false;
 
         $mo = self::$platformLocalization->createMo();
         if (!$mo->import_from_file($mofile)) return false;
@@ -49,8 +62,9 @@ class Localization {
         } else {
             $locale = self::getLocale();
         }
-        $mofile = $locale . '.mo';
-        if ($loaded = self::loadTextDomain($domain, $path . '/' . $mofile)) {
+        $mofile = self::checkMoFile($path, $locale);
+
+        if ($mofile && $loaded = self::loadTextDomain($domain, $path . '/' . $mofile)) {
             return $loaded;
         }
 

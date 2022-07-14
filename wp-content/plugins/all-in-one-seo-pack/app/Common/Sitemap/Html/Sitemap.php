@@ -99,12 +99,6 @@ namespace AIOSEO\Plugin\Common\Sitemap\Html {
 			}
 
 			$sitemapUrl = trim( $sitemapUrl['path'], '/' );
-
-			$page = get_page_by_path( $sitemapUrl, OBJECT, aioseo()->helpers->getPublicPostTypes( true ) );
-			if ( is_object( $page ) ) {
-				return;
-			}
-
 			if ( trim( $wp->request, '/' ) === $sitemapUrl ) {
 				$this->isDedicatedPage = true;
 				$this->generatePage();
@@ -189,6 +183,7 @@ namespace {
 		 */
 		function aioseo_html_sitemap( $attributes = [], $echo = true ) {
 			$attributes = aioseo()->htmlSitemap->frontend->getAttributes( $attributes );
+
 			return aioseo()->htmlSitemap->frontend->output( $echo, $attributes );
 		}
 	}

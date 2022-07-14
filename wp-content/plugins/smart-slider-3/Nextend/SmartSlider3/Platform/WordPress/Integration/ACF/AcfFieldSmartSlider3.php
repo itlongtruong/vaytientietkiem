@@ -96,7 +96,7 @@ class AcfFieldSmartSlider3 extends acf_field {
         <table style="width:100%;border:0;">
             <tr>
                 <td style="white-space: nowrap;">
-                    <a href="#" onclick="<?php echo "NextendSmartSliderSelectModal(jQuery('#" . $field['id'] . "'));"; ?>return false;" class="button" title="<?php echo n2_('Select slider'); ?>"><?php echo n2_('Select slider'); ?></a>
+                    <a href="#" onclick="<?php echo "NextendSmartSliderSelectModal(jQuery('#" . $field['id'] . "'));"; ?>return false;" class="button" title="<?php echo n2_('Select Slider'); ?>"><?php echo n2_('Select Slider'); ?></a>
                     <span style="line-height:2;padding:10px;"><?php n2_e('OR'); ?></span>
                 </td>
                 <td style="width:90%;">

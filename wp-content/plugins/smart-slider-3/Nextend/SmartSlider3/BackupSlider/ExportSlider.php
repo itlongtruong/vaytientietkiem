@@ -320,7 +320,7 @@ class ExportSlider {
             'replaceLightboxImages'
         ), $sliderHTML);
 
-        $sliderHTML = preg_replace_callback('/data-n2-lightbox=[^<>]*?(href)=["|\'](.*?)["|\']/i', array(
+        $sliderHTML = preg_replace_callback('/(data-n2-lightbox)=["|\'](.*?)["|\']/i', array(
             $this,
             'replaceHTMLImageHrefLightbox'
         ), $sliderHTML);

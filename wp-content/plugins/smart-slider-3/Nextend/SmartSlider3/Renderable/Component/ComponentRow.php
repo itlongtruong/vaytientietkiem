@@ -135,9 +135,10 @@ class ComponentRow extends AbstractComponent {
                 }
 
             } else {
+                $this->style->add($device, '-inner > .n2-ss-layer-row-inner', 'flex-wrap:nowrap;');
                 if ($fullWidth) {
                     foreach ($columns as $column) {
-                        $column->setWidth($device, $gutter);
+                        $column->setWidth($device);
                     }
                 } else {
                     foreach ($columns as $column) {

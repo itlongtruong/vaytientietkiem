@@ -198,6 +198,10 @@ class Custom_Permalinks_Form {
 			$permalink = remove_accents( $permalink );
 		}
 
+		if ( empty( $language_code ) ) {
+			$language_code = get_locale();
+		}
+
 		$permalink = wp_strip_all_tags( $permalink );
 		// Preserve escaped octets.
 		$permalink = preg_replace( '|%([a-fA-F0-9][a-fA-F0-9])|', '---$1---', $permalink );
@@ -206,14 +210,16 @@ class Custom_Permalinks_Form {
 		// Restore octets.
 		$permalink = preg_replace( '|---([a-fA-F0-9][a-fA-F0-9])---|', '%$1', $permalink );
 
-		if ( seems_utf8( $permalink ) ) {
-			if ( ! $allow_accents ) {
-				if ( function_exists( 'mb_strtolower' ) ) {
-					if ( ! $allow_caps ) {
-						$permalink = mb_strtolower( $permalink, 'UTF-8' );
+		if ( 'en' === $language_code || strpos( $language_code, 'en_' ) === 0 ) {
+			if ( seems_utf8( $permalink ) ) {
+				if ( ! $allow_accents ) {
+					if ( function_exists( 'mb_strtolower' ) ) {
+						if ( ! $allow_caps ) {
+							$permalink = mb_strtolower( $permalink, 'UTF-8' );
+						}
 					}
+					$permalink = utf8_uri_encode( $permalink );
 				}
-				$permalink = utf8_uri_encode( $permalink );
 			}
 		}
 
@@ -270,7 +276,7 @@ class Custom_Permalinks_Form {
 			$permalink
 		);
 
-			// Convert &times to 'x'.
+		// Convert &times to 'x'.
 		$permalink = str_replace( '%c3%97', 'x', $permalink );
 		// Kill entities.
 		$permalink = preg_replace( '/&.+?;/', '', $permalink );
@@ -327,27 +333,20 @@ class Custom_Permalinks_Form {
 			}
 		}
 
-		// Allow only dot that are coming before any alphabet.
-		$allow_dot = explode( '.', $permalink );
-		if ( 0 < count( $allow_dot ) ) {
-			$new_perm   = $allow_dot[0];
-			$dot_length = count( $allow_dot );
-			for ( $i = 1; $i < $dot_length; ++$i ) {
-				preg_match( '/^[a-z]/', $allow_dot[ $i ], $check_perm );
-				if ( isset( $check_perm ) && ! empty( $check_perm ) ) {
-					$new_perm .= '.';
-				}
-				$new_perm .= $allow_dot[ $i ];
-			}
-
-			$permalink = $new_perm;
-		}
-
 		$permalink = preg_replace( '/\s+/', '-', $permalink );
 		$permalink = preg_replace( '|-+|', '-', $permalink );
 		$permalink = str_replace( '-/', '/', $permalink );
 		$permalink = str_replace( '/-', '/', $permalink );
-		$permalink = trim( $permalink, '-' );
+
+		/*
+		 * Avoid trimming hyphens if filter returns `false`.
+		 *
+		 * @since 2.4.0
+		 */
+		$trim_hyphen = apply_filters( 'custom_permalinks_redundant_hyphens', false );
+		if ( ! is_bool( $trim_hyphen ) || ! $trim_hyphen ) {
+			$permalink = trim( $permalink, '-' );
+		}
 
 		return $permalink;
 	}
@@ -381,7 +380,6 @@ class Custom_Permalinks_Form {
 		if ( ! empty( $_REQUEST['custom_permalink'] )
 			&& $_REQUEST['custom_permalink'] !== $original_link
 		) {
-			$language_code = get_locale();
 			$language_code = apply_filters(
 				'wpml_element_language_code',
 				null,
@@ -472,7 +470,9 @@ class Custom_Permalinks_Form {
 			if ( isset( $permalink ) && ! empty( $permalink ) ) {
 				$view_post_link = $home_url . $permalink;
 			} else {
-				if ( 'draft' === $post->post_status ) {
+				if ( 'draft' === $post->post_status
+					|| 'pending' === $post->post_status
+				) {
 					$view_post      = 'Preview';
 					$view_post_link = $home_url . '?';
 					if ( 'page' === $post->post_type ) {
@@ -616,7 +616,7 @@ class Custom_Permalinks_Form {
 	 *
 	 * @return void
 	 */
-	private function get_permalink_form( $permalink, $original = '', $id,
+	private function get_permalink_form( $permalink, $original, $id,
 		$render_containers = true, $postname = ''
 	) {
 		$encoded_permalink = htmlspecialchars( urldecode( $permalink ) );
@@ -754,7 +754,7 @@ class Custom_Permalinks_Form {
 
 				$this->delete_term_permalink( $term_id );
 
-				$language_code = get_locale();
+				$language_code = '';
 				if ( isset( $term->term_taxonomy_id ) ) {
 					$term_type = 'category';
 					if ( isset( $term->taxonomy ) ) {
@@ -773,6 +773,10 @@ class Custom_Permalinks_Form {
 
 				$permalink = $this->sanitize_permalink( $new_permalink, $language_code );
 				$table     = get_option( 'custom_permalink_table' );
+
+				if ( ! is_array( $table ) ) {
+					$table = array();
+				}
 
 				if ( $permalink && ! array_key_exists( $permalink, $table ) ) {
 					$table[ $permalink ] = array(
@@ -836,16 +840,16 @@ class Custom_Permalinks_Form {
 
 				/*
 				 * Check if `hide_default` is `true` and the current language is not
-				 * the default. Otherwise remove the lang code from the url.
+				 * the default. Otherwise remove the lang code from the URL.
 				 */
 				if ( 1 === $polylang_config['hide_default'] ) {
 					$current_language = '';
 					if ( function_exists( 'pll_current_language' ) ) {
-						// get current language.
+						// Get current language.
 						$current_language = pll_current_language();
 					}
 
-					// get default language.
+					// Get default language.
 					$default_language = $polylang_config['default_lang'];
 					if ( $current_language !== $default_language ) {
 						$remove_lang = ltrim( strstr( $requested_url, '/' ), '/' );
@@ -886,7 +890,9 @@ class Custom_Permalinks_Form {
 			);
 
 			if ( ! $all_permalinks['custom_permalink'] ) {
-				if ( 'draft' === $post->post_status ) {
+				if ( 'draft' === $post->post_status
+					|| 'pending' === $post->post_status
+				) {
 					$view_post_link = '?';
 					if ( 'page' === $post->post_type ) {
 						$view_post_link .= 'page_id';
@@ -899,6 +905,12 @@ class Custom_Permalinks_Form {
 
 					$all_permalinks['preview_permalink'] = $view_post_link;
 				}
+			} else {
+				$all_permalinks['custom_permalink'] = htmlspecialchars(
+					urldecode(
+						$all_permalinks['custom_permalink']
+					)
+				);
 			}
 
 			$cp_frontend = new Custom_Permalinks_Frontend();
@@ -934,7 +946,9 @@ class Custom_Permalinks_Form {
 				'callback'            => array( $this, 'refresh_meta_form' ),
 				'args'                => array(
 					'id' => array(
-						'validate_callback' => 'is_numeric',
+						'validate_callback' => function( $pid ) {
+							return is_numeric( $pid );
+						},
 					),
 				),
 				'permission_callback' => function () {

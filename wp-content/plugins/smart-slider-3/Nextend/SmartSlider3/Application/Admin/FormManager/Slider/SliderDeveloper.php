@@ -9,6 +9,7 @@ use Nextend\Framework\Form\Element\Message\Warning;
 use Nextend\Framework\Form\Element\OnOff;
 use Nextend\Framework\Form\Element\Select;
 use Nextend\Framework\Form\Element\Text;
+use Nextend\Framework\Form\Element\Text\Number;
 use Nextend\Framework\Form\Element\Textarea;
 use Nextend\Framework\Form\FormTabbed;
 
@@ -125,10 +126,10 @@ class SliderDeveloper extends AbstractSliderTab {
             'resize' => 'both'
         ));
 
-        $row4 = $table->createRow('developer-4');
-        new Textarea($row4, 'callbacks', n2_('JavaScript callbacks'), '', array(
-            'height' => 26,
-            'resize' => 'both'
+        $row11 = $table->createRow('developer-11');
+        new Number($row11, 'loading-time', n2_('Loading animation waiting time'), 2000, array(
+            'wide' => 5,
+            'unit' => 'ms',
         ));
         $row10 = $table->createRow('developer-10');
         new Textarea($row10, 'related-posts', n2_('Post IDs') . ' (' . n2_('one per line') . ')', '', array(
@@ -137,6 +138,6 @@ class SliderDeveloper extends AbstractSliderTab {
             'tipLink'        => 'https://smartslider.helpscoutdocs.com/article/1806-slider-settings-developer#post-ids-one-per-line',
             'height'         => 26
         ));
-    
+
     }
 }

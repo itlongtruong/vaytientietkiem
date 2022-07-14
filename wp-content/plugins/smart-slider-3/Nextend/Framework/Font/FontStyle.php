@@ -75,7 +75,7 @@ class FontStyle {
             }
         }
 
-        return 'font-size:' . Common::parse($v, '') . ';';
+        return 'font-size:' . Sanitize::esc_css_value(Common::parse($v, '')) . ';';
     }
 
     /**
@@ -88,7 +88,7 @@ class FontStyle {
         $rgba = Color::hex2rgba($v[3]);
         if ($v[0] == 0 && $v[1] == 0 && $v[2] == 0) return 'text-shadow: none;';
 
-        return 'text-shadow: ' . $v[0] . 'px ' . $v[1] . 'px ' . $v[2] . 'px RGBA(' . $rgba[0] . ',' . $rgba[1] . ',' . $rgba[2] . ',' . round($rgba[3] / 127, 2) . ');';
+        return 'text-shadow: ' . Sanitize::esc_css_value($v[0]) . 'px ' . Sanitize::esc_css_value($v[1]) . 'px ' . Sanitize::esc_css_value($v[2]) . 'px RGBA(' . $rgba[0] . ',' . $rgba[1] . ',' . $rgba[2] . ',' . round($rgba[3] / 127, 2) . ');';
     }
 
     /**
@@ -97,7 +97,7 @@ class FontStyle {
      * @return string
      */
     public function parseAfont($v) {
-        return 'font-family: ' . Sanitize::esc_css_value($this->loadFont($v)) . ';';
+        return 'font-family: ' . $this->loadFont(Sanitize::esc_css_value($v)) . ';';
     }
 
     /**
@@ -108,7 +108,7 @@ class FontStyle {
     public function parseLineheight($v) {
         if ($v == '') return '';
 
-        return 'line-height: ' . $v . ';';
+        return 'line-height: ' . Sanitize::esc_css_value($v) . ';';
     }
 
     /**
@@ -155,23 +155,24 @@ class FontStyle {
      * @return string
      */
     public function parseAlign($v) {
-        return 'text-align: ' . $v . ';';
+        return 'text-align: ' . Sanitize::esc_css_value($v) . ';';
     }
 
     public function parseLetterSpacing($v) {
-        return 'letter-spacing: ' . $v . ';';
+        return 'letter-spacing: ' . Sanitize::esc_css_value($v) . ';';
     }
 
     public function parseWordSpacing($v) {
-        return 'word-spacing: ' . $v . ';';
+        return 'word-spacing: ' . Sanitize::esc_css_value($v) . ';';
     }
 
     public function parseTextTransform($v) {
-        return 'text-transform: ' . $v . ';';
+        return 'text-transform: ' . Sanitize::esc_css_value($v) . ';';
     }
 
     public function parseExtra($v) {
-        return $v;
+
+        return Sanitize::esc_css_string($v);
     }
 
     /**
