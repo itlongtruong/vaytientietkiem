@@ -50,7 +50,7 @@
         <a href="#" class="twitter"><i class="fa fa-twitter"></i></a>
         <a href="https://www.facebook.com/vay.tien.cmnd.online" class="facebook"><i class="fa fa-facebook"></i></a>
         <a href="#" class="linkedin"><i class="fa fa-linkedin"></i></a>
-        <a href="#" class="instagram"><i class="fa fa-instagram"></i></a>
+        <a href="#" class="instagram"><i class="fa fa-instagram"></p></i></a>
       </div>
     </div>
 
@@ -73,16 +73,20 @@
             'menu_class' => 'menu'
           )
         ); ?>
-       
+
       </nav><!-- .main-nav-->
 
 
       <form action="<?php bloginfo('url'); ?>/" method="GET" role="search" class="search-bar d-none d-lg-block">
         <input type="search" name="s" required <?php if (is_search()) { ?>value="<?php the_search_query(); ?>" <?php } else { ?>value="" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;" <?php } ?>>
         <button class="search-btn" type="submit">
-          <span >Search</span>
+          <span>Search</span>
         </button>
       </form>
 
     </div>
-  </header><!-- End Header -->
+  </header>
+
+  
+
+  <!-- End Header -->

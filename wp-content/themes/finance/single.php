@@ -59,7 +59,7 @@ get_header();
               <div class="entry-footer">
                 <i class="bi bi-folder"></i>
                 <ul class="cats">
-                  <li style="margin-left: -40px;"><?php the_category();?></li>
+                  <li style="margin-left: -40px;"><?php the_category(get_the_ID());?></li>
                 </ul>
               </div>
             </article><!-- End blog entry -->
@@ -75,7 +75,7 @@ get_header();
             foreach($categories as $individual_category) $category_ids[] = $individual_category->term_id;
           
             $query = new WP_Query( array(
-              'post_type'        => 'kien-thuc',
+              'post_type'        => 'post',
               'showposts'      =>  4,
               'post__not_in' => array($post->ID),
               'cat'       => $category_ids,

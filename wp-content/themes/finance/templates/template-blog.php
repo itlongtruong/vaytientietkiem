@@ -10,7 +10,8 @@
 get_header();
 
 $wp_query = new WP_Query( array(
-    'post_type'        => 'kien-thuc',
+    'post_type'        => 'post',
+    'post_status' => 'publish',
     'posts_per_page' => 2,
     'paged' =>  get_query_var( 'paged' )
 ));

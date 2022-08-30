@@ -16,6 +16,7 @@ if (!empty(get_query_var( 'cat' ))){
 $args = array(
     'taxonomy' => 'category',
     'hide_empty' => false,
+	'order'            => 'DESC',
 );
 $categories = get_terms($args);
 ?>
@@ -25,7 +26,6 @@ $categories = get_terms($args);
 		<div class="sidebar-item search-form">
 		<form action="<?php bloginfo('url'); ?>/" method="GET" role="search">
 			<input type="text" name="s" placeholder="Search"  <?php if(is_search()) { ?>value="<?php the_search_query(); ?>" <?php } else { ?>value="" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;"<?php } ?>>
-			<input type="hidden" name="post_type" value="kien-thuc" />
 			<button type="submit"><i class="bi bi-search"></i></button>
 		</form>
 		</div>
@@ -46,7 +46,7 @@ $categories = get_terms($args);
 
 		<?php
 		$args = array(
-			'post_type'        => 'kien-thuc',		
+			'post_type'        => 'post',		
 			'numberposts'      =>  5,
 			'orderby'          => 'date',
 			'order'            => 'DESC',		

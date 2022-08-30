@@ -19,7 +19,7 @@
             <div class="row">
 			<?php 	
 			$args = array(
-				'post_type'        => 'kien-thuc',		
+				'post_type'        => 'post',	
 				'numberposts'      =>  1,
 				'orderby'          => 'date',
 				'order'            => 'DESC',		
@@ -55,7 +55,7 @@
               	  <div class="row">
 								<?php 	
 						$args = array(
-							'post_type'        => 'kien-thuc',		
+							'post_type'        => 'post',		
 							'numberposts'      =>  4,
 							'orderby'          => 'date',
 							'order'            => 'DESC',		
