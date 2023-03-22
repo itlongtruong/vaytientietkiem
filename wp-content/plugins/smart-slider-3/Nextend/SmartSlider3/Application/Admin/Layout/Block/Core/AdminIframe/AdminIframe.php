@@ -12,7 +12,7 @@ use Nextend\SmartSlider3\Settings;
 <div <?php $this->renderAttributes(); ?>>
     <div class="n2_iframe_application__nav_bar">
         <div class="n2_iframe_application__nav_bar_label">
-            <?php echo $this->getLabel(); ?>
+            <?php echo esc_html($this->getLabel()); ?>
         </div>
         <div class="n2_iframe_application__nav_bar_actions">
             <?php

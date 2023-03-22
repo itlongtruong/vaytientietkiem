@@ -14,7 +14,7 @@ class ContainerSettings extends ContainerGeneral {
     }
 
     public function renderContainer() {
-        echo '<div class="n2_ss_layer_window__tab_panel" data-panel="' . $this->name . '">';
+        echo '<div class="n2_ss_layer_window__tab_panel" data-panel="' . esc_attr($this->name) . '">';
         parent::renderContainer();
         echo '</div>';
     }

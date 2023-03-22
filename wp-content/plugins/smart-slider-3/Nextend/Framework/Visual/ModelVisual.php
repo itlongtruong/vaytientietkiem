@@ -71,7 +71,7 @@ class ModelVisual extends AbstractModel {
 
     public function deleteSet($setId) {
         $set = $this->storage->getById($setId, $this->type . 'set');
-        if (!empty($set) && $set['section'] == $this->type . 'set' && $set['editable'] && $set['system'] == 0) {
+        if (!empty($set) && $set['section'] == $this->type . 'set' && $set['editable'] && $set['isSystem'] == 0) {
             if ($this->storage->deleteById($setId)) {
                 return $set;
             }

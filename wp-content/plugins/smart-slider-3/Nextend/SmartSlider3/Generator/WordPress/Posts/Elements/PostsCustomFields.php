@@ -24,7 +24,7 @@ class PostsCustomFields extends Select {
         global $wpdb;
         $query     = "SELECT DISTINCT($wpdb->postmeta.meta_key) FROM $wpdb->posts
             LEFT JOIN $wpdb->postmeta ON $wpdb->posts.ID = $wpdb->postmeta.post_id
-            WHERE $wpdb->posts.post_type = '%s'";
+            WHERE $wpdb->posts.post_type = '%s' ORDER BY $wpdb->postmeta.meta_key ASC";
         $meta_keys = $wpdb->get_col($wpdb->prepare($query, $this->postType));
 
         return $meta_keys;

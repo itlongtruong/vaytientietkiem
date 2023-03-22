@@ -37,7 +37,12 @@ class Slide extends AbstractRenderableOwner {
 
     protected $title = '', $description = '', $thumbnail = '';
 
-    public $parameters, $background = '';
+    public $parameters;
+
+    /**
+     * @var string contains escaped html data
+     */
+    public $background = '';
 
     protected $html = '';
 
@@ -269,29 +274,25 @@ class Slide extends AbstractRenderableOwner {
 
             $url = ResourceTranslator::toUrl($url);
 
-            $this->linkAttributes['onclick'] = '';
-            if (strpos($url, 'javascript:') === 0) {
-                $this->linkAttributes['onclick'] = $url;
-            } else {
 
-                $url = Link::parse($url, $this->linkAttributes);
-                $this->linkAttributes['data-href'] = $url;
-            
-                $this->linkAttributes['tabindex'] = 0;
-                $this->linkAttributes['role']     = 'button';
+            $url = Link::parse($url, $this->linkAttributes);
+            $this->linkAttributes['data-href'] = $url;
+        
+            $this->linkAttributes['tabindex'] = 0;
+            $this->linkAttributes['role']     = 'button';
 
-                $ariaLabel = $this->parameters->get('aria-label');
-                if (!empty($ariaLabel)) {
-                    $this->linkAttributes['aria-label'] = $ariaLabel;
-                }
-
-                if (empty($this->linkAttributes['onclick']) && !isset($this->linkAttributes['data-n2-lightbox'])) {
-                    if (!empty($target) && $target != '_self') {
-                        $this->linkAttributes['data-target'] = $target;
-                    }
-                    $this->linkAttributes['data-n2click'] = "url";
-                }
+            $ariaLabel = $this->parameters->get('aria-label');
+            if (!empty($ariaLabel)) {
+                $this->linkAttributes['aria-label'] = $ariaLabel;
             }
+
+            if (!isset($this->linkAttributes['onclick']) && !isset($this->linkAttributes['data-n2-lightbox'])) {
+                if (!empty($target) && $target != '_self') {
+                    $this->linkAttributes['data-target'] = $target;
+                }
+                $this->linkAttributes['data-n2click'] = "url";
+            }
+
             if (!isset($this->linkAttributes['style'])) {
                 $this->linkAttributes['style'] = '';
             }
@@ -378,7 +379,7 @@ class Slide extends AbstractRenderableOwner {
                     'class'   => 'n2-ss-slide-thumbnail'
                 ));
 
-                $this->html .= Html::image($this->sliderObject->features->optimize->optimizeThumbnail($thumbnail), Sanitize::esc_attr($this->getThumbnailAltDynamic()), $attributes);
+                $this->html .= Html::image($this->sliderObject->features->optimize->optimizeThumbnail($thumbnail), esc_attr($this->getThumbnailAltDynamic()), $attributes);
             }
         }
 
@@ -425,6 +426,9 @@ class Slide extends AbstractRenderableOwner {
         return $this->parameters->get('mobilelandscape', 1);
     }
 
+    /**
+     * @return string contains escaped html data
+     */
     public function getHTML() {
         return $this->html;
     }
@@ -583,12 +587,16 @@ class Slide extends AbstractRenderableOwner {
 
     private function _splitbywords($s, $start, $length) {
 
-        $len      = Str::strlen($s);
-        $posStart = max(0, $start == 0 ? 0 : Str::strpos($s, ' ', $start));
-        $posEnd   = max(0, $length > $len ? $len : Str::strpos($s, ' ', $length));
-        if ($posEnd == 0 && $length <= $len) $posEnd = $len;
+        $len = intval(Str::strlen($s));
+        if ($len > $start) {
+            $posStart = max(0, $start == 0 ? 0 : Str::strpos($s, ' ', $start));
+            $posEnd   = max(0, $length > $len ? $len : Str::strpos($s, ' ', $length));
+            if ($posEnd == 0 && $length <= $len) $posEnd = $len;
 
-        return Str::substr($s, $posStart, $posEnd);
+            return Str::substr($s, $posStart, $posEnd);
+        } else {
+            return '';
+        }
     }
 
     private function _findimage($s, $index) {

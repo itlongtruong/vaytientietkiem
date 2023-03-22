@@ -9,16 +9,16 @@ namespace Nextend\SmartSlider3\Application\Admin\Layout\Block\Core\Banner;
 $closeUrl = $this->getCloseUrl();
 ?>
 
-<div id="<?php echo $this->getID(); ?>" class="n2_admin__banner">
+<div id="<?php echo esc_attr($this->getID()); ?>" class="n2_admin__banner">
     <div class="n2_admin__banner_inner">
-        <img src="<?php echo $this->getImage(); ?>" alt="">
-        <div class="n2_admin__banner_inner_title"><?php echo $this->getTitle(); ?></div>
-        <div class="n2_admin__banner_inner_description"><?php echo $this->getDescription(); ?></div>
+        <img src="<?php echo esc_url($this->getImage()); ?>" alt="">
+        <div class="n2_admin__banner_inner_title"><?php echo esc_attr($this->getTitle()); ?></div>
+        <div class="n2_admin__banner_inner_description"><?php echo esc_attr($this->getDescription()); ?></div>
         <a class="n2_admin__banner_inner_button n2_button n2_button--big n2_button--green"
-           href="<?php echo $this->getButtonHref(); ?>"
-           onclick="<?php echo $this->getButtonOnclick(); ?>"
+           href="<?php echo esc_url($this->getButtonHref()); ?>"
+           onclick="<?php echo esc_js($this->getButtonOnclick()); ?>"
            target="_blank">
-            <?php echo $this->getButtonTitle(); ?>
+            <?php echo esc_html($this->getButtonTitle()); ?>
         </a>
     </div>
     <?php if (!empty($closeUrl)): ?>
@@ -29,12 +29,12 @@ $closeUrl = $this->getCloseUrl();
         <script>
             _N2.r(['$', 'documentReady'], function () {
                 var $ = _N2.$;
-                var $banner = $('#<?php echo $this->getID(); ?>');
+                var $banner = $('#<?php echo esc_html($this->getID()); ?>');
 
                 $banner.find('.n2_admin__banner_close').on('click', function (e) {
                     e.preventDefault();
 
-                    _N2.AjaxHelper.ajax({url: <?php echo json_encode($closeUrl); ?>});
+                    _N2.AjaxHelper.ajax({url: <?php echo json_encode(esc_url($closeUrl)); ?>});
                     $banner.remove();
                 });
             });

@@ -3,9 +3,9 @@ Contributors: codepress, tschutter, davidmosterd, engelen, dungengronovius
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZDZRSYLQ4Z76J
 Tags: plugins, wordpress, admin, column, columns, custom columns, custom fields, image, dashboard, sortable, filters, posts, media, users, pages, posttypes, manage columns, wp-admin
 Requires at least: 4.7.1
-Tested up to: 5.8.1
-Requires PHP: 5.6.20
-Stable tag: 4.4.5
+Tested up to: 6.1.1
+Requires PHP: 7.2
+Stable tag: 4.6.1
 
 Customise columns on the administration screens for post(types), pages, media, comments, links and users with an easy to use drag-and-drop interface.
 
@@ -209,10 +209,68 @@ You can find a list of the available actions and filters (and examples on how to
 
 == Changelog ==
 
+= 4.6.1 =
+Release Date: tbd
+
+* [Added] Integration for Media Library Assistant
+
+= 4.6 =
+Release Date: November 30th, 2022
+
+* [Improved] Styling for dynamic select boxes is improved
+* [Improved] The date column setting has some minor UI improvements
+
+= 4.5.5 =
+Release Date: October 17th, 2022
+
+* [Fixed] DOMDocument will use `libxml_clear_errors` to clear any possible errors
+* [Fixed] The `word_count` method will always return an `int`
+* [Fixed] The column separator will always go through the filter: `ac/column/separator`
+* [Fixed] The link to the user profile will only be visible for users than can access that particular profile page
+* [Improved] Added the atrribute tag `ReturnTypeWillChange` to be compliant with PHP 8.x
+
+= 4.5.4 =
+Release Date: September 13th, 2022
+
+* [Fixed] JS null checks that could lead to JS errors
+* [Fixed] More PHP 8.1 compatibility fixes
+
+= 4.5.3 =
+Release Date: July 4th, 2022
+
+* [Fixed] Suppress PHP 8.1 warnings
+
+= 4.5.2 =
+Release Date: June 14th, 2022
+
+* [Added] It is now possible to select the Website display for User related columns
+* [Added] New hook to disable the column value sanitation on the table `ac/column/value/sanitize`
+
+= 4.5.1 =
+Release Date: May 16th, 2022
+
+* [Added] New Audio player column for Media list table
+* [Fixed] Prevent fatal error, when removing a non-existent column set from a Local Storage repository
+
+= 4.5 =
+Release Date: March 22nd, 2022
+
+* [Added] New Image column for the Media list table
+* [Added] The Slug column is now also available for the Media list table
+* [Improved] More thorough logic for the 'Restore Settings' option.
+* [Improved] Refactor of the Setup Script that runs when the plugin is installed and activated for the first time
+* [Improved] The Permalink column now also shows the (upcoming) permalinks for future and draft posts
+
+= 4.4.6 =
+Release Date: February 8th, 2022
+
+* [Fixed] Tooltip arrows were always visible in the dom behind the admin toolbar
+* [Removed] Support for the Ninja Forms integration is removed because of incompatibility with the new submission list table
+
 = 4.4.5 =
 Release Date: December 6th, 2021
 
-* [Hotfix] The ReadOnly class is renamed because it gave fatal error in PHP 8.1
+* [Hotfix] The ReadOnly class is renamed because it gave a fatal error in PHP 8.1
 
 = 4.4.4 =
 Release Date: November 8th, 2021

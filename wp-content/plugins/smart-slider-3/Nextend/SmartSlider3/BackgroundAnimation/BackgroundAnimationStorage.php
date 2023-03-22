@@ -57,7 +57,7 @@ class BackgroundAnimationStorage {
         $this->load();
 
         for ($i = count($this->sets) - 1; $i >= 0; $i--) {
-            $this->sets[$i]['system']   = 1;
+            $this->sets[$i]['isSystem'] = 1;
             $this->sets[$i]['editable'] = 0;
             array_unshift($sets, $this->sets[$i]);
         }
@@ -69,7 +69,7 @@ class BackgroundAnimationStorage {
         if (isset($this->animationBySet[$referenceKey])) {
             $_animation = &$this->animationBySet[$referenceKey];
             for ($i = count($_animation) - 1; $i >= 0; $i--) {
-                $_animation[$i]['system']   = 1;
+                $_animation[$i]['isSystem'] = 1;
                 $_animation[$i]['editable'] = 0;
                 array_unshift($animation, $_animation[$i]);
             }
@@ -80,7 +80,7 @@ class BackgroundAnimationStorage {
     public function animation($id, &$animation) {
         $this->load();
         if (isset($this->animationById[$id])) {
-            $this->animationById[$id]['system']   = 1;
+            $this->animationById[$id]['isSystem'] = 1;
             $this->animationById[$id]['editable'] = 0;
             $animation                            = $this->animationById[$id];
         }

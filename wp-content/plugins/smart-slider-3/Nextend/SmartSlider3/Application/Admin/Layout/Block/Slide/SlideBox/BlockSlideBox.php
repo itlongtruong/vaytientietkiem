@@ -131,13 +131,8 @@ class BlockSlideBox extends AbstractBlock {
         return $this->slide->getGeneratorLabel() . ' [' . $this->slide->getSlideStat() . ']';
     }
 
-    public function getGeneratorAttribute() {
-        if ($this->hasGenerator()) {
-
-            return ' data-generator-edit="' . $this->getUrlGeneratorEdit($this->slide->generator_id, $this->groupID) . '"';
-        }
-
-        return '';
+    public function getGeneratorAttributeUrl() {
+        return $this->getUrlGeneratorEdit($this->slide->generator_id, $this->groupID) . '"';
     }
 
     public function getHiddenDeviceText() {

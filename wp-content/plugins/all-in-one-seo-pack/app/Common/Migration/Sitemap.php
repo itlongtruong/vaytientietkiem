@@ -157,7 +157,7 @@ class Sitemap {
 			foreach ( $this->oldOptions['modules']['aiosp_sitemap_options']['aiosp_sitemap_excl_terms'] as $taxonomy ) {
 				foreach ( $taxonomy['terms'] as $id ) {
 					$term = get_term( $id );
-					if ( ! is_object( $term ) ) {
+					if ( ! is_a( $term, 'WP_Term' ) ) {
 						continue;
 					}
 
@@ -358,7 +358,8 @@ class Sitemap {
 				if ( ! $options->has( $lastOption, false ) ) {
 					$error = true;
 					break;
-				};
+				}
+
 				if ( count( $values['newOption'] ) - 1 !== $i ) {
 					$options = $options->$lastOption;
 				}

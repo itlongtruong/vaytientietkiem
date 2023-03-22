@@ -12,7 +12,7 @@ use Nextend\Framework\Asset\Js\Js;
 JS::addInline('new _N2.SettingsGeneral();');
 ?>
 
-<form id="n2-ss-form-settings-general" action="<?php echo $this->getAjaxUrlSettingsDefault(); ?>" method="post">
+<form id="n2-ss-form-settings-general" action="<?php echo esc_url($this->getAjaxUrlSettingsDefault()); ?>" method="post">
     <?php
     $this->renderForm();
     ?>

@@ -87,7 +87,7 @@ class Form extends Data {
     }
 
     public function render() {
-        echo '<div class="' . implode(' ', $this->classes) . '">';
+        echo '<div class="' . esc_attr(implode(' ', $this->classes)) . '">';
 
         $this->container->renderContainer();
 

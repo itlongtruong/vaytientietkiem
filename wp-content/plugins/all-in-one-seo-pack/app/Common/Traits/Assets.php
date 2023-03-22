@@ -31,15 +31,6 @@ trait Assets {
 	private $manifestFile;
 
 	/**
-	 * Holds the location of the asset manifest file.
-	 *
-	 * @since 4.1.9
-	 *
-	 * @var string
-	 */
-	private $assetManifestFile;
-
-	/**
 	 * True if we are in a dev environment. This mirrors the global isDev.
 	 *
 	 * @since 4.1.9
@@ -56,6 +47,42 @@ trait Assets {
 	 * @var array An array of handles.
 	 */
 	private $noModuleTag = [];
+
+	/**
+	 * Core class instance.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var \AIOSEO\Plugin\Common\Core\Core
+	 */
+	protected $core = null;
+
+	/**
+	 * The LocalBusiness addon version.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var string
+	 */
+	protected $version = '';
+
+	/**
+	 * The development site domain.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var string
+	 */
+	protected $domain = '';
+
+	/**
+	 * The development server port.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var int
+	 */
+	protected $port = 0;
 
 	/**
 	 * The asset to load.
@@ -113,10 +140,10 @@ trait Assets {
 
 		if ( ! empty( $res ) ) {
 			add_action( 'admin_head', function () use ( &$res ) {
-				echo $res; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				echo $res; // phpcs:ignore
 			} );
 			add_action( 'wp_head', function () use ( &$res ) {
-				echo $res; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				echo $res; // phpcs:ignore
 			} );
 		}
 	}
@@ -146,19 +173,16 @@ trait Assets {
 	 *
 	 * @param  string $asset        The script to load CSS for.
 	 * @param  array  $dependencies An array of dependencies.
-	 * @param  string $devPath      The file's dev path.
 	 * @return void
 	 */
-	public function registerCss( $asset, $dependencies = [], $devPath = '' ) {
+	public function registerCss( $asset, $dependencies = [] ) {
 		$handle = $this->cssHandle( $asset );
 		if ( wp_style_is( $handle, 'registered' ) ) {
 			return;
 		}
 
-		$devPath = $devPath ?: $asset;
-
 		$url = $this->shouldLoadDev()
-			? $this->getDevUrl() . ltrim( $devPath, '/' )
+			? $this->getDevUrl() . ltrim( $asset, '/' )
 			: $this->assetUrl( $asset );
 
 		if ( ! $url ) {
@@ -174,12 +198,11 @@ trait Assets {
 	 * @since 4.1.9
 	 *
 	 * @param  string $asset        The css to load.
-	 * @param  string $devPath      The file's dev path.
 	 * @param  array  $dependencies An array of dependencies.
 	 * @return void
 	 */
-	public function enqueueCss( $asset, $dependencies = [], $devPath = '' ) {
-		$this->registerCss( $asset, $dependencies, $devPath );
+	public function enqueueCss( $asset, $dependencies = [] ) {
+		$this->registerCss( $asset, $dependencies );
 
 		$handle = $this->cssHandle( $asset );
 		if ( wp_style_is( $handle, 'enqueued' ) ) {
@@ -271,8 +294,8 @@ trait Assets {
 	private function assetUrl( $asset ) {
 		$assetManifest = $this->getAssetManifestItem( $asset );
 
-		return ! empty( $assetManifest )
-			? $this->basePath() . $assetManifest
+		return ! empty( $assetManifest['file'] )
+			? $this->basePath() . $assetManifest['file']
 			: $this->basePath() . ltrim( $asset, '/' );
 	}
 
@@ -345,43 +368,10 @@ trait Assets {
 			return $file;
 		}
 
-		// Required for local business 1.2.5.
-		if ( preg_match( '/\.json$/', $this->manifestFile ) ) {
-			$content = $this->core->fs->getContents( $this->manifestFile );
-			$file    = json_decode( $content, true );
+		$manifestJson = ''; // This is set in the view.
+		require $this->manifestFile;
 
-			return $file;
-		}
-
-		require( $this->manifestFile );
-		$file = json_decode( $manifestJson, true ); // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
-
-		return $file;
-	}
-
-	/**
-	 * Get the manifest to load entry assets from.
-	 *
-	 * @since 4.1.9
-	 *
-	 * @return array An array of files.
-	 */
-	private function getAssetManifest() {
-		static $file = null;
-		if ( $file ) {
-			return $file;
-		}
-
-		// Required for local business 1.2.5.
-		if ( preg_match( '/\.json$/', $this->assetManifestFile ) ) {
-			$content = $this->core->fs->getContents( $this->assetManifestFile );
-			$file    = json_decode( $content, true );
-
-			return $file;
-		}
-
-		require( $this->assetManifestFile );
-		$file = json_decode( $manifestJson, true ); // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable
+		$file = json_decode( $manifestJson, true );
 
 		return $file;
 	}
@@ -395,7 +385,7 @@ trait Assets {
 	 * @return string|null       The asset item.
 	 */
 	private function getAssetManifestItem( $item ) {
-		$assetManifest = $this->getAssetManifest();
+		$assetManifest = $this->getManifest();
 
 		return ! empty( $assetManifest[ $item ] ) ? $assetManifest[ $item ] : null;
 	}
@@ -478,7 +468,7 @@ trait Assets {
 		}
 
 		set_error_handler( function() {} );
-		$connection = fsockopen( $this->domain, $this->port ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fsockopen
+		$connection = fsockopen( $this->domain, $this->port ); // phpcs:ignore WordPress.WP.AlternativeFunctions
 		restore_error_handler();
 
 		if ( ! $connection ) {
@@ -580,5 +570,39 @@ trait Assets {
 		$paths[ $path ] = $newPath;
 
 		return apply_filters( 'aioseo_normalize_assets_host', $paths[ $path ] );
+	}
+
+	/**
+	 * Get all the CSS files which a JS asset depends on.
+	 * This won't work properly unless you've run `npm run build` first.
+	 *
+	 * @since 4.3.1
+	 *
+	 * @param  string $asset The asset to find the CSS dependencies for.
+	 * @return array         All the asset's CSS dependencies if any.
+	 */
+	public function getJsAssetCssQueue( $asset ) {
+		$queue = [];
+
+		foreach ( $this->getCssUrls( $asset ) as $file => $url ) {
+			$queue[] = [
+				'handle' => $this->cssHandle( $file ),
+				'url'    => $url
+			];
+		}
+
+		$manifestAsset = $this->getManifestItem( $asset );
+		if ( ! empty( $manifestAsset['imports'] ) ) {
+			foreach ( $manifestAsset['imports'] as $subAsset ) {
+				foreach ( $this->getCssUrls( $subAsset ) as $file => $url ) {
+					$queue[] = [
+						'handle' => $this->cssHandle( $file ),
+						'url'    => $url
+					];
+				}
+			}
+		}
+
+		return $queue;
 	}
 }

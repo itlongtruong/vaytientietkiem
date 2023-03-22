@@ -31,23 +31,23 @@ use Nextend\SmartSlider3\SmartSlider3Info;
 
     <div class="n2_dashboard_manager_review__star_selector">
 
-        <div class="n2_dashboard_manager_review__star" data-star="1" data-href="https://smartslider3.com/suggestion/?utm_campaign=<?php echo SmartSlider3Info::$campaign; ?>&utm_source=dashboard-review-1&utm_medium=smartslider-<?php echo Platform::getName() . '-' . SmartSlider3Info::$plan; ?>">
+        <div class="n2_dashboard_manager_review__star" data-star="1" data-href="<?php echo esc_url('https://smartslider3.com/suggestion/?utm_campaign=' . SmartSlider3Info::$campaign . '&utm_source=dashboard-review-1&utm_medium=smartslider-' . Platform::getName() . '-' . SmartSlider3Info::$plan); ?>">
             <i class="ssi_24 ssi_24--star"></i>
         </div>
-        <div class="n2_dashboard_manager_review__star" data-star="2" data-href="https://smartslider3.com/suggestion/?utm_campaign=<?php echo SmartSlider3Info::$campaign; ?>&utm_source=dashboard-review-2&utm_medium=smartslider-<?php echo Platform::getName() . '-' . SmartSlider3Info::$plan; ?>">
+        <div class="n2_dashboard_manager_review__star" data-star="2" data-href="<?php echo esc_url('https://smartslider3.com/suggestion/?utm_campaign=' . SmartSlider3Info::$campaign . '&utm_source=dashboard-review-2&utm_medium=smartslider-' . Platform::getName() . '-' . SmartSlider3Info::$plan); ?>">
             <i class="ssi_24 ssi_24--star"></i>
         </div>
-        <div class="n2_dashboard_manager_review__star" data-star="3" data-href="https://smartslider3.com/satisfied-customer/?utm_campaign=<?php echo SmartSlider3Info::$campaign; ?>&utm_source=dashboard-review-3&utm_medium=smartslider-<?php echo Platform::getName() . '-' . SmartSlider3Info::$plan; ?>">
+        <div class="n2_dashboard_manager_review__star" data-star="3" data-href="<?php echo esc_url('https://smartslider3.com/satisfied-customer/?utm_campaign=' . SmartSlider3Info::$campaign . '&utm_source=dashboard-review-3&utm_medium=smartslider-' . Platform::getName() . '-' . SmartSlider3Info::$plan); ?>">
             <i class="ssi_24 ssi_24--star"></i>
         </div>
-        <div class="n2_dashboard_manager_review__star" data-star="4" data-href="https://smartslider3.com/satisfied-customer/?utm_campaign=<?php echo SmartSlider3Info::$campaign; ?>&utm_source=dashboard-review-4&utm_medium=smartslider-<?php echo Platform::getName() . '-' . SmartSlider3Info::$plan; ?>">
+        <div class="n2_dashboard_manager_review__star" data-star="4" data-href="<?php echo esc_url('https://smartslider3.com/satisfied-customer/?utm_campaign=' . SmartSlider3Info::$campaign . '&utm_source=dashboard-review-4&utm_medium=smartslider-' . Platform::getName() . '-' . SmartSlider3Info::$plan); ?>">
             <i class="ssi_24 ssi_24--star"></i>
         </div>
 
         <?php
         $reviewUrl = 'https://smartslider3.com/redirect/wordpress-review.html?utm_campaign=' . SmartSlider3Info::$campaign . '&utm_source=dashboard-review-5&utm_medium=smartslider-' . Platform::getName() . '-' . SmartSlider3Info::$plan;
         ?>
-        <div class="n2_dashboard_manager_review__star" data-star="5" data-href="<?php echo $reviewUrl; ?>">
+        <div class="n2_dashboard_manager_review__star" data-star="5" data-href="<?php echo esc_url($reviewUrl); ?>">
             <i class="ssi_24 ssi_24--star"></i></div>
 
     </div>

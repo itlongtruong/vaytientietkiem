@@ -31,7 +31,7 @@ class WordPressFilesystem extends AbstractPlatformFilesystem {
         } else {
             $uploadPath = rtrim(realpath($wp_upload_dir['basedir']), "/\\");
             if (empty($uploadPath)) {
-                echo 'Error: Your upload path is not valid or does not exist: ' . $wp_upload_dir['basedir'];
+                echo 'Error: Your upload path is not valid or does not exist: ' . esc_html($wp_upload_dir['basedir']);
                 $uploadPath = rtrim($wp_upload_dir['basedir'], "/\\");
             } else {
                 $this->measurePermission($uploadPath);

@@ -12,7 +12,7 @@ class FusionElementSmartSlider3 extends Fusion_Element {
     public function __construct() {
         parent::__construct();
 
-        add_action('wp_ajax_get_shortcode_render', array(
+        add_action('fusion_load_module', array(
             $this,
             'force_iframe'
         ));
@@ -25,7 +25,11 @@ class FusionElementSmartSlider3 extends Fusion_Element {
 
     public function render($args, $content = '') {
 
-        return do_shortcode('[smartslider3 slider="' . $args['slider'] . '"]');
+        if (!empty($args)) {
+            return do_shortcode('[smartslider3 slider="' . $args['slider'] . '"]');
+        } else {
+            return '<!-- Avada Builder empty Smart Slider element -->';
+        }
     }
 
     public function force_iframe() {

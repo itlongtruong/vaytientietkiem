@@ -32,7 +32,7 @@ class ModelBackgroundAnimation extends ModelVisual {
         $setsTab = new FieldsetVisualSet($form->getContainer(), 'backgroundanimation-sets', n2_('Animation type'));
         new Select($setsTab, 'sets', false);
 
-        echo $form->render();
+        $form->render();
     }
 
     public function renderForm() {

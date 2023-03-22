@@ -95,12 +95,14 @@ class ItemYouTube extends AbstractItem {
         parent::prepareExport($export, $data);
 
         $export->addImage($data->get('image'));
+        $export->addImage($data->get('playbuttonimage'));
     }
 
     public function prepareImport($import, $data) {
         $data = parent::prepareImport($import, $data);
 
         $data->set('image', $import->fixImage($data->get('image')));
+        $data->set('playbuttonimage', $import->fixImage($data->get('playbuttonimage')));
 
         return $data;
     }

@@ -10,9 +10,9 @@ class BlockFloatingMenuItemSeparator extends AbstractBlock {
 
     public function display() {
 
-        echo '<div class="' . implode(' ', array_merge(array(
+        echo '<div class="' . esc_attr(implode(' ', array_merge(array(
                 'n2_floating_menu__item_separator'
-            ), $this->classes)) . '"></div>';
+            ), $this->classes))) . '"></div>';
     }
 
     /**

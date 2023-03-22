@@ -64,12 +64,11 @@ class Blocks {
 		}
 
 		$defaults = [
-			'render_callback' => '',
+			'render_callback' => null,
 			'editor_script'   => aioseo()->core->assets->jsHandle( 'src/vue/standalone/blocks/main.js' ),
-			'editor_style'    => '',
-			'style'           => '',
+			'editor_style'    => aioseo()->core->assets->cssHandle( 'src/vue/assets/scss/blocks-editor.scss' ),
 			'attributes'      => null,
-			'supports'        => '',
+			'supports'        => null
 		];
 
 		$args = wp_parse_args( $args, $defaults );
@@ -104,6 +103,7 @@ class Blocks {
 		}
 
 		aioseo()->core->assets->registerJs( 'src/vue/standalone/blocks/main.js', $dependencies );
+		aioseo()->core->assets->registerCss( 'src/vue/assets/scss/blocks-editor.scss' );
 	}
 
 	/**

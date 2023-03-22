@@ -140,6 +140,8 @@ class ControllerAjaxSliders extends AdminAjaxController {
     public function actionHideReview() {
         $this->validateToken();
 
+        $this->validatePermission('smartslider_config');
+
         StorageSectionManager::getStorage('smartslider')
                              ->set('free', 'review', 1);
 
@@ -148,20 +150,19 @@ class ControllerAjaxSliders extends AdminAjaxController {
 
     public function actionSearch() {
         $this->validateToken();
+
+        $this->validatePermission('smartslider_config');
+
         $slidersModel = new ModelSliders($this);
 
         $keyword = Request::$REQUEST->getVar('keyword', '');
         $sliders = array();
 
         $url     = parse_url($keyword);
-        $baseUrl =parse_url(Platform::getSiteUrl()) ;
+        $baseUrl = parse_url(Platform::getSiteUrl());
 
-        if (isset($url['host']) &&  $url['host'] === $baseUrl['host']) {
-            $options = array(
-                'error' => true,
-            );
-
-            $content = HttpClient::get($keyword, $options);
+        if (isset($url['host']) && $url['host'] === $baseUrl['host']) {
+            $content = HttpClient::get($keyword);
             preg_match_all('/data-ssid="(?<id>[0-9]+)/', $content, $matches);
 
             foreach ($matches['id'] as $sliderID) {
@@ -194,6 +195,9 @@ class ControllerAjaxSliders extends AdminAjaxController {
 
     public function actionPagination() {
         $this->validateToken();
+
+        $this->validatePermission('smartslider_config');
+
         $slidersModel   = new ModelSliders($this);
         $pageIndex      = Request::$REQUEST->getInt('pageIndex', 0);
         $limit          = Request::$REQUEST->getVar('limit', 20);
@@ -244,6 +248,8 @@ class ControllerAjaxSliders extends AdminAjaxController {
 
         $this->validateToken();
 
+        $this->validatePermission('smartslider_edit');
+
         if (empty($_FILES) && empty($_POST)) {
             Notification::error(sprintf(n2_('Your server has an upload file limit at %s, so if you have bigger export file, please use the local import file method.'), @ini_get('post_max_size')));
             $this->response->respond();
@@ -255,9 +261,11 @@ class ControllerAjaxSliders extends AdminAjaxController {
 
             $file = '';
 
-            if (isset($_FILES['slider']) && isset($_FILES['slider']['tmp_name']['import-file'])) {
+            $slider = Request::$FILES->getVar('slider');
 
-                switch ($_FILES['slider']['error']['import-file']) {
+            if ($slider['tmp_name']['import-file'] !== null) {
+
+                switch ($slider['error']['import-file']) {
                     case UPLOAD_ERR_OK:
                     case UPLOAD_ERR_NO_FILE:
                         break;
@@ -268,7 +276,7 @@ class ControllerAjaxSliders extends AdminAjaxController {
                         throw new RuntimeException('Unknown errors.');
                 }
 
-                $file = $_FILES['slider']['tmp_name']['import-file'];
+                $file = $slider['tmp_name']['import-file'];
             }
 
             if (empty($file)) {
@@ -298,9 +306,9 @@ class ControllerAjaxSliders extends AdminAjaxController {
 
                     $this->response->redirect($this->getUrlSliderEdit($sliderId, $groupID));
                 } else {
-                    $extension = pathinfo($_FILES['slider']['name']['import-file'], PATHINFO_EXTENSION);
-                    if (strpos($_FILES['slider']['name']['import-file'], 'sliders_unzip_to_import') !== false) {
-                        Notification::error(n2_('You have to unzip your ' . $_FILES['slider']['name']['import-file'] . ' file to find the importable *.ss3 files!'));
+                    $extension = pathinfo($slider['name']['import-file'], PATHINFO_EXTENSION);
+                    if (strpos($slider['name']['import-file'], 'sliders_unzip_to_import') !== false) {
+                        Notification::error(sprintf(n2_('You have to unzip your %1$s file to find the importable *.ss3 files!'), $slider['name']['import-file']));
                         $this->response->error();
                     } else if ($extension != 'ss3') {
                         Notification::error(n2_('Only *.ss3 files can be uploaded!'));

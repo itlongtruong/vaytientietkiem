@@ -97,7 +97,7 @@ class PostsCustomPosts extends AbstractGenerator {
             'postType'       => $this->postType,
             'tipLabel'       => n2_('Field name'),
             'tipDescription' => n2_('Only show posts, where the given meta key is equal to the given meta value.'),
-            'tipLink'        => 'https://smartslider.helpscoutdocs.com/article/1900-wordpress-custom-posts-generator#filter'
+            'tipLink'        => 'https://smartslider.helpscoutdocs.com/article/1900-wordpress-custom-posts-generator#post-meta-comparison'
         ));
 
         new Select($postMeta, 'postmetacompare', n2_('Compare method'), '=', array(
@@ -124,11 +124,25 @@ class PostsCustomPosts extends AbstractGenerator {
 
         new Text($postMeta, 'postmetavalue', n2_('Field value'));
 
+        new Select($postMeta, 'postmetatype', n2_('Field type'), 'CHAR', array(
+            'options' => array(
+                'CHAR'     => 'CHAR',
+                'NUMERIC'  => 'NUMERIC',
+                'DATE'     => 'DATE',
+                'DATETIME' => 'DATETIME',
+                'TIME'     => 'TIME',
+                'BINARY'   => 'BINARY',
+                'DECIMAL'  => 'DECIMAL',
+                'SIGNED'   => 'SIGNED',
+                'UNSIGNED' => 'UNSIGNED'
+            )
+        ));
+
         $postMetaMore = $filterGroup->createRow('postmeta-more');
-        new Textarea($postMetaMore, 'postmetakeymore', n2_('Meta comparison'), 'field_name||compare_method||field_value', array(
+        new Textarea($postMetaMore, 'postmetakeymore', n2_('Meta comparison'), '', array(
             'tipLabel'       => n2_('Meta comparison'),
-            'tipDescription' => sprintf(n2_('You can create other comparison based on the previous "Field name" and "Compare method" options. %1$s Use the following format: published||=||yes %1$s Write one comparison per line.'), '<br>'),
-            'tipLink'        => 'https://smartslider.helpscoutdocs.com/article/1900-wordpress-custom-posts-generator#filter',
+            'tipDescription' => sprintf(n2_('You can create other comparisons based on the previous "Post Meta Comparison" options. Use the following format: name||compare||value||type%1$s%1$s Example:%1$spublished||=||yes||CHAR%1$s%1$sWrite one comparison per line.'), '<br>'),
+            'tipLink'        => 'https://smartslider.helpscoutdocs.com/article/1900-wordpress-custom-posts-generator#post-meta-comparison',
             'width'          => 300,
             'height'         => 100
         ));
@@ -269,6 +283,7 @@ class PostsCustomPosts extends AbstractGenerator {
                     array(
                         'key'   => $postMetaKey,
                         'value' => $postMetaValue,
+                        'type'  => $this->data->get('postmetatype', 'CHAR')
                     ) + $compare
                 )
             );
@@ -292,6 +307,12 @@ class PostsCustomPosts extends AbstractGenerator {
                         if (!empty($metaMoreArray[2])) {
                             $key_query += array(
                                 'value' => $this->checkKeywords($metaMoreArray[2])
+                            );
+                        }
+
+                        if (!empty($metaMoreArray[3])) {
+                            $key_query += array(
+                                'type' => $metaMoreArray[3]
                             );
                         }
 

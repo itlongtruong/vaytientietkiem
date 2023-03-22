@@ -56,6 +56,6 @@ if ( ! function_exists( 'aioseo_pro_just_activated' ) ) {
 
 // If we detect that V3 is active, let's deactivate it now.
 if ( defined( 'AIOSEOP_VERSION' ) && defined( 'AIOSEO_PLUGIN_FILE' ) ) {
-	require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+	require_once ABSPATH . 'wp-admin/includes/plugin.php';
 	deactivate_plugins( plugin_basename( AIOSEO_PLUGIN_FILE ) );
 }

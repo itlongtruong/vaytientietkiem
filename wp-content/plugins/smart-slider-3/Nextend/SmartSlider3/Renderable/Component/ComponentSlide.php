@@ -123,7 +123,6 @@ class ComponentSlide extends AbstractComponent {
 
         $this->createProperty('backgroundVideoMp4', '');
         $this->createProperty('backgroundVideoOpacity', 100);
-        $this->createProperty('backgroundVideoMuted', 1);
         $this->createProperty('backgroundVideoLoop', 1);
         $this->createProperty('backgroundVideoReset', 1);
         $this->createProperty('backgroundVideoMode', 'fill');

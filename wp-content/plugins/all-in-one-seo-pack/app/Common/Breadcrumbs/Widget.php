@@ -13,6 +13,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Widget extends \WP_Widget {
 	/**
+	 * The default attributes.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var array
+	 */
+	private $defaults = [];
+
+	/**
 	 * Class constructor.
 	 *
 	 * @since 4.1.1

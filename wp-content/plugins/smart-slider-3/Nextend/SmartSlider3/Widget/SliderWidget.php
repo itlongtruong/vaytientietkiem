@@ -93,6 +93,11 @@ class SliderWidget {
         $this->placementAdvanced->add($renderCallback, $horizontalSide, $horizontalPosition, $horizontalUnit, $verticalSide, $verticalPosition, $verticalUnit);
     }
 
+    /**
+     * @param $innerHTML
+     *
+     * @return mixed|string contains already escaped data
+     */
     public function wrapSlider($innerHTML) {
 
         $insideAbsoluteHTML = '';

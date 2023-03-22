@@ -10,9 +10,9 @@ use Nextend\Framework\Asset\Js\Js;
 
 JS::addInline('new _N2.GeneratorConfigure();');
 ?>
-<form id="n2-ss-form-generator-configure" action="<?php echo $this->getAjaxUrlGeneratorCheckConfiguration($this->getGeneratorGroup()
-                                                                                                               ->getName(), $this->getSliderID(), $this->getGroupID()); ?>" method="post">
+<form id="n2-ss-form-generator-configure" action="<?php echo esc_url($this->getAjaxUrlGeneratorCheckConfiguration($this->getGeneratorGroup()
+                                                                                                                       ->getName(), $this->getSliderID(), $this->getGroupID())); ?>" method="post">
     <?php
-    echo $this->renderForm();
+    $this->renderForm();
     ?>
 </form>

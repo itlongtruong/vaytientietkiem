@@ -19,11 +19,11 @@ JS::addInline('new _N2.GeneratorEdit(' . json_encode(array(
     )) . ');');
 
 ?>
-<form id="n2-ss-form-generator-edit" action="<?php echo $this->getAjaxUrlGeneratorEdit($generator['id'], $this->getGroupID()); ?>" method="post">
+<form id="n2-ss-form-generator-edit" action="<?php echo esc_url($this->getAjaxUrlGeneratorEdit($generator['id'], $this->getGroupID())); ?>" method="post">
     <?php
     $this->renderForm();
     ?>
-    <input name="generator[group]" value="<?php echo $generatorGroup->getName(); ?>" type="hidden">
-    <input name="generator[type]" value="<?php echo $generatorSource->getName(); ?>" type="hidden">
-    <input name="slider-id" value="<?php echo $this->getSliderID(); ?>" type="hidden">
+    <input name="generator[group]" value="<?php echo esc_attr($generatorGroup->getName()); ?>" type="hidden">
+    <input name="generator[type]" value="<?php echo esc_attr($generatorSource->getName()); ?>" type="hidden">
+    <input name="slider-id" value="<?php echo esc_attr($this->getSliderID()); ?>" type="hidden">
 </form>

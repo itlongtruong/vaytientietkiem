@@ -71,7 +71,7 @@ class ControllerHelp extends AbstractControllerAdmin {
         }
 
         if (strpos($output, 'ACTION_MISSING') === false) {
-            Notification::error(sprintf(n2_('Unable to connect to the API (%s).') . '<br>' . n2_('See <b>Debug Information</b> for more details!'), Api::getApiUrl()));
+            Notification::error(sprintf(n2_('Unable to connect to the API (%1$s). %2$s See %3$sDebug Information%4$s for more details!'), Api::getApiUrl(), '<br>', '<b>', '</b>'));
         } else {
             Notification::notice(n2_('Successful connection with the API.'));
         }

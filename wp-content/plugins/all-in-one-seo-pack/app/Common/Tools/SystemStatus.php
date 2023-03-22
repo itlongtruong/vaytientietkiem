@@ -55,7 +55,7 @@ class SystemStatus {
 				],
 				[
 					'header' => __( 'Site Language', 'all-in-one-seo-pack' ),
-					'value'  => defined( 'WPLANG' ) && WPLANG ? WPLANG : 'en_US'
+					'value'  => get_locale() ?: 'en_US'
 				],
 				[
 					'header' => __( 'User Language', 'all-in-one-seo-pack' ),
@@ -151,6 +151,14 @@ class SystemStatus {
 				[
 					'header' => 'WPS_DEBUG',
 					'value'  => defined( 'WPS_DEBUG' ) ? ( WPS_DEBUG ? WPS_DEBUG : __( 'Disabled', 'all-in-one-seo-pack' ) ) : __( 'Not set', 'all-in-one-seo-pack' )
+				],
+				[
+					'header' => 'DB_CHARSET',
+					'value'  => defined( 'DB_CHARSET' ) ? ( DB_CHARSET ? DB_CHARSET : __( 'Disabled', 'all-in-one-seo-pack' ) ) : __( 'Not set', 'all-in-one-seo-pack' )
+				],
+				[
+					'header' => 'DB_COLLATE',
+					'value'  => defined( 'DB_COLLATE' ) ? ( DB_COLLATE ? DB_COLLATE : __( 'Disabled', 'all-in-one-seo-pack' ) ) : __( 'Not set', 'all-in-one-seo-pack' )
 				]
 			]
 		];

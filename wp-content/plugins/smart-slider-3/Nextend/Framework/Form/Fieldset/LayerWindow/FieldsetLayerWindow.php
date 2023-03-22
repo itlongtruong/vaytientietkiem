@@ -6,6 +6,7 @@ namespace Nextend\Framework\Form\Fieldset\LayerWindow;
 
 use Nextend\Framework\Form\AbstractField;
 use Nextend\Framework\Form\AbstractFieldset;
+use Nextend\Framework\Sanitize;
 use Nextend\Framework\View\Html;
 
 class FieldsetLayerWindow extends AbstractFieldset {
@@ -14,10 +15,10 @@ class FieldsetLayerWindow extends AbstractFieldset {
 
     public function renderContainer() {
 
-        echo Html::openTag('div', array(
+        echo wp_kses(Html::openTag('div', array(
                 'class'      => 'n2_fields_layer_window',
                 'data-field' => 'fieldset-layer-window-' . $this->name
-            ) + $this->attributes);
+            ) + $this->attributes), Sanitize::$adminFormTags);
 
         if (!empty($this->label)) {
             echo '<div class="n2_fields_layer_window__title">';
@@ -29,7 +30,7 @@ class FieldsetLayerWindow extends AbstractFieldset {
 
         $element = $this->first;
         while ($element) {
-            echo $this->decorateElement($element);
+            echo wp_kses($this->decorateElement($element), Sanitize::$adminFormTags);
 
             $element = $element->getNext();
         }
@@ -40,7 +41,7 @@ class FieldsetLayerWindow extends AbstractFieldset {
 
     protected function renderTitle() {
 
-        echo '<div class="n2_fields_layer_window__label">' . $this->label . '</div>';
+        echo '<div class="n2_fields_layer_window__label">' . esc_html($this->label) . '</div>';
     }
 
     /**
@@ -60,10 +61,10 @@ class FieldsetLayerWindow extends AbstractFieldset {
             $element->getRowClass()
         );
 
-        echo Html::openTag('div', array(
+        echo wp_kses(Html::openTag('div', array(
                 'class'      => implode(' ', array_filter($classes)),
                 'data-field' => $element->getID()
-            ) + $element->getRowAttributes());
+            ) + $element->getRowAttributes()), Sanitize::$adminFormTags);
 
         if ($hasLabel) {
             echo "<div class='n2_field__label'>";

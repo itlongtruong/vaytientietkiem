@@ -41,7 +41,9 @@ class ElementorWidgetSmartSlider290 extends Widget_Base {
 
     protected function render() {
         if (Plugin::instance()->editor->is_edit_mode() || Plugin::instance()->preview->is_preview_mode()) {
-            echo Shortcode::renderIframe($this->get_settings('smartsliderid'));
+
+            // PHPCS - Content already escaped
+            echo Shortcode::renderIframe($this->get_settings('smartsliderid')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
         } else {
             $sliderIDorAlias = $this->get_settings('smartsliderid');
             if (is_numeric($sliderIDorAlias)) {
@@ -63,6 +65,8 @@ class ElementorWidgetSmartSlider290 extends Widget_Base {
      * @url https://developers.elementor.com/v2-9-0-planned-deprecations/
      */
     protected function _content_template() {
-        echo Shortcode::renderIframe('{{{settings.smartsliderid}}}');
+
+        // PHPCS - Content already escaped
+        echo Shortcode::renderIframe('{{{settings.smartsliderid}}}'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
     }
 }

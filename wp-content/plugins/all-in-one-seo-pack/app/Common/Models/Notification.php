@@ -74,6 +74,7 @@ class Notification extends Model {
 	protected $columns = [
 		'id',
 		'slug',
+		'addon',
 		'title',
 		'content',
 		'type',
@@ -87,6 +88,7 @@ class Notification extends Model {
 		'button2_label',
 		'button2_action',
 		'dismissed',
+		'new',
 		'created',
 		'updated'
 	];
@@ -185,12 +187,12 @@ class Notification extends Model {
 				case 'review':
 					// If they intentionally dismissed the main notification, we don't show the repeat one.
 					$originalDismissed = get_user_meta( get_current_user_id(), '_aioseo_plugin_review_dismissed', true );
-					if ( '2' !== $originalDismissed ) {
+					if ( '4' !== $originalDismissed ) {
 						break;
 					}
 
 					$dismissed = get_user_meta( get_current_user_id(), '_aioseo_notification_plugin_review_dismissed', true );
-					if ( '1' === $dismissed ) {
+					if ( '3' === $dismissed ) {
 						break;
 					}
 
@@ -305,7 +307,7 @@ class Notification extends Model {
 		// Set the dismissed status to false.
 		$fields['dismissed'] = 0;
 
-		$notification = new self;
+		$notification = new self();
 		$notification->set( $fields );
 		$notification->save();
 
@@ -343,6 +345,11 @@ class Notification extends Model {
 				! aioseo()->options->advanced->announcements &&
 				'success' === $notification->type
 			) {
+				continue;
+			}
+
+			// If this is an addon notification and the addon is disabled, skip adding it and move on.
+			if ( ! empty( $notification->addon ) && ! aioseo()->addons->getLoadedAddon( $notification->addon ) ) {
 				continue;
 			}
 

@@ -58,7 +58,7 @@ class FontStorage {
         $this->load();
 
         for ($i = count($this->sets) - 1; $i >= 0; $i--) {
-            $this->sets[$i]['system']   = 1;
+            $this->sets[$i]['isSystem'] = 1;
             $this->sets[$i]['editable'] = 0;
             array_unshift($sets, $this->sets[$i]);
         }
@@ -72,7 +72,7 @@ class FontStorage {
         if (isset($this->fontsBySet[$referenceKey])) {
             $_fonts = &$this->fontsBySet[$referenceKey];
             for ($i = count($_fonts) - 1; $i >= 0; $i--) {
-                $_fonts[$i]['system']   = 1;
+                $_fonts[$i]['isSystem'] = 1;
                 $_fonts[$i]['editable'] = 0;
                 array_unshift($fonts, $_fonts[$i]);
             }
@@ -85,7 +85,7 @@ class FontStorage {
         $this->load();
 
         if (isset($this->fontsById[$id])) {
-            $this->fontsById[$id]['system']   = 1;
+            $this->fontsById[$id]['isSystem'] = 1;
             $this->fontsById[$id]['editable'] = 0;
             $font                             = $this->fontsById[$id];
         }

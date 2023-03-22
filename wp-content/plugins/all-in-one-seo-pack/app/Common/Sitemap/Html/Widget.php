@@ -13,6 +13,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Widget extends \WP_Widget {
 	/**
+	 * The default attributes.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var array
+	 */
+	private $defaults = [];
+
+	/**
 	 * Class constructor.
 	 *
 	 * @since 4.1.3
@@ -153,7 +162,7 @@ class Widget extends \WP_Widget {
 		$taxonomyObjects = aioseo()->helpers->getPublicTaxonomies();
 		// phpcs:enable VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 
-		include( AIOSEO_DIR . '/app/Common/Views/sitemap/html/widget-options.php' );
+		include AIOSEO_DIR . '/app/Common/Views/sitemap/html/widget-options.php';
 	}
 
 	/**

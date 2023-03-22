@@ -3,6 +3,7 @@
 
 namespace Nextend\Framework\Url;
 
+use Nextend\Framework\Request\Request;
 
 class UrlHelper {
 
@@ -46,13 +47,13 @@ class UrlHelper {
         $args = func_get_args();
         if (is_array($args[0])) {
             if (count($args) < 2 || false === $args[1]) {
-                $uri = $_SERVER['REQUEST_URI'];
+                $uri = Request::$SERVER->getVar('REQUEST_URI');
             } else {
                 $uri = $args[1];
             }
         } else {
             if (count($args) < 3 || false === $args[2]) {
-                $uri = $_SERVER['REQUEST_URI'];
+                $uri = Request::$SERVER->getVar('REQUEST_URI');
             } else {
                 $uri = $args[2];
             }

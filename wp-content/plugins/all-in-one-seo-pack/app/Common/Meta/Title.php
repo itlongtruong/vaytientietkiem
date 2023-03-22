@@ -13,6 +13,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Title {
 	/**
+	 * Helpers class instance.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var Helpers
+	 */
+	public $helpers = null;
+
+	/**
 	 * Class constructor.
 	 *
 	* @since 4.1.2

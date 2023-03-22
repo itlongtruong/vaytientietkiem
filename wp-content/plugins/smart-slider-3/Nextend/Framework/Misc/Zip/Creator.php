@@ -132,7 +132,8 @@ class Creator {
 
         // echo this entry on the fly, ...
         if ($this->doWrite) {
-            echo $fr;
+            // PHPCS - The value contains zip file binary data, so nothing to escape
+            echo $fr; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
         } else { // ... OR add this entry to array
             $this->datasec[] = $fr;
         }
@@ -182,7 +183,9 @@ class Creator {
             "\x00\x00"; //.zip file comment length
 
         if ($this->doWrite) { // Send central directory & end ctrl dir to STDOUT
-            echo $header;
+
+            // PHPCS - The value is zip file binary header, so nothing to escape.
+            echo $header;  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
             return ""; // Return empty string
         } else { // Return entire ZIP archive as string

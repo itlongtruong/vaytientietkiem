@@ -22,6 +22,24 @@ class Migration {
 	public $oldOptions = [];
 
 	/**
+	 * Meta class instance.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var Meta
+	 */
+	public $meta = null;
+
+	/**
+	 * Helpers class instance.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var Helpers
+	 */
+	public $helpers = null;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @since 4.0.0
@@ -76,8 +94,8 @@ class Migration {
 			aioseo()->core->cache->delete( 'v3_migration_in_progress_terms' );
 
 			try {
-				aioseo()->helpers->unscheduleAction( 'aioseo_migrate_post_meta' );
-				aioseo()->helpers->unscheduleAction( 'aioseo_migrate_term_meta' );
+				aioseo()->actionScheduler->unschedule( 'aioseo_migrate_post_meta' );
+				aioseo()->actionScheduler->unschedule( 'aioseo_migrate_term_meta' );
 			} catch ( \Exception $e ) {
 				// Do nothing.
 			}

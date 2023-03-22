@@ -25,8 +25,10 @@ class Data {
      * @param $json
      */
     public function loadJSON($json) {
-        $array = json_decode($json, true);
-        if (is_array($array)) $this->_data = array_merge($this->_data, $array);
+        if ($json !== null) {
+            $array = json_decode($json, true);
+            if (is_array($array)) $this->_data = array_merge($this->_data, $array);
+        }
     }
 
     /**

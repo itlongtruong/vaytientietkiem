@@ -87,6 +87,9 @@ class ViewPreviewFull extends AbstractView {
         $this->generatorData = $generatorData;
     }
 
+    /**
+     * @return string Return value is already escaped
+     */
     public function renderSlider() {
 
         $locale = setlocale(LC_NUMERIC, 0);

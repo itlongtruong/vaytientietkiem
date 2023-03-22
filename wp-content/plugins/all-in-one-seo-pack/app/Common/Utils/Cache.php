@@ -200,6 +200,9 @@ class Cache {
 		if ( $activationRedirect ) {
 			$this->update( 'activation_redirect', $activationRedirect, 30 );
 		}
+
+		// Bust the tableExists and columnExists cache.
+		aioseo()->internalOptions->database->installedTables = '';
 	}
 
 	/**

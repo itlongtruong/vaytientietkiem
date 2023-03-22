@@ -32,7 +32,7 @@ class FieldsetDesign extends FieldsetLayerWindowLabelFields {
 
     protected function renderTitle() {
 
-        echo '<div class="n2_fields_layer_window__label">' . $this->label . '</div>';
+        echo '<div class="n2_fields_layer_window__label">' . esc_html($this->label) . '</div>';
 
         if ($this->fieldsetLabel->hasFields()) {
             echo '<div class="n2_fields_layer_window__title_fields">';

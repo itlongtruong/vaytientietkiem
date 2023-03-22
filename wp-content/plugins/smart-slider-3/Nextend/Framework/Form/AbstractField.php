@@ -6,6 +6,7 @@ namespace Nextend\Framework\Form;
 
 use Nextend\Framework\Asset\Js\Js;
 use Nextend\Framework\Form\Insert\AbstractInsert;
+use Nextend\Framework\Sanitize;
 use Nextend\Framework\View\Html;
 
 abstract class AbstractField implements ContainedInterface {
@@ -201,13 +202,11 @@ abstract class AbstractField implements ContainedInterface {
     }
 
     public function displayLabel() {
-
-        echo $this->fetchTooltip();
+        echo wp_kses($this->fetchTooltip(), Sanitize::$adminFormTags);
     }
 
     public function displayElement() {
-
-        echo $this->fetchElement();
+        echo wp_kses($this->fetchElement(), Sanitize::$adminFormTags);
     }
 
     protected function fetchTooltip() {

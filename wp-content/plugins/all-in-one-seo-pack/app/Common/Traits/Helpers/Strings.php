@@ -142,6 +142,10 @@ trait Strings {
 	 * @return string              The subject with matches replaced.
 	 */
 	public function pregReplace( $pattern, $replacement, $subject ) {
+		if ( ! $subject ) {
+			return $subject;
+		}
+
 		$key = $pattern . $replacement . $subject;
 
 		static $pregReplace = [];
@@ -173,7 +177,7 @@ trait Strings {
 		if ( isset( $lowerCased[ $string ] ) ) {
 			return $lowerCased[ $string ];
 		}
-		$lowerCased[ $string ] = function_exists( 'mb_strtolower' ) ? mb_strtolower( $string, get_option( 'blog_charset' ) ) : strtolower( $string );
+		$lowerCased[ $string ] = function_exists( 'mb_strtolower' ) ? mb_strtolower( $string, $this->getCharset() ) : strtolower( $string );
 
 		return $lowerCased[ $string ];
 	}
@@ -196,7 +200,7 @@ trait Strings {
 			return $stringIndex[ $key ];
 		}
 
-		$stringIndex[ $key ] = function_exists( 'mb_strpos' ) ? mb_strpos( $stack, $needle, $offset, get_option( 'blog_charset' ) ) : strpos( $stack, $needle, $offset );
+		$stringIndex[ $key ] = function_exists( 'mb_strpos' ) ? mb_strpos( $stack, $needle, $offset, $this->getCharset() ) : strpos( $stack, $needle, $offset );
 
 		return $stringIndex[ $key ];
 	}
@@ -229,8 +233,8 @@ trait Strings {
 	 *
 	 * @since 4.1.2
 	 *
-	 * @param  string $string The string to check.
-	 * @return bool           True if it is JSON or false if not.
+	 * @param  mixed $string The string to check.
+	 * @return bool          True if it is JSON or false if not.
 	 */
 	public function isJsonString( $string ) {
 		if ( ! is_string( $string ) ) {
@@ -248,11 +252,21 @@ trait Strings {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  string $string The string.
-	 * @return string         The string without punctuation.
+	 * @param  string $string           The string.
+	 * @param  array  $charactersToKeep The characters that can't be stripped (optional).
+	 * @return string                   The string without punctuation.
 	 */
-	public function stripPunctuation( $string ) {
-		$string = preg_replace( '#\p{P}#u', '', $string );
+	public function stripPunctuation( $string, $charactersToKeep = [] ) {
+		$characterRegexPattern = '';
+		if ( ! empty( $charactersToKeep ) ) {
+			$characterString       = implode( '', $charactersToKeep );
+			$characterRegexPattern = "(?![$characterString])";
+		}
+
+		$string = aioseo()->helpers->decodeHtmlEntities( $string );
+		$string = preg_replace( "/{$characterRegexPattern}[\p{P}\d+]/u", '', $string );
+		$string = aioseo()->helpers->encodeOutputHtml( $string );
+
 		// Trim both internal and external whitespace.
 		return preg_replace( '/\s\s+/u', ' ', trim( $string ) );
 	}
@@ -266,7 +280,7 @@ trait Strings {
 	 * @return string         The encoded string.
 	 */
 	public function encodeOutputHtml( $string ) {
-		return htmlspecialchars( $string, ENT_COMPAT | ENT_HTML401, get_option( 'blog_charset' ), false );
+		return htmlspecialchars( $string, ENT_COMPAT | ENT_HTML401, $this->getCharset(), false );
 	}
 
 	/**
@@ -365,7 +379,7 @@ trait Strings {
 			return $stringLength[ $string ];
 		}
 
-		$stringLength[ $string ] = function_exists( 'mb_strlen' ) ? mb_strlen( $string, get_option( 'blog_charset' ) ) : strlen( $string );
+		$stringLength[ $string ] = function_exists( 'mb_strlen' ) ? mb_strlen( $string, $this->getCharset() ) : strlen( $string );
 
 		return $stringLength[ $string ];
 	}
@@ -469,5 +483,123 @@ trait Strings {
 		restore_error_handler();
 
 		return $isValid;
+	}
+
+	/**
+	 * Removes the leading slash(es) from a string.
+	 *
+	 * @since 4.2.3
+	 *
+	 * @param  string $string The string.
+	 * @return string         The modified string.
+	 */
+	public function unleadingSlashIt( $string ) {
+		return ltrim( $string, '/' );
+	}
+
+	/**
+	 * Convert the case of the given string.
+	 *
+	 * @since 4.2.4
+	 *
+	 * @param  string $string The string.
+	 * @param  string $type   The casing ("lower", "title", "sentence").
+	 * @return string         The converted string.
+	 */
+	public function convertCase( $string, $type ) {
+		switch ( $type ) {
+			case 'lower':
+				return strtolower( $string );
+			case 'title':
+				return $this->toTitleCase( $string );
+			case 'sentence':
+				return $this->toSentenceCase( $string );
+			default:
+				return $string;
+		}
+	}
+
+	/**
+	 * Converts the given string to title case.
+	 *
+	 * @since 4.2.4
+	 *
+	 * @param  string $string The string.
+	 * @return string         The converted string.
+	 */
+	public function toTitleCase( $string ) {
+		// List of common English words that aren't typically modified.
+		$exceptions = apply_filters( 'aioseo_title_case_exceptions', [
+			'of',
+			'a',
+			'the',
+			'and',
+			'an',
+			'or',
+			'nor',
+			'but',
+			'is',
+			'if',
+			'then',
+			'else',
+			'when',
+			'at',
+			'from',
+			'by',
+			'on',
+			'off',
+			'for',
+			'in',
+			'out',
+			'over',
+			'to',
+			'into',
+			'with'
+		] );
+
+		$words = explode( ' ', strtolower( $string ) );
+
+		foreach ( $words as $k => $word ) {
+			if ( ! in_array( $word, $exceptions, true ) ) {
+				$words[ $k ] = ucfirst( $word );
+			}
+		}
+
+		$string = implode( ' ', $words );
+
+		return $string;
+	}
+
+	/**
+	 * Converts the given string to sentence case.
+	 *
+	 * @since 4.2.4
+	 *
+	 * @param  string $string The string.
+	 * @return string         The converted string.
+	 */
+	public function toSentenceCase( $string ) {
+		$phrases = preg_split( '/([.?!]+)/', $string, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE );
+
+		$convertedString = '';
+		foreach ( $phrases as $index => $sentence ) {
+			$convertedString .= ( $index & 1 ) === 0 ? ucfirst( strtolower( trim( $sentence ) ) ) : $sentence . ' ';
+		}
+
+		return trim( $convertedString );
+	}
+
+	/**
+	 * Returns the substring with a given start index and length.
+	 *
+	 * @since 4.2.5
+	 *
+	 * @param  string $string     The string.
+	 * @param  int    $startIndex The start index.
+	 * @param  int    $length     The length.
+	 * @return string             The substring.
+	 */
+	public function substring( $string, $startIndex, $length ) {
+		return function_exists( 'mb_substr' ) ? mb_substr( $string, $startIndex, $length, $this->getCharset() ) : substr( $string, $startIndex, $length );
 	}
 }

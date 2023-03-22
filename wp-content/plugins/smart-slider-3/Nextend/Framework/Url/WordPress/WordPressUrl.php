@@ -3,6 +3,7 @@
 namespace Nextend\Framework\Url\WordPress;
 
 use Nextend\Framework\Filesystem\Filesystem;
+use Nextend\Framework\Request\Request;
 use Nextend\Framework\Url\AbstractPlatformUrl;
 use function content_url;
 use function wp_upload_dir;
@@ -17,7 +18,7 @@ class WordPressUrl extends AbstractPlatformUrl {
 
         $this->_baseuri = content_url();
 
-        if (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off') {
+        if (strtolower(Request::$SERVER->getCmd('HTTPS', 'off')) != 'off') {
             $this->_baseuri = str_replace('http://', 'https://', $this->_baseuri);
         }
 
@@ -31,7 +32,7 @@ class WordPressUrl extends AbstractPlatformUrl {
         $wp_upload_dir = wp_upload_dir();
         $uploadUri     = rtrim($wp_upload_dir['baseurl'], "/\\");
         if (strpos($this->_baseuri, $uploadUri) !== 0) {
-            if (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) != 'off') {
+            if (strtolower(Request::$SERVER->getCmd('HTTPS', 'off')) != 'off') {
                 $uploadUri = str_replace('http://', 'https://', $uploadUri);
             }
             $this->uris[] = $uploadUri;

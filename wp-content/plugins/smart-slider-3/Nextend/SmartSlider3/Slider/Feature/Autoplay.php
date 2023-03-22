@@ -8,6 +8,7 @@ use Nextend\Framework\Data\Data;
 use Nextend\Framework\Parser\Common;
 use Nextend\SmartSlider3\Slider\Slider;
 
+#[\AllowDynamicProperties]
 class Autoplay {
 
     /**

@@ -19,7 +19,7 @@ trait Options {
 	 *
 	 * @return void
 	 */
-	protected function init() {
+	public function init() {
 		parent::init();
 
 		$dbOptions = $this->getDbOptions( $this->optionsName . '_lite' );

@@ -95,15 +95,29 @@ trait Wp {
 
 		$plugins = [];
 		foreach ( $pluginUpgrader->pluginSlugs as $key => $slug ) {
+			$adminUrl        = admin_url( $pluginUpgrader->pluginAdminUrls[ $key ] );
+			$networkAdminUrl = null;
+			if (
+				is_multisite() &&
+				is_network_admin() &&
+				! empty( $pluginUpgrader->hasNetworkAdmin[ $key ] )
+			) {
+				$networkAdminUrl = network_admin_url( $pluginUpgrader->hasNetworkAdmin[ $key ] );
+				if ( aioseo()->helpers->isPluginNetworkActivated( $pluginUpgrader->pluginSlugs[ $key ] ) ) {
+					$adminUrl = $networkAdminUrl;
+				}
+			}
+
 			$plugins[ $key ] = [
-				'basename'    => $slug,
-				'installed'   => in_array( $slug, $installedPlugins, true ),
-				'activated'   => is_plugin_active( $slug ),
-				'adminUrl'    => admin_url( $pluginUpgrader->pluginAdminUrls[ $key ] ),
-				'canInstall'  => aioseo()->addons->canInstall(),
-				'canActivate' => aioseo()->addons->canActivate(),
-				'canUpdate'   => aioseo()->addons->canUpdate(),
-				'wpLink'      => ! empty( $pluginUpgrader->wpPluginLinks[ $key ] ) ? $pluginUpgrader->wpPluginLinks[ $key ] : null
+				'basename'        => $slug,
+				'installed'       => in_array( $slug, $installedPlugins, true ),
+				'activated'       => is_plugin_active( $slug ),
+				'adminUrl'        => $adminUrl,
+				'networkAdminUrl' => $networkAdminUrl,
+				'canInstall'      => aioseo()->addons->canInstall(),
+				'canActivate'     => aioseo()->addons->canActivate(),
+				'canUpdate'       => aioseo()->addons->canUpdate(),
+				'wpLink'          => ! empty( $pluginUpgrader->wpPluginLinks[ $key ] ) ? $pluginUpgrader->wpPluginLinks[ $key ] : null
 			];
 		}
 
@@ -272,13 +286,19 @@ trait Wp {
 				$name = '_aioseo_type';
 			}
 
+			global $wp_taxonomies;
+			$taxonomyPostTypes = ! empty( $wp_taxonomies[ $name ] )
+				? $wp_taxonomies[ $name ]->object_type
+				: [];
+
 			$taxonomies[] = [
 				'name'         => $name,
 				'label'        => ucwords( $taxObject->label ),
 				'singular'     => ucwords( $taxObject->labels->singular_name ),
 				'icon'         => strpos( $taxObject->label, 'categor' ) !== false ? 'dashicons-category' : 'dashicons-tag',
 				'hierarchical' => $taxObject->hierarchical,
-				'slug'         => isset( $taxObject->rewrite['slug'] ) ? $taxObject->rewrite['slug'] : ''
+				'slug'         => isset( $taxObject->rewrite['slug'] ) ? $taxObject->rewrite['slug'] : '',
+				'postTypes'    => $taxonomyPostTypes
 			];
 		}
 
@@ -322,44 +342,6 @@ trait Wp {
 		}
 
 		return $users;
-	}
-
-	/**
-	 * Retrieve a list of site authors.
-	 *
-	 * @since 4.1.8
-	 *
-	 * @return array An array of user data.
-	 */
-	public function getSiteAuthors() {
-		$authors = aioseo()->core->cache->get( 'site_authors' );
-		if ( null === $authors ) {
-			// phpcs:disable WordPress.DB.SlowDBQuery, HM.Performance.SlowMetaQuery
-			global $wpdb;
-			$users = get_users(
-				[
-					'meta_key'     => $wpdb->prefix . 'user_level',
-					'meta_value'   => '0',
-					'meta_compare' => '!=',
-					'blog_id'      => 0
-				]
-			);
-			// phpcs:enable WordPress.DB.SlowDBQuery, HM.Performance.SlowMetaQuery
-
-			$authors = [];
-			foreach ( $users as $user ) {
-				$authors[] = [
-					'id'          => (int) $user->ID,
-					'displayName' => $user->display_name,
-					'niceName'    => $user->user_nicename,
-					'email'       => $user->user_email,
-					'gravatar'    => get_avatar_url( $user->user_email )
-				];
-			}
-			aioseo()->core->cache->update( 'site_authors', $authors, 12 * HOUR_IN_SECONDS );
-		}
-
-		return $authors;
 	}
 
 	/**
@@ -580,6 +562,23 @@ trait Wp {
 	}
 
 	/**
+	 * Get the edit link for the given Post ID.
+	 *
+	 * @since 4.3.1
+	 *
+	 * @param  int         $postId The Post ID.
+	 * @return bool|string         The edit link or false if not built with page builders.
+	 */
+	public function getPostEditLink( $postId ) {
+		$pageBuilder = $this->getPostPageBuilderName( $postId );
+		if ( ! empty( $pageBuilder ) ) {
+			return aioseo()->standalone->pageBuilderIntegrations[ $pageBuilder ]->getEditUrl( $postId );
+		}
+
+		return get_edit_post_link( $postId );
+	}
+
+	/**
 	 * Checks if the current user can edit posts of the given post type.
 	 *
 	 * @since 4.1.9
@@ -614,15 +613,16 @@ trait Wp {
 			return $capabilities[ $postType ];
 		}
 
-		if ( ! is_array( $postTypeObject->capability_type ) ) {
-			$postTypeObject->capability_type = [
-				$postTypeObject->capability_type,
-				$postTypeObject->capability_type . 's'
+		$capabilityType = $postTypeObject->capability_type;
+		if ( ! is_array( $capabilityType ) ) {
+			$capabilityType = [
+				$capabilityType,
+				$capabilityType . 's'
 			];
 		}
 
 		// Singular base for meta capabilities, plural base for primitive capabilities.
-		list( $singularBase, $pluralBase ) = $postTypeObject->capability_type;
+		list( $singularBase, $pluralBase ) = $capabilityType;
 
 		$capabilities[ $postType ] = [
 			'edit_post'          => 'edit_' . $singularBase,
@@ -676,5 +676,78 @@ trait Wp {
 		$capabilities[ $taxonomy ] = (array) $taxonomyObject->cap;
 
 		return $capabilities[ $taxonomy ];
+	}
+
+	/**
+	 * Returns the charset for the site.
+	 *
+	 * @since 4.2.3
+	 *
+	 * @return string The name of the charset.
+	 */
+	public function getCharset() {
+		static $charset = null;
+		if ( null !== $charset ) {
+			return $charset;
+		}
+
+		$charset = get_option( 'blog_charset' );
+		$charset = $charset ? $charset : 'UTF-8';
+
+		return $charset;
+	}
+
+	/**
+	 * Returns the given data as JSON.
+	 * We temporarily change the floating point precision in order to prevent rounding errors.
+	 * Otherwise e.g. 4.9 could be output as 4.90000004.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @param  mixed  $data  The data.
+	 * @param  int    $flags The flags.
+	 * @return string        The JSON output.
+	 */
+	public function wpJsonEncode( $data, $flags = 0 ) {
+		$originalPrecision          = false;
+		$originalSerializePrecision = false;
+		if ( version_compare( PHP_VERSION, '7.1', '>=' ) ) {
+			$originalPrecision          = ini_get( 'precision' );
+			$originalSerializePrecision = ini_get( 'serialize_precision' );
+			ini_set( 'precision', 17 );
+			ini_set( 'serialize_precision', -1 );
+		}
+
+		$json = wp_json_encode( $data, $flags );
+
+		if ( version_compare( PHP_VERSION, '7.1', '>=' ) ) {
+			ini_set( 'precision', $originalPrecision );
+			ini_set( 'serialize_precision', $originalSerializePrecision );
+		}
+
+		return $json;
+	}
+
+	/**
+	 * Returns the post title or a placeholder if there isn't one.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param  int    $postId The post ID.
+	 * @return string         The post title.
+	 */
+	public function getPostTitle( $postId ) {
+		static $titles = [];
+		if ( isset( $titles[ $postId ] ) ) {
+			return $titles[ $postId ];
+		}
+
+		$post  = aioseo()->helpers->getPost( $postId );
+		$title = $post->post_title;
+		$title = $title ? $title : __( '(no title)' ); // phpcs:ignore WordPress.WP.I18n.MissingArgDomain
+
+		$titles[ $postId ] = aioseo()->helpers->decodeHtmlEntities( $title );
+
+		return $titles[ $postId ];
 	}
 }

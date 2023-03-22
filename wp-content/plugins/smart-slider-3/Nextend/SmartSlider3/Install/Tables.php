@@ -24,12 +24,12 @@ class Tables {
                 `section`      VARCHAR(128) NOT NULL,
                 `referencekey` VARCHAR(128) DEFAULT '',
                 `value`        MEDIUMTEXT  NOT NULL,
-                `system`       INT(11)     NOT NULL DEFAULT '0',
+                `isSystem`       INT(11)     NOT NULL DEFAULT '0',
                 `editable`     INT(11)     NOT NULL DEFAULT '1',
                 PRIMARY KEY (`id`),
                 KEY `application` (`application`, `section`(50), `referencekey`(50)),
                 KEY `application_2` (`application`, `section`(50)),
-                INDEX (`system`),
+                INDEX (`isSystem`),
                 INDEX (`editable`)
             )
             AUTO_INCREMENT = 10000",
@@ -46,11 +46,11 @@ class Tables {
           `title`  VARCHAR(200) NOT NULL,
           `type`   VARCHAR(30)  NOT NULL,
           `params` MEDIUMTEXT   NOT NULL,
-          `status` VARCHAR(50) NOT NULL DEFAULT 'published',
+          `slider_status` VARCHAR(50) NOT NULL DEFAULT 'published',
           `time`   DATETIME     NOT NULL,
           `thumbnail` VARCHAR( 255 ) NOT NULL,
           `ordering` INT NOT NULL DEFAULT '0',
-          INDEX (`status`),
+          INDEX (`slider_status`),
           INDEX (`time`),
           PRIMARY KEY (`id`)
         )",
@@ -92,6 +92,15 @@ class Tables {
             $this->installTable($tableName, $structure);
         }
 
+        $hasIndex = Database::queryRow(Database::parsePrefix("SHOW INDEXES FROM `#__nextend2_section_storage` WHERE Key_name = 'system'"));
+        if ($hasIndex) {
+            $this->query("ALTER TABLE `#__nextend2_section_storage` DROP INDEX `system`");
+        }
+
+        if ($this->hasColumn('#__nextend2_section_storage', 'system')) {
+            $this->query("ALTER TABLE `#__nextend2_section_storage` CHANGE  `system`  `isSystem` INT(11) NOT NULL DEFAULT '0'");
+        }
+
         $hasIndex = Database::queryRow(Database::parsePrefix("SHOW INDEXES FROM `#__nextend2_section_storage` WHERE Key_name = 'application'"));
         if ($hasIndex) {
             $this->query("ALTER TABLE `#__nextend2_section_storage` DROP INDEX `application`");
@@ -108,7 +117,7 @@ class Tables {
         $this->query("ALTER TABLE `#__nextend2_section_storage` ADD INDEX `application` (`application`, `section`(50), `referencekey`(50))");
         $this->query("ALTER TABLE `#__nextend2_section_storage` ADD INDEX `application_2` (`application`, `section`(50))");
 
-        self::fixIndex('#__nextend2_section_storage', 'system');
+        self::fixIndex('#__nextend2_section_storage', 'isSystem');
         self::fixIndex('#__nextend2_section_storage', 'editable');
 
         if (!$this->hasColumn('#__nextend2_smartslider3_sliders', 'thumbnail')) {
@@ -123,13 +132,22 @@ class Tables {
             $this->query("ALTER TABLE `#__nextend2_smartslider3_sliders` ADD `alias` VARCHAR( 255 ) NULL DEFAULT NULL");
         }
 
-        if (!$this->hasColumn('#__nextend2_smartslider3_sliders', 'status')) {
-            $this->query("ALTER TABLE `#__nextend2_smartslider3_sliders` ADD `status` VARCHAR(50) NOT NULL DEFAULT 'published', ADD INDEX `status` (`status`)");
+        $hasIndex = Database::queryRow(Database::parsePrefix("SHOW INDEXES FROM `#__nextend2_smartslider3_sliders` WHERE Key_name = 'status'"));
+        if ($hasIndex) {
+            $this->query("ALTER TABLE `#__nextend2_smartslider3_sliders` DROP INDEX `status`");
+        }
+
+        if (!$this->hasColumn('#__nextend2_smartslider3_sliders', 'slider_status')) {
+            if ($this->hasColumn('#__nextend2_smartslider3_sliders', 'status')) {
+                $this->query("ALTER TABLE `#__nextend2_smartslider3_sliders` CHANGE  `status`  `slider_status` VARCHAR(50) NOT NULL DEFAULT 'published'");
+            } else {
+                $this->query("ALTER TABLE `#__nextend2_smartslider3_sliders` ADD `slider_status` VARCHAR(50) NOT NULL DEFAULT 'published'");
+            }
         }
 
         $this->query("ALTER TABLE `#__nextend2_smartslider3_sliders` CHANGE  `title`  `title` VARCHAR( 200 ) NOT NULL");
 
-        self::fixIndex('#__nextend2_smartslider3_sliders', 'status');
+        self::fixIndex('#__nextend2_smartslider3_sliders', 'slider_status');
         self::fixIndex('#__nextend2_smartslider3_sliders', 'time');
 
         self::fixIndex('#__nextend2_smartslider3_sliders_xref', 'ordering');
@@ -243,8 +261,8 @@ class Tables {
             Database::query('ALTER TABLE ' . $tableName . ' ADD PRIMARY KEY(' . implode(', ', $colNames) . ');');
         }
 
-        if (count($colNames) == 0 && $autoIncrement) {
-            Database::query('ALTER TABLE ' . $tableName . ' MODIFY `' . $colNames . '` INT NOT NULL AUTO_INCREMENT;');
+        if (count($colNames) == 1 && $autoIncrement) {
+            Database::query('ALTER TABLE ' . $tableName . ' MODIFY `' . $colNames[0] . '` INT NOT NULL AUTO_INCREMENT;');
         }
     }
 

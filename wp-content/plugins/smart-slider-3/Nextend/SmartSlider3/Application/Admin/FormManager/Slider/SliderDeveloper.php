@@ -122,8 +122,7 @@ class SliderDeveloper extends AbstractSliderTab {
 
         $row3 = $table->createRow('developer-3');
         new Textarea($row3, 'custom-css-codes', 'CSS', '', array(
-            'height' => 26,
-            'resize' => 'both'
+            'height' => 26
         ));
 
         $row11 = $table->createRow('developer-11');

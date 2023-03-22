@@ -15,6 +15,114 @@ use AIOSEO\Plugin\Common\Models;
  */
 class Sitemap {
 	/**
+	 * Content class instance.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var Content
+	 */
+	public $content = null;
+
+	/**
+	 * Root class instance.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var Root
+	 */
+	public $root = null;
+
+	/**
+	 * Query class instance.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var Query
+	 */
+	public $query = null;
+
+	/**
+	 * File class instance.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var File
+	 */
+	public $file = null;
+
+	/**
+	 * Image class instance.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var Image\Image
+	 */
+	public $image = null;
+
+	/**
+	 * Ping class instance.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var Ping
+	 */
+	public $ping = null;
+
+	/**
+	 * Priority class instance.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var Priority
+	 */
+	public $priority = null;
+
+	/**
+	 * Output class instance.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var Output
+	 */
+	public $output = null;
+
+	/**
+	 * Helpers class instance.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var Helpers
+	 */
+	public $helpers = null;
+
+	/**
+	 * RequestParser class instance.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var RequestParser
+	 */
+	public $requestParser = null;
+
+	/**
+	 * Xsl class instance.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var Xsl
+	 */
+	public $xsl = null;
+
+	/**
+	 * The sitemap type (e.g. "general", "news", "video", "rss", etc.).
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var string
+	 */
+	public $type = '';
+
+	/**
 	 * Class constructor.
 	 *
 	 * @since 4.0.0
@@ -31,13 +139,15 @@ class Sitemap {
 		$this->helpers       = new Helpers();
 		$this->requestParser = new RequestParser();
 		$this->xsl           = new Xsl();
-		$this->localization  = new Localization();
+
+		new Localization();
 
 		$this->disableWpSitemap();
 	}
 
 	/**
 	 * Adds our hooks.
+	 * Note: This runs init and is triggered in the main AIOSEO class.
 	 *
 	 * @since 4.0.0
 	 *
@@ -51,6 +161,8 @@ class Sitemap {
 		add_action( 'edited_term', [ $this, 'regenerateStaticSitemap' ] );
 
 		add_action( 'admin_init', [ $this, 'detectStatic' ] );
+
+		$this->maybeAddHtaccessRewriteRules();
 	}
 
 	/**
@@ -67,6 +179,47 @@ class Sitemap {
 
 		remove_action( 'init', 'wp_sitemaps_get_server' );
 		add_filter( 'wp_sitemaps_enabled', '__return_false' );
+	}
+
+	/**
+	 * Check if the .htaccess rewrite rules are present if the user is using Apache. If not, add them.
+	 *
+	 * @since 4.2.5
+	 *
+	 * @return void
+	 */
+	private function maybeAddHtaccessRewriteRules() {
+		if ( ! aioseo()->helpers->isApache() || wp_doing_ajax() || wp_doing_cron() ) {
+			return;
+		}
+
+		ob_start();
+		aioseo()->templates->getTemplate( 'sitemap/htaccess-rewrite-rules.php' );
+		$rewriteRules = ob_get_clean();
+
+		$escapedRewriteRules = aioseo()->helpers->escapeRegex( $rewriteRules );
+
+		$contents = aioseo()->helpers->decodeHtmlEntities( aioseo()->htaccess->getContents() );
+		if ( get_option( 'permalink_structure' ) ) {
+			if ( preg_match( '/All in One SEO Sitemap Rewrite Rules/i', $contents ) && ! aioseo()->core->cache->get( 'aioseo_sitemap_htaccess_rewrite_rules_remove' ) ) {
+				aioseo()->core->cache->update( 'aioseo_sitemap_htaccess_rewrite_rules_remove', time(), HOUR_IN_SECONDS );
+
+				$contents = preg_replace( "/$escapedRewriteRules/i", '', $contents );
+				aioseo()->htaccess->saveContents( $contents );
+			}
+
+			return;
+		}
+
+		if ( preg_match( '/All in One SEO Sitemap Rewrite Rules/i', $contents ) || aioseo()->core->cache->get( 'aioseo_sitemap_htaccess_rewrite_rules_add' ) ) {
+			return;
+		}
+
+		aioseo()->core->cache->update( 'aioseo_sitemap_htaccess_rewrite_rules_add', time(), HOUR_IN_SECONDS );
+
+		$contents .= $rewriteRules;
+
+		aioseo()->htaccess->saveContents( $contents );
 	}
 
 	/**
@@ -87,7 +240,7 @@ class Sitemap {
 			return;
 		}
 
-		require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		require_once ABSPATH . 'wp-admin/includes/file.php';
 		$files = list_files( get_home_path(), 1 );
 		if ( ! count( $files ) ) {
 			return;
@@ -250,9 +403,8 @@ class Sitemap {
 			status_header( 404 );
 		}
 
-		global $wp;
 		$this->xsl->saveXslData(
-			$wp->request,
+			aioseo()->sitemap->requestParser->slug,
 			$entries,
 			$total
 		);
@@ -264,7 +416,8 @@ class Sitemap {
 				$loadedAddon->output->output( $entries );
 			}
 		}
-		exit();
+
+		exit;
 	}
 
 	/**
@@ -292,7 +445,7 @@ class Sitemap {
 			return;
 		}
 
-		require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		require_once ABSPATH . 'wp-admin/includes/file.php';
 		if ( ! aioseo()->core->fs->exists( get_home_path() . $_SERVER['REQUEST_URI'] ) ) {
 			$this->scheduleRegeneration();
 		}
@@ -306,7 +459,7 @@ class Sitemap {
 	 * @return void
 	 */
 	public function headers() {
-		$charset = get_option( 'blog_charset' );
+		$charset = aioseo()->helpers->getCharset();
 		header( "Content-Type: text/xml; charset=$charset", true );
 		header( 'X-Robots-Tag: noindex, follow', true );
 	}
@@ -322,8 +475,8 @@ class Sitemap {
 		global $wp_query;
 		$wp_query->set_404();
 		status_header( 404 );
-		include( get_404_template() );
-		exit();
+		include get_404_template();
+		exit;
 	}
 
 	/**

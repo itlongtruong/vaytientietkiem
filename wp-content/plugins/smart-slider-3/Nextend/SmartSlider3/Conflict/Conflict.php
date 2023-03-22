@@ -65,7 +65,7 @@ class Conflict {
         if (function_exists('ini_get')) {
             $max_input_vars = intval(ini_get('max_input_vars'));
             if ($max_input_vars < 1000) {
-                $this->displayConflict('PHP', sprintf(n2_('Increase %1$s in php.ini to 1000 or more. Current value: %2$s'), '<b>max_input_vars</b>', $max_input_vars), 'https://smartslider.helpscoutdocs.com/article/1717-wordpress-installation');
+                $this->displayConflict('PHP - max_input_vars', sprintf(n2_('Increase %1$s in php.ini to 1000 or more. Current value: %2$s'), '<b>max_input_vars</b>', $max_input_vars), 'https://smartslider.helpscoutdocs.com/article/1717-wordpress-installation');
             }
         }
     }
@@ -74,7 +74,7 @@ class Conflict {
         if (function_exists('ini_get') && ini_get('opcache.enable')) {
             $revalidateFrequenty = intval(ini_get('opcache.revalidate_freq'));
             if ($revalidateFrequenty >= 15) {
-                $this->displayConflict('PHP', sprintf(n2_('Decrease %1$s below 15 in php.ini to prevent fatal errors on plugin updates. Current value: %2$s'), '<b>opcache.revalidate_freq</b>', $revalidateFrequenty), 'https://smartslider.helpscoutdocs.com/article/1717-wordpress-installation');
+                $this->displayConflict('PHP - opcache', sprintf(n2_('Decrease %1$s below 15 in php.ini to prevent fatal errors on plugin updates. Current value: %2$s'), '<b>opcache.revalidate_freq</b>', $revalidateFrequenty), 'https://smartslider.helpscoutdocs.com/article/1717-wordpress-installation');
             }
         }
     }
@@ -84,7 +84,7 @@ class Conflict {
                                     ->get('log', 'api');
         if (!empty($log)) {
             if (strpos($log, 'ACTION_MISSING') === false) {
-                $this->displayConflict(n2_('Unable to connect to the API'), n2_('See <b>Debug Information</b> for more details!'));
+                $this->displayConflict(n2_('Unable to connect to the API'), sprintf(n2_('See %1$sDebug Information%2$s for more details!'), '<b>', '</b>'));
 
                 $this->curlLog = json_decode($log, true);
             }

@@ -42,7 +42,9 @@ class ViewIframe extends AbstractView {
 
         setlocale(LC_NUMERIC, $locale);
 
-        echo $this->render('Iframe');
+
+        // PHPCS - Content already escaped
+        echo $this->render('Iframe'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
     }
 
     /**
@@ -60,7 +62,7 @@ class ViewIframe extends AbstractView {
     }
 
     /**
-     * @return string
+     * @return string already escaped
      */
     public function getSliderHTML() {
         return $this->sliderHTML;

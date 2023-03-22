@@ -17,6 +17,7 @@ class WordPressConflict extends Conflict {
         $this->testPluginNetbaseWidgetsForSiteOrigin();
         $this->testPluginNavMenuAddonForElementor();
         $this->testPluginSimplyExclude();
+        $this->testPluginCaches();
     }
 
     /**
@@ -79,6 +80,43 @@ class WordPressConflict extends Conflict {
     private function testPluginSimplyExclude() {
         if (defined('SIMPLY_EXCLUDE_I18N_DOMAIN')) {
             $this->displayConflict('Simply Exclude', sprintf(n2_('This plugin breaks the filtering options of the dynamic slide generators when %1$s is set to %2$s. Also it has not received any updates since WordPress 3.9.'), 'Query Filtering', 'All Loops'));
+        }
+    }
+
+
+    /**
+     * Cache plugins
+     */
+    private function testPluginCaches() {
+        $description = n2_('Optimization plugins often create issues, so if you see anything wrong, follow our documentation:');
+        $link        = 'https://smartslider.helpscoutdocs.com/article/1976-cache-or-minification';
+
+        if (defined('WP_ROCKET_VERSION')) {
+            $this->displayConflict('WP Rocket', $description, $link . '#wp-rocket');
+        }
+        if (defined('WPFC_WP_PLUGIN_DIR')) {
+            $this->displayConflict('WP Fastest Cache', $description, $link . '#wp-fastest-cache');
+        }
+        if (defined('NITROPACK_VERSION')) {
+            $this->displayConflict('Nitropack', $description, $link . '#nitropack');
+        }
+        if (defined('AUTOPTIMIZE_PLUGIN_VERSION')) {
+            $this->displayConflict('Autoptimize', $description, $link . '#autoptimize');
+        }
+        if (defined('LSCWP_V')) {
+            $this->displayConflict('Litespeed Cache', $description, $link . '#litespeed');
+        }
+        if (defined('SiteGround_Optimizer\VERSION')) {
+            $this->displayConflict('SiteGround Optimizer', $description, $link . '#sg-optimizer');
+        }
+        if (defined('W3TC_DIR')) {
+            $this->displayConflict('W3 Total Cache', $description, $link . '#w3-total-cache');
+        }
+        if (defined('WPCACHEHOME')) {
+            $this->displayConflict('WP Super Cache', $description, $link . '#wp-super-cache');
+        }
+        if (defined('JETPACK__VERSION')) {
+            $this->displayConflict('Jetpack', $description, $link . '#jetpack');
         }
     }
 }

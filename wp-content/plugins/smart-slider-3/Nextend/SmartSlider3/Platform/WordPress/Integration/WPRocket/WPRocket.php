@@ -39,6 +39,14 @@ class WPRocket {
             $this,
             'rocket_defer_inline_exclusions'
         ));
+
+        /**
+         * @see https://nextendweb.atlassian.net/browse/SSDEV-3775
+         */
+        add_filter('rocket_delay_js_exclusions', array(
+            $this,
+            'rocket_delay_js_exclusions'
+        ));
     }
 
     public function remove_rocket_excluded_inline_js_content($excluded_inline) {
@@ -70,6 +78,15 @@ class WPRocket {
         }
 
         return $inline_exclusions;
+    }
+
+    public function rocket_delay_js_exclusions($exclude_delay_js) {
+
+        $exclude_delay_js[] = '(.*)smart-slider(.*).js';
+        $exclude_delay_js[] = 'new _N2';
+        $exclude_delay_js[] = 'this._N2';
+
+        return $exclude_delay_js;
     }
 
     public function initCDN() {

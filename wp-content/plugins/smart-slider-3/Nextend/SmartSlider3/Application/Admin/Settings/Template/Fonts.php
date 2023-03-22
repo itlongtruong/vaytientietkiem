@@ -12,7 +12,7 @@ JS::addInline('new _N2.SettingsFonts();');
 
 ?>
 
-<form id="n2-ss-form-settings-fonts" method="post" action="<?php echo $this->getAjaxUrlSettingsFonts(); ?>">
+<form id="n2-ss-form-settings-fonts" method="post" action="<?php echo esc_url($this->getAjaxUrlSettingsFonts()); ?>">
     <?php
     $this->renderForm();
     ?>

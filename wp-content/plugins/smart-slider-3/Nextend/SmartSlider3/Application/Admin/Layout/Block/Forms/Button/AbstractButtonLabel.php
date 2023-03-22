@@ -18,7 +18,7 @@ class AbstractButtonLabel extends AbstractButton {
         $content = '';
 
         if (!empty($this->iconBefore)) {
-            $content .= '<i class="' . $this->iconBefore . ' ' . $this->itemBeforeClass . '"></i>';
+            $content .= '<i class="' . $this->iconBefore . ' ' . $this->iconBeforeClass . '"></i>';
         }
 
         $content .= '<span class="' . $this->baseClass . '__label">' . $this->getLabel() . '</span>';
@@ -57,7 +57,7 @@ class AbstractButtonLabel extends AbstractButton {
      */
     public function setIconBefore($icon, $extraClass = "") {
         $this->iconBefore      = $icon;
-        $this->itemBeforeClass = $extraClass;
+        $this->iconBeforeClass = $extraClass;
     }
 
 }

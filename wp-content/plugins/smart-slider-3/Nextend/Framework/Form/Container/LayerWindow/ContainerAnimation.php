@@ -19,14 +19,14 @@ class ContainerAnimation extends ContainerGeneral {
     }
 
     public function renderContainer() {
-        echo '<div class="n2_container_animation" data-field="animation-' . $this->name . '">';
+        echo '<div class="n2_container_animation" data-field="animation-' . esc_attr($this->name) . '">';
         echo '<div class="n2_container_animation__buttons">';
 
         $element = $this->first;
         while ($element) {
 
             if ($element instanceof ContainerAnimationTab) {
-                echo '<div class="n2_container_animation__button" data-related-tab="' . $element->getName() . '">' . $element->getLabel() . '</div>';
+                echo '<div class="n2_container_animation__button" data-related-tab="' . esc_attr($element->getName()) . '">' . esc_html($element->getLabel()) . '</div>';
             }
 
             $element = $element->getNext();

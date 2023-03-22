@@ -101,7 +101,7 @@ class ModelSlidersXRef extends AbstractModelTable {
             SELECT xref.slider_id
             FROM " . $this->getTableName() . " AS xref
             LEFT JOIN " . $slidersModel->getTableName() . " AS sliders ON sliders.id = xref.slider_id
-            WHERE xref.group_id = '" . $groupID . "' AND sliders.status LIKE " . Database::quote($status) . "
+            WHERE xref.group_id = '" . $groupID . "' AND sliders.slider_status LIKE " . Database::quote($status) . "
             ORDER BY xref.ordering ASC");
         }
 
@@ -134,7 +134,7 @@ class ModelSlidersXRef extends AbstractModelTable {
         $wheres = array("xref.slider_id = '" . $sliderID . "'");
 
         if ($status !== '*') {
-            $wheres[] = "sliders.status LIKE '" . $status . "'";
+            $wheres[] = "sliders.slider_status LIKE '" . $status . "'";
         }
 
         $result = Database::queryAll("
@@ -182,7 +182,7 @@ class ModelSlidersXRef extends AbstractModelTable {
                  * It is a group
                  */
                 $sliderRow = $slidersModel->get($group['group_id']);
-                if (isset($sliderRow['status']) && $sliderRow['status'] === 'published') {
+                if (isset($sliderRow['slider_status']) && $sliderRow['slider_status'] === 'published') {
                     return true;
                 }
             } else {
@@ -190,7 +190,7 @@ class ModelSlidersXRef extends AbstractModelTable {
                  * It is a slider
                  */
                 $sliderRow = $slidersModel->get($sliderID);
-                if (isset($sliderRow['status']) && $sliderRow['status'] === 'published') {
+                if (isset($sliderRow['slider_status']) && $sliderRow['slider_status'] === 'published') {
                     return true;
                 }
             }

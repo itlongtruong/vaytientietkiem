@@ -108,7 +108,7 @@ class ViewSlidersImport extends AbstractView {
 
         new SelectFile($localImportGrouping, 'local-import-file', n2_('File'), '', 'ss3');
 
-        new Notice($localImportGrouping, 'instructions', '', sprintf(n2_('Files with <i>.ss3</i> extension are listed from: %s'), Platform::getPublicDirectory()));
+        new Notice($localImportGrouping, 'instructions', '', sprintf(n2_('Files with %1$s.ss3%2$s extension are listed from: %3$s'), '<i>', '</i>', Platform::getPublicDirectory()));
 
         new OnOff($localImportGrouping, 'delete', n2_('Delete file'), 0, array(
             'tipLabel'       => n2_('Delete file'),

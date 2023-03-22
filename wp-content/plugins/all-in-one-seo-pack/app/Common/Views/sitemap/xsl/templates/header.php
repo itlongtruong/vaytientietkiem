@@ -55,8 +55,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</xsl:otherwise>
 				</xsl:choose>
 				<?php 
-					// Translators: 1 - The generated date, 2 - The generated time.
-					echo sprintf( 
+					echo sprintf(
+						// Translators: 1 - The generated date, 2 - The generated time.
 						__( 'and was generated on %1$s at %2$s', 'all-in-one-seo-pack' ),
 						date_i18n( get_option( 'date_format' ) ),
 						date_i18n( get_option( 'time_format' ) )

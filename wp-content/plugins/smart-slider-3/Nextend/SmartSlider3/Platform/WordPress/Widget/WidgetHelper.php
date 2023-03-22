@@ -62,7 +62,7 @@ class WidgetHelper {
 
     public function dynamic_sidebar_before($index) {
         if (substr($index, 0, strlen('smartslider_area_')) === 'smartslider_area_') {
-            echo '<div class="description">Display this widget area in your theme with: <pre style="white-space: pre-wrap;overflow:hidden;">&lt;?php dynamic_sidebar(\'' . $index . '\'); ?&gt;</pre></div>';
+            echo '<div class="description">Display this widget area in your theme with: <pre style="white-space: pre-wrap;overflow:hidden;">&lt;?php dynamic_sidebar(\'' . esc_html($index) . '\'); ?&gt;</pre></div>';
         }
 
     }

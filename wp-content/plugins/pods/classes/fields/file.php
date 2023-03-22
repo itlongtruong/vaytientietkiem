@@ -1,5 +1,8 @@
 <?php
 
+use Pods\Whatsit\Field;
+use Pods\Whatsit\Pod;
+
 /**
  * @package Pods\Fields
  */
@@ -95,6 +98,45 @@ class PodsField_File extends PodsField {
 				'pick_show_select_text' => 0,
 				'dependency' => true,
 			),
+			static::$type . '_type'                   => array(
+				'label'      => __( 'Restrict File Types', 'pods' ),
+				'default'    => apply_filters( "pods_form_ui_field_{$type}_type_default", 'images' ),
+				'type'       => 'pick',
+				'data'       => apply_filters(
+					"pods_form_ui_field_{$type}_type_options",
+					[
+						'Images' => [
+							'images'     => __( 'Images (ONLY jpg, jpeg, png, gif, and webp)', 'pods' ),
+							'images-any' => __( 'Images - Any (jpg, jpeg, png, gif, webp, and others supported by WP)', 'pods' ),
+						],
+						'Video' => [
+							'video'      => __( 'Video (ONLY mpg, mov, flv, and mp4)', 'pods' ),
+							'video-any'  => __( 'Video - Any (mpg, mov, flv, mp4, and others supported by WP)', 'pods' ),
+						],
+						'Audio' => [
+							'audio'      => __( 'Audio (ONLY mp3, m4a, wav, and wma)', 'pods' ),
+							'audio-any'  => __( 'Audio - Any (mp3, m4a, wav, wma, and others supported by WP)', 'pods' ),
+						],
+						'Text' => [
+							'text'       => __( 'Text (txt, csv, tsv, rtx)', 'pods' ),
+						],
+						'More Options' => [
+							'any'        => __( 'Any Type (no restriction)', 'pods' ),
+							'other'      => __( 'Other (customize allowed extensions)', 'pods' ),
+						],
+					]
+				),
+				'pick_show_select_text' => 0,
+				'dependency' => true,
+			),
+			static::$type . '_allowed_extensions'     => array(
+				'label'       => __( 'Allowed File Extensions', 'pods' ),
+				'description' => __( 'Separate file extensions with a comma (ex. jpg,png,mp4,mov). This only applies to the file uploader, media library selection will continue to fallback to the mime type group like Images, Video, etc.', 'pods' ),
+				'depends-on'  => array( static::$type . '_type' => 'other' ),
+				'default'     => apply_filters( "pods_form_ui_field_{$type}_extensions_default", '' ),
+				'text_placeholder' => 'jpg,png,mp4,mov',
+				'type'        => 'text',
+			),
 			static::$type . '_attachment_tab'         => array(
 				'label'      => __( 'Media Library Default Tab', 'pods' ),
 				'depends-on' => array( static::$type . '_uploader' => 'attachment' ),
@@ -169,36 +211,15 @@ class PodsField_File extends PodsField {
 				'text_placeholder' => '10MB',
 				'type'       => 'text',
 			),
-			static::$type . '_type'                   => array(
-				'label'      => __( 'Restrict File Types', 'pods' ),
-				'default'    => apply_filters( "pods_form_ui_field_{$type}_type_default", 'images' ),
-				'type'       => 'pick',
-				'data'       => apply_filters(
-					"pods_form_ui_field_{$type}_type_options",
-					array(
-						'images' => __( 'Images (jpg, jpeg, png, gif)', 'pods' ),
-						'video'  => __( 'Video (mpg, mov, flv, mp4, etc..)', 'pods' ),
-						'audio'  => __( 'Audio (mp3, m4a, wav, wma, etc..)', 'pods' ),
-						'text'   => __( 'Text (txt, csv, tsv, rtx, etc..)', 'pods' ),
-						'any'    => __( 'Any Type (no restriction)', 'pods' ),
-						'other'  => __( 'Other (customize allowed extensions)', 'pods' ),
-					)
-				),
-				'pick_show_select_text' => 0,
-				'dependency' => true,
-			),
-			static::$type . '_allowed_extensions'     => array(
-				'label'       => __( 'Allowed File Extensions', 'pods' ),
-				'description' => __( 'Separate file extensions with a comma (ex. jpg,png,mp4,mov). This only applies to the file uploader, media library selection will continue to fallback to the mime-type group like Images, Video, etc.', 'pods' ),
-				'depends-on'  => array( static::$type . '_type' => 'other' ),
-				'default'     => apply_filters( "pods_form_ui_field_{$type}_extensions_default", '' ),
-				'text_placeholder' => 'jpg,png,mp4,mov',
-				'type'        => 'text',
-			),
 			static::$type . '_field_template'         => array(
 				'label'      => __( 'List Style', 'pods' ),
 				'help'       => __( 'You can choose which style you would like the files to appear within the form.', 'pods' ),
-				'depends-on' => array( static::$type . '_type' => 'images' ),
+				'depends-on' => array(
+					static::$type . '_type' => [
+						'images',
+						'images-any',
+					]
+				),
 				'default'    => apply_filters( "pods_form_ui_field_{$type}_template_default", 'rows' ),
 				'type'       => 'pick',
 				'data'       => apply_filters(
@@ -232,7 +253,12 @@ class PodsField_File extends PodsField {
 			static::$type . '_wp_gallery_output'      => array(
 				'label'      => __( 'Output as a WP Gallery', 'pods' ),
 				'help'       => sprintf( __( '<a href="%s" target="_blank" rel="noopener noreferrer">Click here for more info</a>', 'pods' ), 'https://wordpress.org/support/article/inserting-images-into-posts-and-pages/' ),
-				'depends-on' => array( static::$type . '_type' => 'images' ),
+				'depends-on' => [
+					static::$type . '_type' => [
+						'images',
+						'images-any',
+					]
+				],
 				'dependency' => true,
 				'type'       => 'boolean',
 			),
@@ -240,6 +266,7 @@ class PodsField_File extends PodsField {
 				'label'      => __( 'Gallery Image Links', 'pods' ),
 				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'pick',
+				'default'    => 'file',
 				'data'       => array(
 					'post' => __( 'Attachment Page', 'pods' ),
 					'file' => __( 'Media File', 'pods' ),
@@ -251,6 +278,7 @@ class PodsField_File extends PodsField {
 				'label'      => __( 'Gallery Image Columns', 'pods' ),
 				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'pick',
+				'default'    => '3',
 				'data'       => array(
 					'1' => '1',
 					'2' => '2',
@@ -273,6 +301,7 @@ class PodsField_File extends PodsField {
 				'label'      => __( 'Gallery Image Size', 'pods' ),
 				'depends-on' => array( static::$type . '_wp_gallery_output' => true ),
 				'type'       => 'pick',
+				'default'    => 'thumbnail',
 				'data'       => $this->data_image_sizes(),
 				'pick_show_select_text' => 0,
 			),
@@ -339,7 +368,6 @@ class PodsField_File extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function input( $name, $value = null, $options = null, $pod = null, $id = null ) {
-
 		$options = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 
 		$type = pods_v( 'type', $options, static::$type );
@@ -379,6 +407,11 @@ class PodsField_File extends PodsField {
 
 		wp_enqueue_script( 'pods-i18n' );
 
+		// To be further refactored later when we remove jQuery dependency and this field is fully React.
+		wp_enqueue_script( 'jquery' );
+		wp_enqueue_script( 'jquery-ui-core' );
+		wp_enqueue_script( 'jquery-ui-sortable' );
+
 		// Ensure the media library is initialized
 		$this->render_input_script( $args );
 	}
@@ -387,7 +420,6 @@ class PodsField_File extends PodsField {
 	 * {@inheritdoc}
 	 */
 	public function build_dfv_field_options( $options, $args ) {
-
 		if ( ! is_admin() ) {
 			include_once ABSPATH . '/wp-admin/includes/template.php';
 
@@ -418,7 +450,7 @@ class PodsField_File extends PodsField {
 		$options[ $args->type . '_type' ] = $limit_file_type;
 
 		// Non-image file types are forced to rows template right now.
-		if ( 'images' !== $limit_file_type ) {
+		if ( ! in_array( $limit_file_type, [ 'images', 'images-any' ], true ) ) {
 			$file_field_template = 'rows';
 		}
 
@@ -437,87 +469,15 @@ class PodsField_File extends PodsField {
 
 		$options[ $args->type . '_limit' ] = $file_limit;
 
-		// Build types and extensions to limit by.
-		if ( 'images' === $limit_file_type ) {
-			$limit_types      = 'image';
-			$limit_extensions = 'jpg,jpeg,png,gif';
-		} elseif ( 'video' === $limit_file_type ) {
-			$limit_types      = 'video';
-			$limit_extensions = 'mpg,mov,flv,mp4';
-		} elseif ( 'audio' === $limit_file_type ) {
-			$limit_types      = 'audio';
-			$limit_extensions = 'mp3,m4a,wav,wma';
-		} elseif ( 'text' === $limit_file_type ) {
-			$limit_types      = 'text';
-			$limit_extensions = 'txt,rtx,csv,tsv';
-		} elseif ( 'any' === $limit_file_type ) {
+		$file_mime_types = $this->get_file_mime_types_for_field( $options );
+
+		if ( null === $file_mime_types ) {
 			$limit_types      = '';
 			$limit_extensions = '*';
 		} else {
-			$limit_types = pods_v( $args->type . '_allowed_extensions', $options, '', true );
-
-			$limit_extensions = $limit_types;
+			$limit_types      = implode( ',', $file_mime_types['mime_types'] );
+			$limit_extensions = implode( ',', $file_mime_types['extensions'] );
 		}
-
-		// Find and replace certain characters to properly split by commas.
-		$find = array(
-			' ',
-			'.',
-			"\n",
-			"\t",
-			';',
-		);
-
-		$replace = array(
-			'',
-			',',
-			',',
-			',',
-		);
-
-		$limit_types      = trim( str_replace( $find, $replace, $limit_types ), ',' );
-		$limit_extensions = trim( str_replace( $find, $replace, $limit_extensions ), ',' );
-		$mime_types       = get_allowed_mime_types();
-
-		if ( ! in_array( $limit_file_type, array( 'images', 'video', 'audio', 'text', 'any' ), true ) ) {
-			$new_limit_types = array();
-
-			$limit_types = array_filter( explode( ',', $limit_types ) );
-
-			foreach ( $limit_types as $k => $limit_type ) {
-				if ( isset( $mime_types[ $limit_type ] ) ) {
-					$mime = explode( '/', $mime_types[ $limit_type ] );
-					$mime = $mime[0];
-
-					if ( ! in_array( $mime, $new_limit_types, true ) ) {
-						$new_limit_types[] = $mime;
-					}
-				} else {
-					$found = false;
-
-					foreach ( $mime_types as $type => $mime ) {
-						if ( false !== strpos( $type, $limit_type ) ) {
-							$mime = explode( '/', $mime );
-							$mime = $mime[0];
-
-							if ( ! in_array( $mime, $new_limit_types, true ) ) {
-								$new_limit_types[] = $mime;
-							}
-
-							$found = true;
-						}
-					}
-
-					if ( ! $found ) {
-						$new_limit_types[] = $limit_type;
-					}
-				}//end if
-			}//end foreach
-
-			if ( ! empty( $new_limit_types ) ) {
-				$limit_types = implode( ',', $new_limit_types );
-			}
-		}//end if
 
 		$options['limit_types']      = $limit_types;
 		$options['limit_extensions'] = $limit_extensions;
@@ -528,18 +488,36 @@ class PodsField_File extends PodsField {
 		if ( 'plupload' === pods_v( static::$type . '_uploader', $options ) ) {
 			wp_enqueue_script( 'plupload-all' );
 
-			$pod_id   = (int) pods_v( 'pod_id', $args->pod, 0 );
-			$field_id = (int) pods_v( 'id', $options, 0 );
-			$item_id  = (int) pods_v( 'id', $args, 0 );
+			if ( is_array( $args->pod ) ) {
+				$pod_name = $args->pod['name'];
+			} elseif ( $args->pod instanceof Pods ) {
+				$pod_name = $args->pod->pod;
+			} elseif ( $args->pod instanceof Pod ) {
+				$pod_name = $args->pod->get_name();
+			} else {
+				$pod_name = '';
+			}
 
-			if ( $is_user_logged_in ) {
+			if ( is_array( $options ) ) {
+				$field_name = pods_v( 'name', $options );
+			} elseif ( $options instanceof Field ) {
+				$field_name = $options->get_name();
+			} else {
+				$field_name = '';
+			}
+
+			$id = (int) $args->id;
+
+			if ( is_user_logged_in() ) {
 				$uid = 'user_' . get_current_user_id();
 			} else {
 				$uid = pods_session_id();
 			}
 
-			$uri_hash    = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
-			$field_nonce = wp_create_nonce( 'pods_upload_' . $pod_id . '_' . $uid . '_' . $uri_hash . '_' . $field_id );
+			$uri_hash = wp_create_nonce( 'pods_uri_' . $_SERVER['REQUEST_URI'] );
+
+			$nonce_name  = 'pods_upload:' . json_encode( compact( 'pod_name', 'field_name', 'uid', 'uri_hash', 'id' ) );
+			$field_nonce = wp_create_nonce( $nonce_name );
 
 			$plupload_init = [
 				'runtimes'            => 'html5,silverlight,flash,html4',
@@ -552,19 +530,19 @@ class PodsField_File extends PodsField {
 				'filters'             => [
 					[
 						'title'      => __( 'Allowed Files', 'pods' ),
-						'extensions' => '*',
+						'extensions' => $limit_extensions,
 					],
 				],
 				'multipart'           => true,
 				'urlstream_upload'    => true,
 				'multipart_params'    => [
-					'_wpnonce' => $field_nonce,
-					'action'   => 'pods_upload',
-					'method'   => 'upload',
-					'pod'      => $pod_id,
-					'field'    => $field_id,
-					'item_id'  => $item_id,
-					'uri'      => $uri_hash,
+					'action'     => 'pods_upload',
+					'method'     => 'upload',
+					'pod_name'   => $pod_name,
+					'field_name' => $field_name,
+					'id'         => $id,
+					'uri_hash'   => $uri_hash,
+					'_wpnonce'   => $field_nonce,
 				],
 			];
 
@@ -688,36 +666,46 @@ class PodsField_File extends PodsField {
 		$value = array_unique( array_filter( $value ), SORT_REGULAR );
 
 		// Handle File title saving.
-		foreach ( $value as $id ) {
+		foreach ( $value as $attachment_id ) {
 			$title = false;
 
-			if ( is_array( $id ) ) {
-				if ( isset( $id['title'] ) && 0 < strlen( trim( $id['title'] ) ) ) {
-					$title = trim( $id['title'] );
+			if ( is_array( $attachment_id ) ) {
+				if ( isset( $attachment_id['title'] ) && 0 < strlen( trim( $attachment_id['title'] ) ) ) {
+					$title = trim( $attachment_id['title'] );
 				}
 
-				if ( isset( $id['id'] ) ) {
-					$id = (int) $id['id'];
+				if ( isset( $attachment_id['id'] ) ) {
+					$attachment_id = (int) $attachment_id['id'];
 				} else {
-					$id = 0;
+					$attachment_id = 0;
 				}
 			}
 
-			if ( empty( $id ) ) {
+			if ( empty( $attachment_id ) ) {
 				continue;
 			}
 
 			$attachment      = null;
 			$attachment_data = array();
 
+			$attachment = get_post( $attachment_id );
+
+			if ( ! $attachment ) {
+				continue;
+			}
+
 			// Update the title if set.
-			if ( false !== $title && 1 === (int) pods_v( static::$type . '_edit_title', $options, 0 ) ) {
+			if (
+				false !== $title
+				&& 1 === (int) pods_v( static::$type . '_edit_title', $options, 0 )
+				&& $attachment->post_title !== $title
+			) {
 				$attachment_data['post_title'] = $title;
 			}
 
 			// Update attachment parent if it's not set yet and we're updating a post.
 			if ( ! empty( $params->id ) && ! empty( $pod['type'] ) && 'post_type' === $pod['type'] ) {
-				$attachment = get_post( $id );
+				$attachment = get_post( $attachment_id );
 
 				if ( isset( $attachment->post_parent ) && 0 === (int) $attachment->post_parent ) {
 					$attachment_data['post_parent'] = (int) $params->id;
@@ -726,7 +714,7 @@ class PodsField_File extends PodsField {
 
 			// Update the attachment if it the data array is not still empty.
 			if ( ! empty( $attachment_data ) ) {
-				$attachment_data['ID'] = $id;
+				$attachment_data['ID'] = $attachment_id;
 
 				if ( $attachment ) {
 					// Add post type to trigger attachment update filters from other plugins.
@@ -1004,11 +992,11 @@ class PodsField_File extends PodsField {
 			'upload',
 		);
 
-		if ( ! isset( $params->method ) || ! in_array( $params->method, $methods, true ) || ! isset( $params->pod ) || ! isset( $params->field ) || ! isset( $params->uri ) || empty( $params->uri ) ) {
+		if ( ! isset( $params->method ) || ! in_array( $params->method, $methods, true ) ) {
 			pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
-		} elseif ( ! empty( $params->pod ) && empty( $params->field ) ) {
+		} elseif ( ! empty( $params->pod_name ) && empty( $params->field_name ) ) {
 			pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
-		} elseif ( empty( $params->pod ) && ! current_user_can( 'upload_files' ) ) {
+		} elseif ( empty( $params->pod_name ) && ! current_user_can( 'upload_files' ) ) {
 			pods_error( __( 'Invalid AJAX request', 'pods' ), PodsInit::$admin );
 		}
 
@@ -1048,23 +1036,53 @@ class PodsField_File extends PodsField {
 			}
 		}
 
-		$uid = pods_session_id();
-
-		if ( $is_user_logged_in ) {
-			$uid = 'user_' . get_current_user_id();
-		}
-
-		$nonce_check = 'pods_upload_' . (int) $params->pod . '_' . $uid . '_' . $params->uri . '_' . (int) $params->field;
-
-		if ( true === $upload_disabled || ! isset( $params->_wpnonce ) || false === wp_verify_nonce( $params->_wpnonce, $nonce_check ) ) {
+		if ( true === $upload_disabled ) {
 			pods_error( __( 'Unauthorized request', 'pods' ), PodsInit::$admin );
 		}
 
-		$pod   = array();
-		$field = array(
-			'type'    => 'file',
-			'options' => array(),
-		);
+		if ( ! isset( $params->_wpnonce, $params->pod_name, $params->field_name, $params->uri_hash, $params->id ) ) {
+			pods_error( __( 'Unauthorized request', 'pods' ), PodsInit::$admin );
+		}
+
+		$_wpnonce   = $params->_wpnonce;
+		$pod_name   = $params->pod_name;
+		$field_name = $params->field_name;
+		$uri_hash   = $params->uri_hash;
+		$id         = (int) $params->id;
+
+		$uid = pods_session_id();
+
+		if ( is_user_logged_in() ) {
+			$uid = 'user_' . get_current_user_id();
+		}
+
+		$nonce_name = 'pods_upload:' . json_encode( compact( 'pod_name', 'field_name', 'uid', 'uri_hash', 'id' ) );
+
+		if ( false === wp_verify_nonce( $_wpnonce, $nonce_name ) ) {
+			pods_error( __( 'Unauthorized request', 'pods' ), PodsInit::$admin );
+		}
+
+		if ( empty( self::$api ) ) {
+			self::$api = pods_api();
+		}
+
+		$pod = self::$api->load_pod( [
+			'name' => $pod_name,
+		] );
+
+		if ( ! $pod ) {
+			pods_error( __( 'Invalid Pod configuration', 'pods' ), PodsInit::$admin );
+		}
+
+		$field = $pod->get_field( $field_name );
+
+		if ( ! $field ) {
+			pods_error( __( 'Invalid Field configuration', 'pods' ), PodsInit::$admin );
+		}
+
+		if ( ! $field->is_file() ) {
+			pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
+		}
 
 		if ( empty( self::$api ) ) {
 			self::$api = pods_api();
@@ -1072,25 +1090,12 @@ class PodsField_File extends PodsField {
 
 		self::$api->display_errors = false;
 
-		if ( ! empty( $params->pod ) ) {
-			$pod   = self::$api->load_pod( array( 'id' => (int) $params->pod ) );
-			$field = self::$api->load_field( array( 'id' => (int) $params->field ) );
-
-			if ( empty( $pod ) || empty( $field ) || (int) $pod['id'] !== (int) $field['pod_id'] || ! isset( $pod['fields'][ $field['name'] ] ) ) {
-				pods_error( __( 'Invalid field request', 'pods' ), PodsInit::$admin );
-			}
-
-			if ( ! in_array( $field['type'], PodsForm::file_field_types(), true ) ) {
-				pods_error( __( 'Invalid field', 'pods' ), PodsInit::$admin );
-			}
-		}
-
 		$method = $params->method;
 
 		// Cleaning up $params
 		unset( $params->action, $params->method, $params->_wpnonce );
 
-		$params->item_id = (int) pods_v( 'item_id', $params, 0 );
+		$params->post_id = (int) pods_v( 'post_id', $params, 0 );
 
 		/**
 		 * Upload a new file (advanced - returns URL and ID)
@@ -1098,7 +1103,7 @@ class PodsField_File extends PodsField {
 		if ( 'upload' === $method ) {
 			$file = $_FILES['Filedata'];
 
-			$limit_size = pods_v( $field['type'] . '_restrict_filesize', $field['options'] );
+			$limit_size = pods_v( $field['type'] . '_restrict_filesize', $field );
 
 			if ( ! empty( $limit_size ) ) {
 				if ( false !== stripos( $limit_size, 'GB' ) ) {
@@ -1120,93 +1125,21 @@ class PodsField_File extends PodsField {
 				}
 
 				if ( 0 < $limit_size && $limit_size < $file['size'] ) {
-					$error = __( 'File size too large, max size is %s', 'pods' );
-					$error = sprintf( $error, pods_v( $field['type'] . '_restrict_filesize', $field['options'] ) );
+					$error = sprintf(
+						__( 'Error: File size too large, max size is %s', 'pods' ),
+						pods_v( $field['type'] . '_restrict_filesize', $field )
+					);
 
-					pods_error( '<div style="color:#FF0000">Error: ' . $error . '</div>' );
+					pods_error( '<div style="color:#FF0000">' . $error . '</div>' );
 				}
 			}//end if
 
-			$limit_file_type = pods_v( $field['type'] . '_type', $field['options'], 'images' );
+			$file_mime_types = $this->get_file_mime_types_for_field( $field );
 
-			if ( 'images' === $limit_file_type ) {
-				$limit_types = 'jpg,jpeg,png,gif';
-			} elseif ( 'video' === $limit_file_type ) {
-				$limit_types = 'mpg,mov,flv,mp4';
-			} elseif ( 'audio' === $limit_file_type ) {
-				$limit_types = 'mp3,m4a,wav,wma';
-			} elseif ( 'text' === $limit_file_type ) {
-				$limit_types = 'txt,rtx,csv,tsv';
-			} elseif ( 'any' === $limit_file_type ) {
-				$limit_types = '';
-			} else {
-				$limit_types = pods_v( $field['type'] . '_allowed_extensions', $field['options'], '', true );
-			}
+			if ( null !== $file_mime_types ) {
+				$file_mime_types_extensions = $file_mime_types['extensions'];
+				$file_mime_types_mapping    = $file_mime_types['mapping'];
 
-			$limit_types = trim(
-				str_replace(
-					array( ' ', '.', "\n", "\t", ';' ), array(
-						'',
-						',',
-						',',
-						',',
-					), $limit_types
-				), ','
-			);
-
-			$mime_types = get_allowed_mime_types();
-
-			if ( in_array( $limit_file_type, array( 'images', 'audio', 'video' ), true ) ) {
-				$new_limit_types = array();
-
-				foreach ( $mime_types as $type => $mime ) {
-					if ( 0 === strpos( $mime, $limit_file_type ) ) {
-						$type = explode( '|', $type );
-
-						$new_limit_types = array_merge( $new_limit_types, $type );
-					}
-				}
-
-				if ( ! empty( $new_limit_types ) ) {
-					$limit_types = implode( ',', $new_limit_types );
-				}
-			} elseif ( 'any' !== $limit_file_type ) {
-				$new_limit_types = array();
-
-				$limit_types = explode( ',', $limit_types );
-
-				foreach ( $limit_types as $k => $limit_type ) {
-					$found = false;
-
-					foreach ( $mime_types as $type => $mime ) {
-						if ( 0 === strpos( $mime, $limit_type ) ) {
-							$type = explode( '|', $type );
-
-							foreach ( $type as $t ) {
-								if ( ! in_array( $t, $new_limit_types, true ) ) {
-									$new_limit_types[] = $t;
-								}
-							}
-
-							$found = true;
-						}
-					}
-
-					if ( ! $found ) {
-						$new_limit_types[] = $limit_type;
-					}
-				}//end foreach
-
-				if ( ! empty( $new_limit_types ) ) {
-					$limit_types = implode( ',', $new_limit_types );
-				}
-			}//end if
-
-			$limit_types = explode( ',', $limit_types );
-
-			$limit_types = array_filter( array_unique( $limit_types ) );
-
-			if ( ! empty( $limit_types ) ) {
 				$file_info = pathinfo( $file['name'] );
 				$ok        = false;
 
@@ -1214,22 +1147,42 @@ class PodsField_File extends PodsField {
 					// Enforce lowercase for the extension checking.
 					$file_info['extension'] = strtolower( $file_info['extension'] );
 
-					foreach ( $limit_types as $limit_type ) {
-						$limit_type = strtolower( trim( $limit_type, ' .' ) );
-
-						if ( $limit_type === $file_info['extension'] ) {
-							$ok = true;
-
-							break;
-						}
-					}
+					$ok = isset( $file_mime_types_mapping[ $file_info['extension'] ] );
 				}
 
 				if ( false === $ok ) {
-					$error = __( 'File type not allowed, please use one of the following: %s', 'pods' );
-					$error = sprintf( $error, '.' . implode( ', .', $limit_types ) );
+					$error = sprintf(
+						__( 'Error: File type not allowed, please use one of the following: %s', 'pods' ),
+						'.' . implode( ', .', $file_mime_types_extensions )
+					);
 
-					pods_error( '<div style="color:#FF0000">Error: ' . $error . '</div>' );
+					pods_error( '<div style="color:#FF0000"><p>' . esc_html( $error ) . '</p></div>' );
+				}
+
+				// Confirm mime type if we can.
+				if ( ! empty( $file_mime_types_mapping[ $file_info['extension'] ] ) ) {
+					if ( 0 === strpos( $file_mime_types_mapping[ $file_info['extension'] ], 'image/' ) ) {
+						$real_mime = wp_get_image_mime( $file['name'] );
+					} elseif ( extension_loaded( 'fileinfo' ) ) {
+						// Use finfo to get the mime type information.
+						$finfo_resource = finfo_open( FILEINFO_MIME_TYPE );
+						$real_mime      = finfo_file( $finfo_resource, $file['name'] );
+						finfo_close( $finfo_resource );
+					} else {
+						// No other validation we can do, just make the mime type match to bypass the next check.
+						$real_mime = $file_mime_types_mapping[ $file_info['extension'] ];
+					}
+
+					// Do not allow if the mime type was found and it does not match.
+					if ( $real_mime && $real_mime !== $file_mime_types_mapping[ $file_info['extension'] ] ) {
+						$error = sprintf(
+							__( 'Error: File mime type "%s" not expected, please ensure your file is valid: %s', 'pods' ),
+							$real_mime,
+							'.' . $file_info['extension'] . ' (' . $file_mime_types_mapping[ $file_info['extension'] ] . ')'
+						);
+
+						pods_error( '<div style="color:#FF0000"><p>' . esc_html( $error ) . '</p></div>' );
+					}
 				}
 			}//end if
 
@@ -1238,14 +1191,14 @@ class PodsField_File extends PodsField {
 			if ( null === $custom_handler ) {
 
 				// Start custom directory.
-				$upload_dir = pods_v( $field['type'] . '_upload_dir', $field['options'], 'wp' );
+				$upload_dir = pods_v( $field['type'] . '_upload_dir', $field, 'wp' );
 
 				if ( 'wp' !== $upload_dir ) {
-					$custom_dir  = pods_v( $field['type'] . '_upload_dir_custom', $field['options'], '' );
+					$custom_dir  = pods_v( $field['type'] . '_upload_dir_custom', $field, '' );
 					$context_pod = null;
 
 					if ( $params->item_id ) {
-						$context_pod = pods( pods_v( 'name', $pod, false ), $params->item_id );
+						$context_pod = pods_get_instance( pods_v( 'name', $pod, false ), $params->item_id );
 
 						if ( ! $context_pod->exists() ) {
 							$context_pod = null;
@@ -1286,6 +1239,7 @@ class PodsField_File extends PodsField {
 
 				// Upload file.
 				$post_id = 0;
+
 				if ( 'post_type' === pods_v( 'type', $pod, null ) ) {
 					$post_id = $params->item_id;
 				}
@@ -1395,6 +1349,188 @@ class PodsField_File extends PodsField {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Get the file mime type information for a field.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param Field|array $field The field to use.
+	 *
+	 * @return null|array Null if any are allowed, otherwise an array with the file mime type information including the
+	 *                    list of extensions, mime types, and mapping of extensions to mime types.
+	 */
+	public function get_file_mime_types_for_field( $field ) {
+		$media_type  = pods_v( $field['type'] . '_type', $field, 'images', true );
+
+		$other_extensions = [];
+
+		if ( 'images' === $media_type ) {
+			// Limit to basic images.
+			$media_type       = 'other';
+			$other_extensions = [
+				'jpg',
+				'jpeg',
+				'png',
+				'gif',
+				'webp',
+			];
+		} elseif ( 'video' === $media_type ) {
+			// Limit to basic video.
+			$media_type       = 'other';
+			$other_extensions = [
+				'mpg',
+				'mov',
+				'flv',
+				'mp4',
+			];
+		} elseif ( 'audio' === $media_type ) {
+			// Limit to basic audio.
+			$media_type       = 'other';
+			$other_extensions = [
+				'mp3',
+				'm4a',
+				'wav',
+				'wma',
+			];
+		} elseif ( 'text' === $media_type ) {
+			// Limit to basic text.
+			$media_type       = 'other';
+			$other_extensions = [
+				'txt',
+				'csv',
+				'tsv',
+				'rtx'
+			];
+		} elseif ( 'other' === $media_type ) {
+			// Allow specifying allowed extensions.
+			$other_extensions = pods_v( $field['type'] . '_allowed_extensions', $field, '', true );
+
+			$other_extensions = trim(
+				str_replace(
+					[
+						' ',
+						'.',
+						"\n",
+						"\t",
+						';',
+						'|',
+					],
+					[
+						',',
+						',',
+						',',
+						',',
+						',',
+					],
+					$other_extensions
+				),
+				', '
+			);
+		} elseif ( false !== strpos( $media_type, '-any' ) ) {
+			// Handle cases where we want to support any of a specific mime type grouping.
+			$media_type = str_replace( '-any', '', $media_type );
+
+			// Images should map to 'image/' mime type.
+			if ( 'images' === $media_type ) {
+				$media_type = 'image';
+			}
+		}
+
+		return $this->get_file_mime_types_for_media_type( $media_type, $other_extensions, $field );
+	}
+
+	/**
+	 * Get the file mime type information for a specific media type and other file extensions.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param string           $media_type       The media type to use for looking up by mime type.
+	 * @param string|array     $other_extensions The other file extensions that may have been provided.
+	 * @param Field|array|null $field            The field to use.
+	 *
+	 * @return null|array Null if any are allowed, otherwise an array with the file mime type information including the
+	 *                    list of extensions, mime types, and mapping of extensions to mime types.
+	 */
+	public function get_file_mime_types_for_media_type( $media_type, $other_extensions = [], $field = null ) {
+		if ( 'any' === $media_type ) {
+			return null;
+		}
+
+		if ( ! $other_extensions ) {
+			$other_extensions = [];
+		} elseif ( ! is_array( $other_extensions ) ) {
+			$other_extensions = explode( ',', $other_extensions );
+		}
+
+		$mime_types = get_allowed_mime_types();
+
+		$file_extensions = [];
+
+		if ( $other_extensions ) {
+			// Handle custom list of extensions and map them to mime types if we can.
+			foreach ( $other_extensions as $other_extension ) {
+				$found = false;
+
+				foreach ( $mime_types as $extension => $mime_type ) {
+					$extensions = explode( '|', $extension );
+
+					if ( ! in_array( $other_extension, $extensions, true ) ) {
+						continue;
+					}
+
+					$found = true;
+
+					$file_extensions[ $other_extension ] = $mime_type;
+
+					break;
+				}
+
+				if ( ! $found ) {
+					$file_extensions[ $other_extension ] = '';
+				}
+			}
+		} elseif ( 'other' !== $media_type ) {
+			// Handle specific media type as a mime type prefix like (image/, audio/, video/, etc).
+			foreach ( $mime_types as $extension => $mime_type ) {
+				if ( 0 !== strpos( $mime_type, $media_type . '/' ) ) {
+					continue;
+				}
+
+				$extensions = explode( '|', $extension );
+
+				foreach ( $extensions as $file_extension ) {
+					$file_extensions[ $file_extension ] = $mime_type;
+				}
+			}
+		}
+
+		/**
+		 * Allow filtering the file extensions allowed for a media type and other file extensions provided.
+		 *
+		 * @since 2.9.0
+		 *
+		 * @param null|array       $file_extensions  Null if any are allowed, otherwise an array with the file mime type
+		 *                                           information including the list of extensions, mime types, and mapping
+		 *                                           of extensions to mime types.
+		 * @param string           $media_type       The media type to use for looking up by mime type.
+		 * @param string|array     $other_extensions The other file extensions that may have been provided.
+		 * @param Field|array|null $field            The field to use.
+		 */
+		$file_extensions = apply_filters(
+			'pods_form_ui_field_file_mime_types_for_media_type',
+			$file_extensions,
+			$media_type,
+			$other_extensions,
+			$field
+		);
+
+		return [
+			'mime_types' => array_filter( array_unique( array_values( $file_extensions ) ) ),
+			'extensions' => array_filter( array_unique( array_keys( $file_extensions ) ) ),
+			'mapping'    => $file_extensions,
+		];
 	}
 
 }

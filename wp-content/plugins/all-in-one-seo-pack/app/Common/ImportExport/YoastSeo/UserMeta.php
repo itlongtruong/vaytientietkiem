@@ -23,7 +23,7 @@ class UserMeta {
 	 * @since 4.0.0
 	 */
 	public function scheduleImport() {
-		aioseo()->helpers->scheduleSingleAction( aioseo()->importExport->yoastSeo->userActionName, 30 );
+		aioseo()->actionScheduler->scheduleSingle( aioseo()->importExport->yoastSeo->userActionName, 30 );
 
 		if ( ! aioseo()->core->cache->get( 'import_user_meta_yoast_seo' ) ) {
 			aioseo()->core->cache->update( 'import_user_meta_yoast_seo', 0, WEEK_IN_SECONDS );
@@ -61,7 +61,7 @@ class UserMeta {
 
 		if ( count( $usersMeta ) === $usersPerAction ) {
 			aioseo()->core->cache->update( 'import_user_meta_yoast_seo', 100 + $offset, WEEK_IN_SECONDS );
-			aioseo()->helpers->scheduleSingleAction( aioseo()->importExport->yoastSeo->userActionName, 5, [], true );
+			aioseo()->actionScheduler->scheduleSingle( aioseo()->importExport->yoastSeo->userActionName, 5, [], true );
 		} else {
 			aioseo()->core->cache->delete( 'import_user_meta_yoast_seo' );
 		}

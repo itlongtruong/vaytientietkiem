@@ -29,7 +29,18 @@ class API {
 		// The Pods Blocks JS API.
 		$pods_blocks_options_file = file_get_contents( PODS_DIR . 'ui/js/blocks/pods-blocks-api.min.asset.json' );
 
-		$pods_blocks_options = json_decode( $pods_blocks_options_file, true );
+		$pods_blocks_options = null;
+
+		if ( $pods_blocks_options_file ) {
+			$pods_blocks_options = json_decode( $pods_blocks_options_file, true );
+		}
+
+		if ( ! is_array( $pods_blocks_options ) ) {
+			$pods_blocks_options = [
+				'dependencies' => [],
+				'version'      => false,
+			];
+		}
 
 		wp_register_script( 'pods-blocks-api', PODS_URL . 'ui/js/blocks/pods-blocks-api.min.js', $pods_blocks_options['dependencies'], $pods_blocks_options['version'], true );
 
@@ -83,6 +94,7 @@ class API {
 		pods_container( 'pods.blocks.form' );
 		pods_container( 'pods.blocks.list' );
 		pods_container( 'pods.blocks.single' );
+		pods_container( 'pods.blocks.single-list-fields' );
 		pods_container( 'pods.blocks.view' );
 
 		/**
@@ -109,12 +121,6 @@ class API {
 			return $blocks;
 		}
 
-		$cached = pods_transient_get( 'pods_blocks' );
-
-		if ( is_array( $cached ) ) {
-			return $cached;
-		}
-
 		$this->setup_core_blocks();
 
 		$api = pods_api();
@@ -122,6 +128,7 @@ class API {
 		/** @var Block[] $blocks */
 		$blocks = $api->_load_objects( [
 			'object_type' => 'block',
+			'bypass_cache' => true,
 			// Disable DB queries for now.
 			'bypass_post_type_find' => false,
 		] );
@@ -132,8 +139,6 @@ class API {
 		$blocks = array_map( static function ( $block ) {
 			return $block->get_block_args();
 		}, $blocks );
-
-		pods_transient_set( 'pods_blocks', $blocks, DAY_IN_SECONDS * 7 );
 
 		return $blocks;
 	}

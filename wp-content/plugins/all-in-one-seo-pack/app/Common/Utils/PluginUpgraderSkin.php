@@ -55,4 +55,13 @@ class PluginUpgraderSkin extends \WP_Upgrader_Skin {
 	 * @param string $type Type of update count to decrement.
 	 */
 	public function decrement_update_count( $type ) {} // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable, PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
+	/**
+	 * @since 4.2.5
+	 *
+	 * @param  string $feedback Message data.
+	 * @param  mixed  ...$args  Optional text replacements.
+	 * @return void
+	 */
+	public function feedback( $feedback, ...$args ) {} // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 }

@@ -10,6 +10,7 @@ use Nextend\Framework\Cache\CacheGoogleFont;
 use Nextend\Framework\Filesystem\Filesystem;
 use Nextend\Framework\Font\FontSettings;
 use Nextend\Framework\Url\UrlHelper;
+use Nextend\SmartSlider3\SmartSlider3Info;
 
 class Asset extends AbstractAsset {
 
@@ -54,7 +55,7 @@ class Asset extends AbstractAsset {
                     $path = $cache->makeCache($url, 'css');
 
                     if ($path) {
-                        $url = Filesystem::pathToAbsoluteURL($path);
+                        $url = Filesystem::pathToAbsoluteURL($path) . '?ver=' . SmartSlider3Info::$revisionShort;
                     }
                 }
 

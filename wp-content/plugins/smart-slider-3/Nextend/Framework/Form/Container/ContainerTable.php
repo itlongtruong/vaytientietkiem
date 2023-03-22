@@ -24,20 +24,20 @@ class ContainerTable extends ContainerGeneral {
     }
 
     public function renderContainer() {
-        echo '<div class="n2_form__table" data-field="table-' . $this->name . '">';
+        echo '<div class="n2_form__table" data-field="table-' . esc_attr($this->name) . '">';
         echo '<div class="n2_form__table_label">';
         echo '<div class="n2_form__table_label_title">';
-        echo $this->label;
+        echo esc_html($this->label);
         echo '</div>';
         if ($this->fieldsetLabel->hasFields()) {
-            echo '<div class="n2_form__table_label_fields n2_form__table_label_fields--' . $this->fieldsetLabelPosition . '">';
+            echo '<div class="n2_form__table_label_fields n2_form__table_label_fields--' . esc_attr($this->fieldsetLabelPosition) . '">';
             $this->fieldsetLabel->renderContainer();
             echo '</div>';
         }
         echo '</div>';
 
         if ($this->first) {
-            echo '<div class="n2_form__table_rows" data-field="table-rows-' . $this->name . '">';
+            echo '<div class="n2_form__table_rows" data-field="table-rows-' . esc_attr($this->name) . '">';
             parent::renderContainer();
             echo '</div>';
         }

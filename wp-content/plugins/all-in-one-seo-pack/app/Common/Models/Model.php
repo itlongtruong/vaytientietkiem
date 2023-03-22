@@ -76,13 +76,23 @@ class Model implements \JsonSerializable {
 	protected $pk = 'id';
 
 	/**
+	 * The ID of the model.
+	 * This needs to be null in order for MySQL to auto-increment correctly if the NO_AUTO_VALUE_ON_ZERO SQL mode is enabled.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var int|null
+	 */
+	public $id = null;
+
+	/**
 	 * An array of columns from the DB that we can use.
 	 *
 	 * @since 4.0.0
 	 *
 	 * @var array
 	 */
-	private static $columns;
+	private static $columns = [];
 
 	/**
 	 * Class constructor.
@@ -171,7 +181,9 @@ class Model implements \JsonSerializable {
 			}
 
 			if ( in_array( $key, $this->jsonFields, true ) ) {
-				$this->$key = json_decode( $value );
+				if ( $value ) {
+					$this->$key = is_string( $value ) ? json_decode( $value ) : $value;
+				}
 				continue;
 			}
 
@@ -302,6 +314,10 @@ class Model implements \JsonSerializable {
 	 * @return null
 	 */
 	public function delete() {
+		if ( ! $this->exists() ) {
+			return;
+		}
+
 		aioseo()->core->db
 			->delete( $this->table )
 			->where( $this->pk, $this->id )
@@ -406,6 +422,10 @@ class Model implements \JsonSerializable {
 	 *
 	 * @return array An array of data that we are okay with serializing.
 	 */
+	#[\ReturnTypeWillChange]
+	// The attribute above omits a deprecation notice from PHP 8.1 that is thrown because the return type of jsonSerialize() isn't "mixed".
+	// Once PHP 5.6 is our minimum supported version, this can be removed in favour of overriding the return type in the method signature like this -
+	// public function jsonSerialize() : array
 	public function jsonSerialize() {
 		$array = [];
 
@@ -433,9 +453,12 @@ class Model implements \JsonSerializable {
 
 			// Let's set the columns that are available by default.
 			$table   = aioseo()->core->db->prefix . $this->table;
-			$results = aioseo()->core->db->execute( 'SHOW COLUMNS FROM `' . $table . '`', true );
+			$results = aioseo()->core->db->start( $table )
+				->output( 'OBJECT' )
+				->execute( 'SHOW COLUMNS FROM `' . $table . '`', true )
+				->result();
 
-			foreach ( $results->result() as $col ) {
+			foreach ( $results as $col ) {
 				self::$columns[ get_called_class() ][ $col->Field ] = $col->Default;
 			}
 
@@ -447,55 +470,5 @@ class Model implements \JsonSerializable {
 		}
 
 		return self::$columns[ get_called_class() ];
-	}
-
-	/**
-	 * Returns a JSON object with default schema options.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @param  string $existingOptions The existing options in JSON.
-	 * @return string                  The existing options with defaults added in JSON.
-	 */
-	public static function getDefaultSchemaOptions( $existingOptions = '' ) {
-		// If the root level value for a graph needs to be an object, we need to set at least one property inside of it so that PHP doesn't convert it to an empty array.
-
-		$defaults = [
-			'article'  => [
-				'articleType' => 'BlogPosting'
-			],
-			'course'   => [
-				'name'        => '',
-				'description' => '',
-				'provider'    => ''
-			],
-			'faq'      => [
-				'pages' => []
-			],
-			'product'  => [
-				'reviews' => []
-			],
-			'recipe'   => [
-				'ingredients'  => [],
-				'instructions' => [],
-				'keywords'     => []
-			],
-			'software' => [
-				'reviews'          => [],
-				'operatingSystems' => []
-			],
-			'webPage'  => [
-				'webPageType' => 'WebPage'
-			]
-		];
-
-		if ( empty( $existingOptions ) ) {
-			return wp_json_encode( $defaults );
-		}
-
-		$existingOptions = json_decode( $existingOptions, true );
-		$existingOptions = array_replace_recursive( $defaults, $existingOptions );
-
-		return wp_json_encode( $existingOptions );
 	}
 }

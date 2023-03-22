@@ -25,7 +25,22 @@ class Pod extends Whatsit {
 	 * @return string The storage used for the Pod data (meta, table, etc).
 	 */
 	public function get_storage() {
-		return $this->get_arg( 'storage' );
+		$storage = parent::get_arg( 'storage' );
+
+		if ( empty( $storage ) ) {
+			$type    = $this->get_type();
+			$storage = 'none';
+
+			if ( in_array( $type, [ 'post_type', 'taxonomy', 'user', 'comment', 'media' ], true ) ) {
+				$storage = 'meta';
+			} elseif ( in_array( $type, [ 'pod', 'table' ], true ) ) {
+				$storage = 'table';
+			} elseif ( 'settings' === $type )  {
+				$storage = 'option';
+			}
+		}
+
+		return $storage;
 	}
 
 	/**
@@ -33,6 +48,8 @@ class Pod extends Whatsit {
 	 */
 	public function get_args() {
 		$args = parent::get_args();
+
+		$args['storage'] = $this->get_arg( 'storage' );
 
 		// Pods generally have no parent, group, or order.
 		unset( $args['parent'], $args['group'], $args['weight'] );
@@ -43,7 +60,27 @@ class Pod extends Whatsit {
 	/**
 	 * {@inheritdoc}
 	 */
+	public function export( array $args = [] ) {
+		$exported = parent::export( $args );
+
+		// Always make sure we have a storage arg set.
+		$exported['storage'] = $this->get_storage();
+
+		return $exported;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
 	public function get_arg( $arg, $default = null, $strict = false ) {
+		if ( 'storage' === $arg ) {
+			return $this->get_storage();
+		}
+
+		if ( 'type' === $arg && null === $default ) {
+			$default = 'post_type';
+		}
+
 		$value = parent::get_arg( $arg, $default, $strict );
 
 		// Better handle object for extended objects.
@@ -125,6 +162,28 @@ class Pod extends Whatsit {
 		$this->_table_info = $table_info;
 
 		return $table_info;
+	}
+
+	/**
+	 * Determine whether this is a table-based Pod.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @return bool Whether this is a table-based Pod.
+	 */
+	public function is_table_based() {
+		return 'table' === $this->get_storage() || 'pod' === $this->get_type();
+	}
+
+	/**
+	 * Determine whether this is a meta-based Pod.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @return bool Whether this is a meta-based Pod.
+	 */
+	public function is_meta_based() {
+		return 'meta' === $this->get_storage();
 	}
 
 	/**

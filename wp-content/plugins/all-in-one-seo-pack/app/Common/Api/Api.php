@@ -35,6 +35,7 @@ class Api {
 			'ping'                                        => [ 'callback' => [ 'Ping', 'ping' ], 'access' => 'everyone' ],
 			'post'                                        => [ 'callback' => [ 'PostsTerms', 'getPostData' ], 'access' => 'everyone' ],
 			'post/(?P<postId>[\d]+)/first-attached-image' => [ 'callback' => [ 'PostsTerms', 'getFirstAttachedImage' ], 'access' => 'aioseo_page_social_settings' ],
+			'user/(?P<userId>[\d]+)/image'                => [ 'callback' => [ 'User', 'getUserImage' ], 'access' => 'aioseo_page_social_settings' ],
 			'tags'                                        => [ 'callback' => [ 'Tags', 'getTags' ], 'access' => 'everyone' ]
 		],
 		'POST'   => [
@@ -89,9 +90,11 @@ class Api {
 			'settings/hide-setup-wizard'                           => [ 'callback' => [ 'Settings', 'hideSetupWizard' ], 'access' => 'any' ],
 			'settings/hide-upgrade-bar'                            => [ 'callback' => [ 'Settings', 'hideUpgradeBar' ], 'access' => 'any' ],
 			'settings/import'                                      => [ 'callback' => [ 'Settings', 'importSettings' ], 'access' => 'aioseo_tools_settings' ],
+			'settings/import/(?P<siteId>[\d]+)'                    => [ 'callback' => [ 'Settings', 'importSettings' ], 'access' => 'aioseo_tools_settings' ],
 			'settings/import-plugins'                              => [ 'callback' => [ 'Settings', 'importPlugins' ], 'access' => 'aioseo_tools_settings' ],
 			'settings/toggle-card'                                 => [ 'callback' => [ 'Settings', 'toggleCard' ], 'access' => 'any' ],
 			'settings/toggle-radio'                                => [ 'callback' => [ 'Settings', 'toggleRadio' ], 'access' => 'any' ],
+			'settings/items-per-page'                              => [ 'callback' => [ 'Settings', 'changeItemsPerPage' ], 'access' => 'any' ],
 			'settings/do-task'                                     => [ 'callback' => [ 'Settings', 'doTask' ], 'access' => 'aioseo_tools_settings' ],
 			'sitemap/deactivate-conflicting-plugins'               => [ 'callback' => [ 'Sitemaps', 'deactivateConflictingPlugins' ], 'access' => 'any' ],
 			'sitemap/delete-static-files'                          => [ 'callback' => [ 'Sitemaps', 'deleteStaticFiles' ], 'access' => 'aioseo_sitemap_settings' ],

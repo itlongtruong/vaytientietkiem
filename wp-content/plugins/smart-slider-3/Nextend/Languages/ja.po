@@ -1,4 +1,4 @@
-# NEXTEND 02 <ramona@nextendweb.com>, 2020.
+# NEXTEND, 2020.
 msgid ""
 msgstr ""
 "Project-Id-Version: VERSION\n"

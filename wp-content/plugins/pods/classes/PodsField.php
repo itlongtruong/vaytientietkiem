@@ -2,6 +2,7 @@
 
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
+use Pods\Whatsit\Value_Field;
 use Pod as Pod_Deprecated;
 
 /**
@@ -574,8 +575,24 @@ class PodsField {
 	public function build_dfv_field_config( $args ) {
 		if ( $args->options instanceof Field ) {
 			$config = $args->options->export();
+
+			$config['repeatable']                  = $args->options->is_repeatable();
+			$config['repeatable_add_new_label']    = $args->options->get_arg( 'repeatable_add_new_label', __( 'Add New', 'pods' ), true );
+			$config['repeatable_reorder']          = filter_var( $args->options->get_arg( 'repeatable_reorder', true ), FILTER_VALIDATE_BOOLEAN );
+			$config['repeatable_limit']            = $args->options->get_limit();
+			$config['repeatable_format']           = $args->options->get_arg( 'repeatable_format', 'default', true );
+			$config['repeatable_format_separator'] = $args->options->get_arg( 'repeatable_format_separator', ', ', true );
 		} else {
 			$config = (array) $args->options;
+		}
+
+		// Backcompat readonly argument handling.
+		if ( isset( $config['readonly'] ) ) {
+			if ( ! isset( $config['read_only'] ) ) {
+				$config['read_only'] = (int) $config['readonly'];
+			}
+
+			unset( $config['readonly'] );
 		}
 
 		unset( $config['data'] );
@@ -970,6 +987,53 @@ class PodsField {
 		}
 
 		return trim( $value );
+	}
+
+	/**
+	 * Normalize the field value for the input.
+	 *
+	 * @param mixed       $value     The field value.
+	 * @param Field|array $field     The field object or the field options array.
+	 * @param string      $separator The separator to use if the field does not support multiple values.
+	 *
+	 * @return mixed The field normalized value.
+	 */
+	public function normalize_value_for_input( $value, $field, $separator = ' ' ) {
+		if (
+			(
+				(
+					$field instanceof Field
+					|| $field instanceof Value_Field
+				)
+				&& $field->is_repeatable()
+			)
+			|| (
+				is_array( $field )
+				&& 1 === (int) pods_v( 'repeatable', $field )
+				&& (
+					'wysiwyg' !== pods_v( 'type', $field )
+					|| 'tinymce' !== pods_v( 'wysiwyg_editor', $field, 'tinymce', true )
+				)
+			)
+		) {
+			if ( ! is_array( $value ) ) {
+				if ( '' === $value || null === $value ) {
+					$value = [
+						'',
+					];
+				} else {
+					$value = (array) $value;
+				}
+			}
+
+			return $value;
+		}
+
+		if ( ! is_array( $value ) ) {
+			return $value;
+		}
+
+		return implode( $separator, $value );
 	}
 
 	/**

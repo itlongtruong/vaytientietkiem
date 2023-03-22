@@ -40,6 +40,15 @@ class Image {
 	];
 
 	/**
+	 * The post object.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var \WP_Post
+	 */
+	private $post = null;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @since 4.0.5
@@ -71,7 +80,7 @@ class Image {
 			return;
 		}
 		// Action Scheduler hooks.
-		add_filter( 'init', [ $this, 'scheduleScan' ], 3001 );
+		add_action( 'init', [ $this, 'scheduleScan' ], 3001 );
 	}
 
 	/**
@@ -89,7 +98,7 @@ class Image {
 			return;
 		}
 
-		aioseo()->helpers->scheduleSingleAction( $this->imageScanAction, 10 );
+		aioseo()->actionScheduler->scheduleSingle( $this->imageScanAction, 10 );
 	}
 
 	/**
@@ -122,7 +131,7 @@ class Image {
 			->result();
 
 		if ( ! $posts ) {
-			aioseo()->helpers->scheduleSingleAction( $this->imageScanAction, 15 * MINUTE_IN_SECONDS, [], true );
+			aioseo()->actionScheduler->scheduleSingle( $this->imageScanAction, 15 * MINUTE_IN_SECONDS, [], true );
 
 			return;
 		}
@@ -131,7 +140,7 @@ class Image {
 			$this->scanPost( $post );
 		}
 
-		aioseo()->helpers->scheduleSingleAction( $this->imageScanAction, 30, [], true );
+		aioseo()->actionScheduler->scheduleSingle( $this->imageScanAction, 30, [], true );
 	}
 
 	/**
@@ -210,24 +219,14 @@ class Image {
 	private function buildEntries( $images ) {
 		$entries = [];
 		foreach ( $images as $image ) {
-			$id = $this->getImageId( $image );
-			if ( ! is_numeric( $id ) ) {
-				$imageUrl = aioseo()->sitemap->helpers->formatUrl( $id );
-				if ( preg_match( $this->getImageExtensionRegexPattern(), $imageUrl ) ) {
-					$entries[] = [ 'image:loc' => $imageUrl ];
-				}
-
+			$idOrUrl  = $this->getImageIdOrUrl( $image );
+			$imageUrl = is_numeric( $idOrUrl ) ? wp_get_attachment_url( $idOrUrl ) : $idOrUrl;
+			$imageUrl = aioseo()->sitemap->helpers->formatUrl( $imageUrl );
+			if ( ! $imageUrl || ! preg_match( $this->getImageExtensionRegexPattern(), $imageUrl ) ) {
 				continue;
 			}
 
-			$imageUrl = aioseo()->sitemap->helpers->formatUrl( wp_get_attachment_url( $id ) );
-			if ( preg_match( $this->getImageExtensionRegexPattern(), $imageUrl ) ) {
-				$entries[] = [
-					'image:loc'     => $imageUrl,
-					'image:title'   => get_the_title( $id ),
-					'image:caption' => wp_get_attachment_caption( $id )
-				];
-			}
+			$entries[] = [ 'image:loc' => $imageUrl ];
 		}
 
 		return $entries;
@@ -241,7 +240,7 @@ class Image {
 	 * @param  int|string $image The attachment ID or URL.
 	 * @return int|string        The attachment ID or URL.
 	 */
-	private function getImageId( $image ) {
+	private function getImageIdOrUrl( $image ) {
 		if ( is_numeric( $image ) ) {
 			return $image;
 		}
@@ -272,15 +271,16 @@ class Image {
 		// WordPress is supposed to only return the attached images but returns a different result if the shortcode has no valid attributes, so we need to grab them manually.
 		$images = array_merge( $images, $this->getPostGalleryImages() );
 
+		// Now, get the remaining images from image tags in the post content.
+		$parsedPostContent = function_exists( 'do_blocks' ) ? do_blocks( $this->post->post_content ) : $this->post->post_content; // phpcs:disable AIOSEO.WpFunctionUse.NewFunctions
+		$parsedPostContent = aioseo()->helpers->doShortcodes( $parsedPostContent, true, $this->post->ID );
+		$parsedPostContent = preg_replace( '/\s\s+/u', ' ', trim( $parsedPostContent ) ); // Trim both internal and external whitespace.
+
 		// Get the images from any third-party plugins/themes that are active.
-		$thirdParty = new ThirdParty( $this->post );
+		$thirdParty = new ThirdParty( $this->post, $parsedPostContent );
 		$images     = array_merge( $images, $thirdParty->extract() );
 
-		// Now, get the remaining images from image tags in the post content.
-		$postContent = aioseo()->helpers->doShortcodes( $this->post->post_content, true, $this->post->ID );
-		$postContent = preg_replace( '/\s\s+/u', ' ', trim( $postContent ) ); // Trim both internal and external whitespace.
-
-		preg_match_all( '#<img[^>]+src="([^">]+)"#', $postContent, $matches );
+		preg_match_all( '#<img[^>]+src="([^">]+)"#', $parsedPostContent, $matches );
 		foreach ( $matches[1] as $url ) {
 			$images[] = aioseo()->helpers->makeUrlAbsolute( $url );
 		}

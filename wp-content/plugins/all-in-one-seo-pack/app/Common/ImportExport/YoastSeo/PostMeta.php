@@ -167,12 +167,17 @@ class PostMeta {
 						if ( in_array( $post->post_type, [ 'post', 'page', 'attachment' ], true ) ) {
 							break;
 						}
-						if ( in_array( $value, ImportExport\SearchAppearance::$supportedWebPageGraphs, true ) ) {
-							$meta[ $mappedMeta[ $name ] ] = 'WebPage';
-							$options          = new \stdClass();
-							$options->webPage = [ 'webPageType' => $value ];
+
+						if ( ! in_array( $value, ImportExport\SearchAppearance::$supportedWebPageGraphs, true ) ) {
+							break;
 						}
-						$meta['schema_type_options'] = wp_json_encode( $options );
+
+						$meta[ $mappedMeta[ $name ] ] = 'WebPage';
+						$meta['schema_type_options']  = wp_json_encode( [
+							'webPage' => [
+								'webPageType' => $value
+							]
+						] );
 						break;
 					case '_yoast_wpseo_schema_article_type':
 						$value = aioseo()->helpers->pregReplace( '#\s#', '', $value );
@@ -201,11 +206,16 @@ class PostMeta {
 						$meta['schema_type_options'] = wp_json_encode( $options );
 						break;
 					case '_yoast_wpseo_focuskw':
-						$keyphrase = [
-							'focus'      => [ 'keyphrase' => aioseo()->helpers->sanitizeOption( $value ) ],
-							'additional' => []
+						$focusKeyphrase = [
+							'focus' => [ 'keyphrase' => aioseo()->helpers->sanitizeOption( $value ) ]
 						];
-						$meta['keyphrases'] = $keyphrase;
+
+						// Merge with existing keyphrases if the array key already exists.
+						if ( ! empty( $meta['keyphrases'] ) ) {
+							$meta['keyphrases'] = array_merge( $meta['keyphrases'], $focusKeyphrase );
+						} else {
+							$meta['keyphrases'] = $focusKeyphrase;
+						}
 						break;
 					case '_yoast_wpseo_focuskeywords':
 						$keyphrases = [];
@@ -216,11 +226,16 @@ class PostMeta {
 						$yoastKeyphrases = json_decode( $value );
 						for ( $i = 0; $i < count( $yoastKeyphrases ); $i++ ) {
 							$keyphrase = [ 'keyphrase' => aioseo()->helpers->sanitizeOption( $yoastKeyphrases[ $i ]->keyword ) ];
+
+							if ( ! isset( $keyphrases['additional'] ) ) {
+								$keyphrases['additional'] = [];
+							}
+
 							$keyphrases['additional'][ $i ] = $keyphrase;
 						}
 
 						if ( ! empty( $keyphrases ) ) {
-							// Merge previous 'keyphrases' with the focus keyword.
+							// Merge with existing keyphrases if the array key already exists.
 							if ( ! empty( $meta['keyphrases'] ) ) {
 								$meta['keyphrases'] = array_merge( $meta['keyphrases'], $keyphrases );
 							} else {

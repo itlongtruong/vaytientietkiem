@@ -22,8 +22,10 @@ class Field extends Base {
 	 * @return array List of tabs for the Field object.
 	 */
 	public function get_tabs( \Pods\Whatsit\Pod $pod ) {
+		$repeatable_field_types = PodsForm::repeatable_field_types();
+
 		$core_tabs = [
-			'basic' => __( 'Field Details', 'pods' ),
+			'basic'      => __( 'Field Details', 'pods' ),
 		];
 
 		$field_types = PodsForm::field_types();
@@ -38,6 +40,14 @@ class Field extends Base {
 				],
 			];
 		}
+
+		$core_tabs['repeatable'] = [
+			'name'       => 'repeatable',
+			'label'      => __( 'Repeatable', 'pods' ),
+			'depends-on' => [
+				'type' => $repeatable_field_types,
+			],
+		];
 
 		$core_tabs['advanced'] = __( 'Advanced', 'pods' );
 
@@ -100,12 +110,17 @@ class Field extends Base {
 	 * @return array List of fields for the Field object.
 	 */
 	public function get_fields( \Pods\Whatsit\Pod $pod, array $tabs ) {
-		$field_types           = PodsForm::field_types();
-		$tableless_field_types = PodsForm::tableless_field_types();
+		$field_types                    = PodsForm::field_types();
+		$tableless_field_types          = PodsForm::tableless_field_types();
+		$repeatable_field_types         = PodsForm::repeatable_field_types();
+		$separator_excluded_field_types = PodsForm::separator_excluded_field_types();
+
+		// Remove repeatable fields custom separator options.
+		$serial_repeatable_field_types = array_values( array_diff( $repeatable_field_types, $separator_excluded_field_types ) );
 
 		$options = [];
 
-		$options['basic']    = [
+		$options['basic'] = [
 			'label'       => [
 				'name'     => 'label',
 				'label'    => __( 'Label', 'pods' ),
@@ -143,18 +158,18 @@ class Field extends Base {
 				'help'       => 'help',
 			],
 			'pick_object' => [
-				'name'       => 'pick_object',
-				'label'      => __( 'Related Type', 'pods' ),
-				'type'       => 'pick',
-				'default'    => '',
-				'required'   => true,
-				'data'       => [],
-				'pick_show_select_text'   => 0,
-				'dependency' => true,
-				'depends-on' => [
+				'name'                  => 'pick_object',
+				'label'                 => __( 'Related Type', 'pods' ),
+				'type'                  => 'pick',
+				'default'               => '',
+				'required'              => true,
+				'data'                  => [],
+				'pick_show_select_text' => 0,
+				'dependency'            => true,
+				'depends-on'            => [
 					'type' => 'pick',
 				],
-				'help'       => 'help',
+				'help'                  => 'help',
 			],
 			'pick_custom' => [
 				'name'       => 'pick_custom',
@@ -169,17 +184,17 @@ class Field extends Base {
 				'help'       => __( 'One option per line, use <em>value|Label</em> for separate values and labels', 'pods' ),
 			],
 			'pick_table'  => [
-				'name'       => 'pick_table',
-				'label'      => __( 'Related Table', 'pods' ),
-				'type'       => 'pick',
-				'default'    => '',
-				'data'       => [],
-				'pick_show_select_text'   => 0,
-				'depends-on' => [
+				'name'                  => 'pick_table',
+				'label'                 => __( 'Related Table', 'pods' ),
+				'type'                  => 'pick',
+				'default'               => '',
+				'data'                  => [],
+				'pick_show_select_text' => 0,
+				'depends-on'            => [
 					'type'        => 'pick',
 					'pick_object' => 'table',
 				],
-				'help'       => 'help',
+				'help'                  => 'help',
 			],
 			'sister_id'   => [
 				'name'       => 'sister_id',
@@ -201,7 +216,76 @@ class Field extends Base {
 				'boolean_yes_label' => '',
 				'help'              => __( 'This will require a non-empty value to be entered.', 'pods' ),
 			],
+			'required_help_boolean'    => [
+				'name'              => 'required_help_boolean',
+				'label'             => '',
+				'type'              => 'html',
+				'default'           => 0,
+				'html_content'      => '<p><em>' . esc_html__( 'Please note: When Yes/No fields are required, the field must be set to Yes (checked) to be able to submit the form.', 'pods' ) . '</em></p>',
+				'dependency'        => true,
+				'depends-on'        => [
+					'required' => true,
+					'type' => 'boolean',
+				],
+			],
 		];
+
+		$options['repeatable'] = [
+			'repeatable'                  => [
+				'name'              => 'repeatable',
+				'label'             => __( 'Repeatable', 'pods' ),
+				'default'           => 0,
+				'type'              => 'boolean',
+				'help'              => __( 'Making a field repeatable will add controls next to the field which allows users to Add / Remove / Reorder additional values.', 'pods' ),
+				'boolean_yes_label' => __( 'Allow multiple values', 'pods' ),
+				'dependency'        => true,
+				'depends-on'        => [
+					'type' => $repeatable_field_types,
+				],
+			],
+			'repeatable_add_new_label'    => [
+				'name'        => 'repeatable_add_new_label',
+				'label'       => __( 'Repeatable - Add New Label', 'pods' ),
+				'placeholder' => __( 'Add New', 'pods' ),
+				'default'     => '',
+				'type'        => 'text',
+				'depends-on'  => [
+					'type'       => $repeatable_field_types,
+					'repeatable' => true,
+				],
+			],
+			'repeatable_format'           => [
+				'label'                 => __( 'Repeatable - Display Format', 'pods' ),
+				'help'                  => __( 'Used as format for front-end display', 'pods' ),
+				'depends-on'            => [
+					'type'       => $serial_repeatable_field_types,
+					'repeatable' => true,
+				],
+				'default'               => 'default',
+				'required'              => true,
+				'type'                  => 'pick',
+				'data'                  => [
+					'default'    => __( 'Item 1, Item 2, and Item 3', 'pods' ),
+					'non_serial' => __( 'Item 1, Item 2 and Item 3', 'pods' ),
+					'custom'     => __( 'Custom separator (without "and")', 'pods' ),
+				],
+				'pick_show_select_text' => 0,
+				'dependency'            => true,
+			],
+			'repeatable_format_separator' => [
+				'label'       => __( 'Repeatable - Display Format Separator', 'pods' ),
+				'help'        => __( 'Used as separator for front-end display. Be sure to include exactly the spaces that you need since the separator is used literally between values. For example, you would use ", " to have values like "One, Two, Three". You would also use " | " to have values like "One | Two | Three".', 'pods' ),
+				'description' => __( 'This option will default to ", "', 'pods' ),
+				'depends-on'  => [
+					'type'              => $serial_repeatable_field_types,
+					'repeatable'        => true,
+					'repeatable_format' => 'custom',
+				],
+				'placeholder' => '',
+				'type'        => 'text',
+			],
+		];
+
 		$options['advanced'] = [
 			'visual'                  => [
 				'name'  => 'visual',
@@ -211,7 +295,7 @@ class Field extends Base {
 			'class'                   => [
 				'name'    => 'class',
 				'label'   => __( 'Additional CSS Classes', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
+				'help'    => __( 'You can provide additional CSS classes separated by spaces to be output for the field markup.', 'pods' ),
 				'type'    => 'text',
 				'default' => '',
 			],
@@ -223,7 +307,7 @@ class Field extends Base {
 			'default_value'           => [
 				'name'    => 'default_value',
 				'label'   => __( 'Default Value', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
+				'help'    => __( 'This is the default value used when the Add New form is used.', 'pods' ),
 				'type'    => 'text',
 				'default' => '',
 				'options' => [
@@ -233,7 +317,7 @@ class Field extends Base {
 			'default_value_parameter' => [
 				'name'    => 'default_value_parameter',
 				'label'   => __( 'Set Default Value via Parameter', 'pods' ),
-				'help'    => __( 'help', 'pods' ),
+				'help'    => __( 'You can automatically populate the value of this field from the URL parameter "your_field" such as ?your_field=1234', 'pods' ),
 				'type'    => 'text',
 				'default' => '',
 			],
@@ -289,7 +373,7 @@ class Field extends Base {
 						'label'      => __( 'Make field "Read Only" in UI', 'pods' ),
 						'default'    => 0,
 						'type'       => 'boolean',
-						'help'       => __( 'This option is overridden by access restrictions. If the user does not have access to edit this field, it will be read only. If no access restrictions are set, this field will always be read only.', 'pods' ),
+						'help'       => __( 'This option is overridden by access restrictions. If the user does not have access to edit this field, it will be read only. If no access restrictions are set, this field will always be read only. This does not prevent the field from being changed manually through HTML DOM manipulation, this just shows the field as a read-only text field that cannot be normally changed without developer intervention.', 'pods' ),
 						'depends-on' => [
 							'type' => [
 								'boolean',
@@ -498,6 +582,8 @@ class Field extends Base {
 		] );*/
 
 		if ( 'table' === $pod['storage'] || 'pod' === $pod['type'] ) {
+			unset( $options['basic']['repeatable'] );
+
 			$options['basic']['unique'] = [
 				'name'              => 'unique',
 				'label'             => __( 'Unique', 'pods' ),

@@ -155,6 +155,11 @@ class AssetManager {
         self::$image->unSerialize($array['image']);
     }
 
+    /**
+     * @param $path
+     *
+     * @return array|string contains already escaped data
+     */
     public static function getCSS($path = false) {
         if (self::$css) {
             if ($path) {
@@ -167,6 +172,11 @@ class AssetManager {
         return '';
     }
 
+    /**
+     * @param $path
+     *
+     * @return array|string contains already escaped data
+     */
     public static function getJs($path = false) {
         if (self::$js) {
             if ($path) {

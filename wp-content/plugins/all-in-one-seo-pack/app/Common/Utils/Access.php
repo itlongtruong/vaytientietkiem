@@ -25,6 +25,7 @@ class Access {
 		'aioseo_page_redirects_manage',
 		'aioseo_redirects_settings',
 		'aioseo_seo_analysis_settings',
+		'aioseo_search_statistics_settings',
 		'aioseo_tools_settings',
 		'aioseo_feature_manager_settings',
 		'aioseo_page_analysis',
@@ -39,6 +40,15 @@ class Access {
 		'aioseo_about_us_page',
 		'aioseo_setup_wizard'
 	];
+
+	/**
+	 * Whether we're already updating the roles during this request.
+	 *
+	 * @since 4.2.7
+	 *
+	 * @var bool
+	 */
+	protected $isUpdatingRoles = false;
 
 	/**
 	 * Roles we check capabilities against.

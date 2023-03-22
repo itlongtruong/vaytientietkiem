@@ -200,8 +200,8 @@ abstract class AbstractSliderTypeFrontend {
 
         }
 
-
-        echo implode('', $svgs);
+        // PHPCS - Content already escaped
+        echo implode('', $svgs);  // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
     }
 
     protected function initSliderBackground($selector) {
@@ -214,7 +214,7 @@ abstract class AbstractSliderTypeFrontend {
         $sliderCSS2 = '';
 
         if (!empty($backgroundImage)) {
-            $sliderCSS2 .= 'background-image: URL(' . ResourceTranslator::toUrl($backgroundImage) . ');';
+            $sliderCSS2 .= 'background-image: url(' . ResourceTranslator::toUrl($backgroundImage) . ');';
         }
         if (!empty($backgroundColor)) {
             $rgba = Color::hex2rgba($backgroundColor);
@@ -230,5 +230,7 @@ abstract class AbstractSliderTypeFrontend {
     }
 
     protected function getBackgroundVideo($params) {
+        return '';
+    
     }
 }

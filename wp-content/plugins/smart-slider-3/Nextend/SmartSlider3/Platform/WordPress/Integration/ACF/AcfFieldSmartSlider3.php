@@ -96,11 +96,11 @@ class AcfFieldSmartSlider3 extends acf_field {
         <table style="width:100%;border:0;">
             <tr>
                 <td style="white-space: nowrap;">
-                    <a href="#" onclick="<?php echo "NextendSmartSliderSelectModal(jQuery('#" . $field['id'] . "'));"; ?>return false;" class="button" title="<?php echo n2_('Select Slider'); ?>"><?php echo n2_('Select Slider'); ?></a>
+                    <a href="#" onclick="<?php echo "NextendSmartSliderSelectModal(jQuery('#" . esc_js($field['id']) . "'));"; ?>return false;" class="button" title="<?php n2_e('Select Slider'); ?>"><?php n2_e('Select Slider'); ?></a>
                     <span style="line-height:2;padding:10px;"><?php n2_e('OR'); ?></span>
                 </td>
                 <td style="width:90%;">
-                    <select id="<?php echo $field['id']; ?>" class="<?php echo $field['class']; ?>" name="<?php echo $field['name']; ?>">
+                    <select id="<?php echo esc_attr($field['id']); ?>" class="<?php echo esc_attr($field['class']); ?>" name="<?php echo esc_attr($field['name']); ?>">
                         <?php if (!isset($field['required']) || !$field['required']): ?>
                             <option value=""><?php n2_e('None'); ?></option>
                         <?php endif; ?>
@@ -108,11 +108,11 @@ class AcfFieldSmartSlider3 extends acf_field {
                         foreach ($choices as $id => $choice) {
                             if (is_array($choice)) {
                                 ?>
-                                <optgroup label="<?php echo $choice['label']; ?>">
+                                <optgroup label="<?php echo esc_attr($choice['label']); ?>">
                                     <?php
                                     foreach ($choice['choices'] as $_id => $_choice) {
                                         ?>
-                                        <option <?php if ($_id == $field['value']){ ?>selected <?php } ?>value="<?php echo $_id; ?>"><?php echo $_choice; ?></option>
+                                        <option <?php if ($_id == $field['value']){ ?>selected <?php } ?>value="<?php echo esc_attr($_id); ?>"><?php echo esc_html($_choice); ?></option>
                                         <?php
                                     }
                                     ?>
@@ -120,7 +120,7 @@ class AcfFieldSmartSlider3 extends acf_field {
                                 <?php
                             } else {
                                 ?>
-                                <option <?php if ($id == $field['value']){ ?>selected <?php } ?>value="<?php echo $id; ?>"><?php echo $choice; ?></option>
+                                <option <?php if ($id == $field['value']){ ?>selected <?php } ?>value="<?php echo esc_attr($id); ?>"><?php echo esc_html($choice); ?></option>
                                 <?php
                             }
                         }

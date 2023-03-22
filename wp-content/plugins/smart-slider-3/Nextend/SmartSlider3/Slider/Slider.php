@@ -81,6 +81,9 @@ class Slider extends AbstractRenderable {
      */
     public $assets;
 
+    /**
+     * @var string contains already escaped data
+     */
     public $staticHtml = '';
 
     private $sliderRow;
@@ -158,7 +161,7 @@ class Slider extends AbstractRenderable {
                 $this->hasError = true;
                 throw new Exception('Slider does not exists!');
             } else {
-                if (!$this->isAdminArea && $sliderRow['status'] != 'published') {
+                if (!$this->isAdminArea && $sliderRow['slider_status'] != 'published') {
                     $this->hasError = true;
                     throw new Exception('Slider is not published!');
                 }

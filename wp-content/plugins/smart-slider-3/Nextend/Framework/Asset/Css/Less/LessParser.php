@@ -6,6 +6,7 @@ namespace Nextend\Framework\Asset\Css\Less;
 use Exception;
 use stdClass;
 
+#[\AllowDynamicProperties]
 class LessParser {
 
     static protected $nextBlockId = 0; // used to uniquely identify blocks

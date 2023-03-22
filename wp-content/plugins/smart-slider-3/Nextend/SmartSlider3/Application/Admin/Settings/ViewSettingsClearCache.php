@@ -79,8 +79,8 @@ class ViewSettingsClearCache extends AbstractView {
 
         new OnOff($row1, 'delete-image-cache', n2_('Delete resized image cache'), 0);
 
-        $instructions = sprintf(n2_('If enabled the following folder will be <b>permanently deleted</b>: %s'), CacheImage::getStorage()
-                                                                                                                         ->getPath('slider/cache', '', 'image'));
+        $instructions = sprintf(n2_('If enabled the following folder will be %1$spermanently deleted%2$s: %3$s'), '<b>', '</b>', CacheImage::getStorage()
+                                                                                                                                           ->getPath('slider/cache', '', 'image'));
         new Notice($row1, 'instructions', n2_('Instruction'), $instructions);
 
         $form->render();

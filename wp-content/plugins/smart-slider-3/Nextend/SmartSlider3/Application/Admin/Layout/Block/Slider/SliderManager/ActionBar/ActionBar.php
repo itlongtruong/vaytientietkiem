@@ -30,7 +30,7 @@ namespace Nextend\SmartSlider3\Application\Admin\Layout\Block\Slider\SliderManag
                     <i class="ssi_16 ssi_16--circularremove"></i>
                 </div>
                 <form class="n2_slider_manager__search_form" autocomplete="off">
-                    <input type="text" name="kw" class="n2_slider_manager__search_input" value="" placeholder="<?php echo n2_('Search Project'); ?>" tabindex="-1">
+                    <input type="text" name="kw" class="n2_slider_manager__search_input" value="" placeholder="<?php n2_e('Search Project'); ?>" tabindex="-1">
                 </form>
             </div>
         <?php } ?>

@@ -16,10 +16,10 @@ class IntegrationRepository {
 			new Integration\EventsCalendar(),
 			new Integration\GravityForms(),
 			new Integration\JetEngine(),
-			new Integration\NinjaForms(),
 			new Integration\Pods(),
 			new Integration\Types(),
 			new Integration\MetaBox(),
+			new Integration\MediaLibraryAssistant(),
 			new Integration\WooCommerce(),
 			new Integration\YoastSeo(),
 		] );

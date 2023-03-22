@@ -49,7 +49,8 @@ class Helpers {
 				if ( ! $options->has( $lastOption, false ) ) {
 					$error = true;
 					break;
-				};
+				}
+
 				if ( count( $values['newOption'] ) - 1 !== $i ) {
 					$options = $options->$lastOption;
 				}
@@ -240,7 +241,7 @@ class Helpers {
 		aioseo()->core->cache->delete( 'v3_migration_in_progress_posts' );
 		aioseo()->core->cache->delete( 'v3_migration_in_progress_terms' );
 
-		aioseo()->helpers->unscheduleAction( 'aioseo_migrate_post_meta' );
-		aioseo()->helpers->unscheduleAction( 'aioseo_migrate_term_meta' );
+		aioseo()->actionScheduler->unschedule( 'aioseo_migrate_post_meta' );
+		aioseo()->actionScheduler->unschedule( 'aioseo_migrate_term_meta' );
 	}
 }

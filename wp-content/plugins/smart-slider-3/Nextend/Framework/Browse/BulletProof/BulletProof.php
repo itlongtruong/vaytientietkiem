@@ -4,6 +4,7 @@ namespace Nextend\Framework\Browse\BulletProof;
 
 use Nextend\Framework\Filesystem\Filesystem;
 use Nextend\Framework\Image\ImageEdit;
+use Nextend\Framework\Request\Request;
 
 /**
  * BULLETPROOF,
@@ -272,17 +273,19 @@ class BulletProof {
         if (function_exists("mime_content_type")) {
             $rawMime = mime_content_type($fileToUpload["tmp_name"]);
         } else {
-            $path_parts = pathinfo($_FILES["image"]["name"]);
-            switch ($path_parts['extension']) {
-                case 'mp4':
-                    $rawMime = 'video/mp4';
-                    break;
-                case 'mp3':
-                    $rawMime = 'audio/mpeg';
-                    break;
-                default:
-                    $rawMime = '';
-                    break;
+            if (!empty($fileToUpload['name'])) {
+                $path_parts = pathinfo($fileToUpload['name']);
+                switch ($path_parts['extension']) {
+                    case 'mp4':
+                        $rawMime = 'video/mp4';
+                        break;
+                    case 'mp3':
+                        $rawMime = 'audio/mpeg';
+                        break;
+                    default:
+                        $rawMime = '';
+                        break;
+                }
             }
         }
 

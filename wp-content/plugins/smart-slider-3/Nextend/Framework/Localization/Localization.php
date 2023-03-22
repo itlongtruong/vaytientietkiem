@@ -24,7 +24,7 @@ class Localization {
 
     protected function init() {
 
-        require_once 'Functions.php';
+        require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'Functions.php';
         self::$platformLocalization = new WordPressLocalization();
     }
 

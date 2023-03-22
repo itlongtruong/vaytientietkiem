@@ -21,7 +21,6 @@ class BuilderComponentSlide extends AbstractBuilderComponent {
         "backgroundMode"         => "default",
         "backgroundVideoMp4"     => "",
         "backgroundVideoOpacity" => 100,
-        "backgroundVideoMuted"   => 1,
         "backgroundVideoLoop"    => 1,
         "backgroundVideoReset"   => 1,
         "backgroundVideoMode"    => "fill",

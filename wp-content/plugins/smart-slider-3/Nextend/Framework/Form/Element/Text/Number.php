@@ -31,8 +31,7 @@ class Number extends Text {
         $this->renderRelatedFields();
 
         $html = Html::openTag('div', array(
-            'class' => 'n2_field_text ' . $this->getClass(),
-            'style' => ($this->fieldType == 'hidden' ? 'display: none;' : '')
+            'class' => 'n2_field_text ' . $this->getClass()
         ));
 
         if (!empty($this->sublabel)) {

@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<?php if ( $description ) {
 		?><description><?php aioseo()->sitemap->output->escapeAndEcho( $description ); ?></description>
 		<?php }
-		?><?php if ( isset( $entries[0] ) && ( array_key_exists( 'pubDate', $entries[0] ) || ! $entries[0]['pubDate'] ) ) {
+		?><?php if ( ! empty( $entries[0]['pubDate'] ) ) {
 		?><lastBuildDate><?php aioseo()->sitemap->output->escapeAndEcho( $entries[0]['pubDate'] ); ?></lastBuildDate>
 		<?php }
 		?><docs>https://validator.w3.org/feed/docs/rss2.html</docs>
@@ -32,18 +32,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <?php }
 foreach ( $entries as $entry ) {
-		if ( ! is_array( $entry ) || ! array_key_exists( 'guid', $entry ) || ! $entry['guid'] ) {
+		if ( empty( $entry['guid'] ) ) {
 			continue;
 			}?>
 		<item>
 			<guid><?php aioseo()->sitemap->output->escapeAndEcho( $entry['guid'] ); ?></guid>
 			<link><?php aioseo()->sitemap->output->escapeAndEcho( $entry['guid'] ); ?></link><?php
-			if ( array_key_exists( 'title', $entry ) && $entry['title'] ) {
+			if ( ! empty( $entry['title'] ) ) {
 				?>
 
 			<title><?php aioseo()->sitemap->output->escapeAndEcho( $entry['title'], false ); ?></title><?php
 			}
-			if ( array_key_exists( 'pubDate', $entry ) && $entry['pubDate'] ) {
+			if ( ! empty( $entry['pubDate'] ) ) {
 				?>
 
 			<pubDate><?php aioseo()->sitemap->output->escapeAndEcho( $entry['pubDate'] ); ?></pubDate><?php

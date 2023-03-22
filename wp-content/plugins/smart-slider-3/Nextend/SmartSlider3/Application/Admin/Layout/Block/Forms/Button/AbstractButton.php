@@ -4,6 +4,7 @@
 namespace Nextend\SmartSlider3\Application\Admin\Layout\Block\Forms\Button;
 
 
+use Nextend\Framework\Sanitize;
 use Nextend\Framework\View\AbstractBlock;
 use Nextend\Framework\View\Html;
 
@@ -23,7 +24,7 @@ abstract class AbstractButton extends AbstractBlock {
 
     public function display() {
 
-        echo Html::link($this->getContent(), $this->getUrl(), $this->getAttributes());
+        echo wp_kses(Html::link($this->getContent(), $this->getUrl(), $this->getAttributes()), Sanitize::$adminTemplateTags);
     }
 
     abstract protected function getContent();

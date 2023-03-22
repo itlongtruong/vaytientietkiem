@@ -21,7 +21,7 @@ class PostsMetaKeys extends Select {
     function generate_meta_keys() {
         global $wpdb;
         $query     = "SELECT DISTINCT($wpdb->postmeta.meta_key) FROM $wpdb->posts
-            LEFT JOIN $wpdb->postmeta ON $wpdb->posts.ID = $wpdb->postmeta.post_id";
+            LEFT JOIN $wpdb->postmeta ON $wpdb->posts.ID = $wpdb->postmeta.post_id ORDER BY $wpdb->postmeta.meta_key ASC";
         $meta_keys = $wpdb->get_results($query, ARRAY_A);
         $return    = array();
         foreach ($meta_keys as $num => $array) {

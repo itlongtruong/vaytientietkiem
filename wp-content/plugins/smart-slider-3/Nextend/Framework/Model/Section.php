@@ -77,7 +77,7 @@ class Section {
             "id",
             "referencekey",
             "value",
-            "system",
+            "isSystem",
             "editable"
         ));
 
@@ -89,13 +89,13 @@ class Section {
         return $rows;
     }
 
-    public static function add($application, $section, $referenceKey, $value, $system = 0, $editable = 1) {
+    public static function add($application, $section, $referenceKey, $value, $isSystem = 0, $editable = 1) {
         $row = array(
             "application"  => $application,
             "section"      => $section,
             "referencekey" => '',
             "value"        => $value,
-            "system"       => $system,
+            "isSystem"     => $isSystem,
             "editable"     => $editable
         );
 
@@ -109,12 +109,12 @@ class Section {
     }
 
 
-    public static function set($application, $section, $referenceKey, $value, $system = 0, $editable = 1) {
+    public static function set($application, $section, $referenceKey, $value, $isSystem = 0, $editable = 1) {
 
         $result = self::getAll($application, $section, $referenceKey);
 
         if (empty($result)) {
-            return self::add($application, $section, $referenceKey, $value, $system, $editable);
+            return self::add($application, $section, $referenceKey, $value, $isSystem, $editable);
         } else {
             $attributes = array(
                 "application" => $application,
@@ -150,7 +150,7 @@ class Section {
         $attributes = array(
             "application" => $application,
             "section"     => $section,
-            "system"      => 0
+            "isSystem"    => 0
         );
 
         if ($referenceKey !== null) {
@@ -165,8 +165,8 @@ class Section {
     public static function deleteById($id) {
 
         self::$tableSectionStorage->deleteByAttributes(array(
-            "id"     => $id,
-            "system" => 0
+            "id"       => $id,
+            "isSystem" => 0
         ));
 
         return true;

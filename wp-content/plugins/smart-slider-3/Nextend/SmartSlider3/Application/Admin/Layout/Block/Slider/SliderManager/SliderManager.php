@@ -19,7 +19,7 @@ $limit           = $this->getPaginationLimit();
 $paginationIndex = $this->getPaginationIndex();
 
 ?>
-<div class="n2_slider_manager" data-groupid="<?php echo $groupID; ?>" data-orderby="<?php echo $orderBy; ?>" data-orderbydirection="<?php echo $orderByDirection; ?>">
+<div class="n2_slider_manager" data-groupid="<?php echo esc_attr($groupID); ?>" data-orderby="<?php echo esc_attr($orderBy); ?>" data-orderbydirection="<?php echo esc_attr($orderByDirection); ?>">
     <?php
 
     $actionBar = new BlockActionBar($this);
@@ -32,7 +32,7 @@ $paginationIndex = $this->getPaginationIndex();
         <div class="n2_slider_manager__box n2_slider_manager__new_slider">
             <i class="n2_slider_manager__new_slider_icon ssi_48 ssi_48--plus"></i>
             <span class="n2_slider_manager__new_slider_label">
-                <?php echo n2_('New project'); ?>
+                <?php n2_e('New project'); ?>
             </span>
         </div>
         <?php
@@ -61,7 +61,7 @@ $paginationIndex = $this->getPaginationIndex();
 
     </div>
     <?php if ($groupID <= 0) { ?>
-        <div class="n2_slider_manager__paginator" data-countstart="<?php echo $sliderCount ?>" data-currentstart="<?php echo $paginationIndex ?>" data-limitstart="<?php echo $limit ?>">
+        <div class="n2_slider_manager__paginator" data-countstart="<?php echo esc_attr($sliderCount); ?>" data-currentstart="<?php echo esc_attr($paginationIndex); ?>" data-limitstart="<?php echo esc_attr($limit); ?>">
             <?php
             $blockPaginator = new BlockPaginator($this);
             $blockPaginator->setSliderManager($this);

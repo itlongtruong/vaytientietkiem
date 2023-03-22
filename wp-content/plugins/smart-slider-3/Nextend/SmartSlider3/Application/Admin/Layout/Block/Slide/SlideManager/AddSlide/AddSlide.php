@@ -46,7 +46,7 @@ use Nextend\Framework\Platform\Platform;
             <div class="n2_slide_manager__add_slide_action_label"><?php n2_e('Static overlay'); ?></div>
         </a>
 
-        <a href="<?php echo $this->getDynamicSlidesUrl(); ?>" class="n2_slide_manager__add_slide_action n2_slide_manager__add_slide_action--dynamic">
+        <a href="<?php echo esc_url($this->getDynamicSlidesUrl()); ?>" class="n2_slide_manager__add_slide_action n2_slide_manager__add_slide_action--dynamic">
             <div class="n2_slide_manager__add_slide_action_icon">
                 <i class="ssi_48 ssi_48--dynamic"></i>
             </div>

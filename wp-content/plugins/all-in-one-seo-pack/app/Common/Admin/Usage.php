@@ -59,7 +59,7 @@ abstract class Usage {
 		try {
 			$action = 'aioseo_send_usage_data';
 			if ( ! $this->enabled ) {
-				aioseo()->helpers->unscheduleAction( $action );
+				aioseo()->actionScheduler->unschedule( $action );
 
 				return;
 			}
@@ -93,13 +93,12 @@ abstract class Usage {
 		wp_remote_post(
 			$this->getUrl(),
 			[
-				'timeout'     => 5,
-				'redirection' => 5,
-				'httpversion' => '1.1',
-				'blocking'    => true,
-				'headers'     => [ 'Content-Type' => 'application/json; charset=utf-8' ],
-				'body'        => wp_json_encode( $this->getData() ),
-				'user-agent'  => 'AIOSEO/' . AIOSEO_VERSION . '; ' . get_bloginfo( 'url' ),
+				'timeout'    => 10,
+				'headers'    => array_merge( [
+					'Content-Type' => 'application/json; charset=utf-8'
+				], aioseo()->helpers->getApiHeaders() ),
+				'user-agent' => aioseo()->helpers->getApiUserAgent(),
+				'body'       => wp_json_encode( $this->getData() )
 			]
 		);
 	}
@@ -172,6 +171,8 @@ abstract class Usage {
 			}
 		});
 
+		$settings = $this->filterPrivateSettings( $settings );
+
 		$internal = aioseo()->internalOptions->all();
 		array_walk_recursive( $internal, function( &$v ) {
 			if ( is_string( $v ) && strpos( $v, '&quot' ) !== false ) {
@@ -227,5 +228,25 @@ abstract class Usage {
 		];
 
 		return strtotime( 'next sunday' ) + array_sum( $tracking );
+	}
+
+	/**
+	 * Anonimizes or obfuscates the value of certain settings.
+	 *
+	 * @since 4.3.2
+	 *
+	 * @param  array $settings The settings.
+	 * @return array           The altered settings.
+	 */
+	private function filterPrivateSettings( $settings ) {
+		if ( ! empty( $settings['advanced']['openAiKey'] ) ) {
+			$settings['advanced']['openAiKey'] = true;
+		}
+
+		if ( ! empty( $settings['localBusiness']['maps']['apiKey'] ) ) {
+			$settings['localBusiness']['maps']['apiKey'] = true;
+		}
+
+		return $settings;
 	}
 }

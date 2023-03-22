@@ -38,40 +38,46 @@ class SliderTypeBlockFrontend extends AbstractSliderTypeFrontend {
 
         $this->initParticleJS();
 
-        echo $this->openSliderElement();
+        echo wp_kses($this->openSliderElement(), Sanitize::$basicTags);
         ob_start();
 
         $slide = $this->slider->getActiveSlide();
         $slide->finalize();
         ?>
 
-        <div class="n2-ss-slider-1 n2-ow"<?php echo empty($sliderCSS) ? '' : ' style="' . Sanitize::esc_attr($sliderCSS) . '"'; ?>>
+        <div class="n2-ss-slider-1 n2-ow"<?php echo empty($sliderCSS) ? '' : ' style="' . esc_attr($sliderCSS) . '"'; ?>>
             <div class="n2-ss-slider-2 n2-ow">
                 <?php
-                echo $this->getBackgroundVideo($params);
+                echo wp_kses($this->getBackgroundVideo($params), Sanitize::$videoTags);
 
-                echo Html::tag('div', array('class' => 'n2-ss-slide-backgrounds n2-ow-all'), $slide->background);
+                // PHPCS - Content already escaped
+                echo Html::tag('div', array('class' => 'n2-ss-slide-backgrounds n2-ow-all'), $slide->background); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                 ?>
                 <div class="n2-ss-slider-3 n2-ow">
                     <?php
                     $this->displaySizeSVGs($css);
 
-                    echo $this->slider->staticHtml;
+                    // PHPCS - Content already escaped
+                    echo $this->slider->staticHtml; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
-                    echo Html::tag('div', Html::mergeAttributes($slide->attributes, $slide->linkAttributes, array(
-                        'class' => 'n2-ss-slide n2-ow ' . $slide->classes,
-                        'style' => $slide->style
+                    // PHPCS - Content already escaped
+                    echo Html::tag('div', Html::mergeAttributes($slide->attributes, $slide->linkAttributes, array( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                                                                                                                   'class' => 'n2-ss-slide n2-ow ' . $slide->classes,
+                                                                                                                   'style' => $slide->style
                     )), $slide->getHTML());
                     ?>
                 </div>
                 <?php
+
                 $this->renderShapeDividers();
                 ?>
             </div>
         </div>
         <?php
-        echo $this->widgets->wrapSlider(ob_get_clean());
-        echo $this->closeSliderElement();
+
+        // PHPCS - Content already escaped
+        echo $this->widgets->wrapSlider(ob_get_clean()); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        echo wp_kses($this->closeSliderElement(), Sanitize::$basicTags);
 
         $this->style .= $css->getCSS();
     }

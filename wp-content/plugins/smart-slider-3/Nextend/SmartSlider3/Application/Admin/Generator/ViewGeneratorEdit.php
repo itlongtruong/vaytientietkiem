@@ -107,7 +107,7 @@ class ViewGeneratorEdit extends AbstractView {
         $generatorModel = new ModelGenerator($this);
         $generatorModel->renderFields($form->getContainer());
 
-        echo $form->render();
+        $form->render();
     }
 
     /**

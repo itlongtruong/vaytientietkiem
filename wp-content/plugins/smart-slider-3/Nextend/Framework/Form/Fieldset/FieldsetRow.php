@@ -6,6 +6,7 @@ namespace Nextend\Framework\Form\Fieldset;
 
 use Nextend\Framework\Form\AbstractField;
 use Nextend\Framework\Form\AbstractFieldset;
+use Nextend\Framework\Sanitize;
 use Nextend\Framework\View\Html;
 
 class FieldsetRow extends AbstractFieldset {
@@ -21,14 +22,14 @@ class FieldsetRow extends AbstractFieldset {
             $classes[] = 'n2_form__table_row--hidden';
         }
 
-        echo Html::openTag('div', array(
+        echo wp_kses(Html::openTag('div', array(
             'class'      => implode(' ', $classes),
             'data-field' => 'table-row-' . $this->name
-        ));
+        )), Sanitize::$adminFormTags);
 
         $element = $this->first;
         while ($element) {
-            echo $this->decorateElement($element);
+            echo wp_kses($this->decorateElement($element), Sanitize::$adminFormTags);
 
             $element = $element->getNext();
         }
@@ -52,10 +53,10 @@ class FieldsetRow extends AbstractFieldset {
             $element->getRowClass()
         );
 
-        echo Html::openTag('div', array(
+        echo wp_kses(Html::openTag('div', array(
                 'class'      => implode(' ', array_filter($classes)),
                 'data-field' => $element->getID()
-            ) + $element->getRowAttributes());
+            ) + $element->getRowAttributes()), Sanitize::$adminFormTags);
 
         if ($hasLabel) {
             echo "<div class='n2_field__label'>";

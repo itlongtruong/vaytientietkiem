@@ -78,6 +78,16 @@ class Admin {
 	 * @since 4.0.0
 	 */
 	public function __construct() {
+		new SeoAnalysis();
+
+		include_once ABSPATH . 'wp-admin/includes/plugin.php';
+		if (
+			is_network_admin() &&
+			! is_plugin_active_for_network( plugin_basename( AIOSEO_FILE ) )
+		) {
+			return;
+		}
+
 		add_action( 'aioseo_unslash_escaped_data_posts', [ $this, 'unslashEscapedDataPosts' ] );
 
 		if ( wp_doing_ajax() || wp_doing_cron() ) {
@@ -98,7 +108,7 @@ class Admin {
 	 * @return string         The possibly modified HTML language attribute.
 	 */
 	public function alwaysAddHtmlDirAttribute( $output ) {
-		if ( is_rtl() ) {
+		if ( is_rtl() || preg_match( '/dir=[\'"](ltr|rtl|auto)[\'"]/i', $output ) ) {
 			return $output;
 		}
 
@@ -122,9 +132,6 @@ class Admin {
 			// Add the menu to the sidebar.
 			add_action( 'admin_menu', [ $this, 'addMenu' ] );
 			add_action( 'admin_menu', [ $this, 'hideScheduledActionsMenu' ], 99999 );
-			if ( is_multisite() ) {
-				add_action( 'network_admin_menu', [ $this, 'addRobotsMenu' ] );
-			}
 
 			// Add Score to Publish metabox.
 			add_action( 'post_submitbox_misc_actions', [ $this, 'addPublishScore' ] );
@@ -135,6 +142,9 @@ class Admin {
 			add_filter( 'bulk_post_updated_messages', [ $this, 'appendTrashedMessage' ], 10, 2 );
 
 			$this->registerLinkFormatHooks();
+
+			add_action( 'admin_footer', [ $this, 'addAioseoModalPortal' ] );
+			add_action( 'admin_enqueue_scripts', [ $this, 'enqueueAioseoModalPortal' ], 11 );
 		}
 
 		$this->loadTextDomain();
@@ -149,7 +159,7 @@ class Admin {
 	 *
 	 * @return void
 	 */
-	private function setPages() {
+	protected function setPages() {
 		// TODO: Remove this after a couple months.
 		$newIndicator = '<span class="aioseo-menu-new-indicator">&nbsp;NEW!</span>';
 
@@ -159,7 +169,9 @@ class Admin {
 				'parent'     => $this->pageSlug
 			],
 			'aioseo-settings'          => [
-				'menu_title' => esc_html__( 'General Settings', 'all-in-one-seo-pack' ),
+				'menu_title' => is_network_admin()
+					? esc_html__( 'Network Settings', 'all-in-one-seo-pack' )
+					: esc_html__( 'General Settings', 'all-in-one-seo-pack' ),
 				'parent'     => $this->pageSlug
 			],
 			'aioseo-search-appearance' => [
@@ -175,8 +187,7 @@ class Admin {
 				'parent'     => $this->pageSlug
 			],
 			'aioseo-link-assistant'    => [
-				'menu_title' => esc_html__( 'Link Assistant', 'all-in-one-seo-pack' ) . $newIndicator,
-				'page_title' => esc_html__( 'Link Assistant', 'all-in-one-seo-pack' ),
+				'menu_title' => esc_html__( 'Link Assistant', 'all-in-one-seo-pack' ),
 				'capability' => 'aioseo_link_assistant_settings',
 				'parent'     => $this->pageSlug
 			],
@@ -192,8 +203,15 @@ class Admin {
 				'menu_title' => esc_html__( 'SEO Analysis', 'all-in-one-seo-pack' ),
 				'parent'     => $this->pageSlug
 			],
+			'aioseo-search-statistics' => [
+				'menu_title' => esc_html__( 'Search Statistics', 'all-in-one-seo-pack' ) . $newIndicator,
+				'page_title' => esc_html__( 'Search Statistics', 'all-in-one-seo-pack' ),
+				'parent'     => $this->pageSlug
+			],
 			'aioseo-tools'             => [
-				'menu_title' => esc_html__( 'Tools', 'all-in-one-seo-pack' ),
+				'menu_title' => is_network_admin()
+					? esc_html__( 'Network Tools', 'all-in-one-seo-pack' )
+					: esc_html__( 'Tools', 'all-in-one-seo-pack' ),
 				'parent'     => $this->pageSlug
 			],
 			'aioseo-feature-manager'   => [
@@ -226,7 +244,6 @@ class Admin {
 		add_action( 'wp_enqueue_editor', [ $this, 'addClassicLinkFormatScript' ], 999999 );
 
 		global $wp_version;
-		include_once ABSPATH . 'wp-admin/includes/plugin.php';
 		if ( version_compare( $wp_version, '5.3', '>=' ) || is_plugin_active( 'gutenberg/gutenberg.php' ) ) {
 			add_action( 'current_screen', [ $this, 'addGutenbergLinkFormatScript' ] );
 			add_action( 'enqueue_block_editor_assets', [ $this, 'enqueueBlockEditorLinkFormat' ] );
@@ -376,9 +393,12 @@ class Admin {
 			return;
 		}
 
+		$classes    = is_admin()
+			? 'wp-core-ui wp-ui-notification aioseo-menu-notification-counter'
+			: 'aioseo-menu-notification-counter aioseo-menu-notification-counter-frontend';
 		$count      = count( Models\Notification::getAllActiveNotifications() );
 		$htmlCount  = 10 > $count ? $count : '!';
-		$htmlCount  = $htmlCount ? '<div class="wp-core-ui wp-ui-notification aioseo-menu-notification-counter">' . $htmlCount . '</div>' : '';
+		$htmlCount  = $htmlCount ? "<div class=\"{$classes}\">" . $htmlCount . '</div>' : '';
 		$htmlCount .= '<div id="aioseo-menu-new-notifications"></div>';
 
 		$this->adminBarMenuItems[] = [
@@ -396,6 +416,8 @@ class Admin {
 			];
 		}
 
+		$this->adminBarMenuItems[] = aioseo()->standalone->seoPreview->getAdminBarMenuItemNode();
+
 		$htmlSitemapRequested = aioseo()->htmlSitemap->isDedicatedPage;
 		if ( ! is_admin() && ! $htmlSitemapRequested ) {
 			$this->addPageAnalyzerMenuItems();
@@ -407,8 +429,10 @@ class Admin {
 		}
 
 		$this->addSettingsMenuItems();
+		$this->addEditSeoMenuItem();
+
+		// Actually add in the menu bar items.
 		$this->addAdminBarMenuItems();
-		$this->addPostMenuItems();
 	}
 
 	/**
@@ -462,7 +486,7 @@ class Admin {
 			],
 			[
 				'id'    => 'aioseo-analyze-page-structureddata',
-				'title' => esc_html__( 'Google Structured Data Test', 'all-in-one-seo-pack' ),
+				'title' => esc_html__( 'Google Rich Results Test', 'all-in-one-seo-pack' ),
 				'href'  => 'https://search.google.com/test/rich-results?url=' . $url,
 			],
 			[
@@ -516,25 +540,27 @@ class Admin {
 	/**
 	 * Adds the current post menu items to the admin bar.
 	 *
-	 * @since 4.0.0
+	 * @since 4.2.3
 	 *
 	 * @return void
 	 */
-	protected function addPostMenuItems() {
-		$blogPage = aioseo()->helpers->getBlogPage();
-		if ( ! $blogPage ) {
+	protected function addEditSeoMenuItem() {
+		// Don't show if we're on the home page and the home page is the latest posts or if we're not in a singular context.
+		if ( aioseo()->helpers->isDynamicHomePage() || ! is_singular() ) {
 			return;
 		}
 
-		$addMenu = $this->getAdminBarMenuData( $blogPage );
-		if ( ! empty( $addMenu ) ) {
-			$this->adminBarMenuItems[] = [
-				'id'     => 'aioseo-edit-' . $addMenu['id'],
-				'parent' => 'aioseo-main',
-				'title'  => esc_html__( 'Edit SEO', 'all-in-one-seo-pack' ),
-				'href'   => $addMenu['link'],
-			];
+		$post = aioseo()->helpers->getPost();
+		if ( empty( $post ) ) {
+			return;
 		}
+
+		$this->adminBarMenuItems[] = [
+			'id'     => 'aioseo-edit-' . $post->ID,
+			'parent' => 'aioseo-main',
+			'title'  => esc_html__( 'Edit SEO', 'all-in-one-seo-pack' ),
+			'href'   => get_edit_post_link( $post->ID ) . '#aioseo-settings',
+		];
 	}
 
 	/**
@@ -572,42 +598,6 @@ class Admin {
 				'href'   => esc_url( admin_url( 'admin.php?page=' . $id ) )
 			];
 		}
-	}
-
-	/**
-	 * Retreive data to build the admin bar.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @param  WP_Post $post The post object.
-	 * @return array         An array of data to build a menu link.
-	 */
-	protected function getAdminBarMenuData( $post ) {
-		// Don't show if we're on the home page and the home page is the latest posts.
-		if ( ! is_home() || ( ! is_front_page() && ! is_home() ) ) {
-			global $wp_the_query;
-			$currentObject = $wp_the_query->get_queried_object();
-
-			if ( is_singular() ) {
-				if ( ! empty( $currentObject ) && ! empty( $currentObject->post_type ) ) {
-					// Try the main query.
-					$editPostLink = get_edit_post_link( $currentObject->ID );
-
-					return [
-						'id'   => $currentObject->ID,
-						'link' => $editPostLink . '#aioseo'
-					];
-				} else {
-					// Try the post object.
-					return [
-						'id'   => $post->ID,
-						'link' => get_edit_post_link( $post->ID ) . '#aioseo'
-					];
-				}
-			}
-		}
-
-		return [];
 	}
 
 	/**
@@ -674,29 +664,6 @@ class Admin {
 	}
 
 	/**
-	 * Add the robots only menu inside of the WordPress network admin.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @return void
-	 */
-	public function addRobotsMenu() {
-		$slug = 'aioseo-tools';
-		$this->addMainMenu( $slug );
-
-		$page = $this->pages[ $slug ];
-		$hook = add_submenu_page(
-			$slug,
-			! empty( $page['page_title'] ) ? $page['page_title'] : $page['menu_title'],
-			$page['menu_title'],
-			$this->getPageRequiredCapability( $slug ),
-			$slug,
-			[ $this, 'page' ]
-		);
-		add_action( "load-{$hook}", [ $this, 'hooks' ] );
-	}
-
-	/**
 	 * Add the main menu.
 	 *
 	 * @since 4.0.0
@@ -704,7 +671,7 @@ class Admin {
 	 * @param  string $slug which slug to use.
 	 * @return void
 	 */
-	private function addMainMenu( $slug = 'aioseo' ) {
+	protected function addMainMenu( $slug = 'aioseo' ) {
 		add_menu_page(
 			$this->menuName,
 			$this->menuName,
@@ -740,7 +707,6 @@ class Admin {
 				return;
 			}
 		}
-
 	}
 
 	/**
@@ -785,6 +751,7 @@ class Admin {
 			'redirects',
 			'local-seo',
 			'seo-analysis',
+			'search-statistics',
 			'tools',
 			'feature-manager',
 			'monsterinsights',
@@ -811,7 +778,7 @@ class Admin {
 			}
 
 			if ( 'tools' === $page ) {
-				$this->checkAdminQueryArgs();
+				$this->checkForRedirects();
 			}
 
 			// Redirect our Analytics page to the appropriate plugin page.
@@ -851,12 +818,14 @@ class Admin {
 			// We don't want any plugin adding notices to our screens. Let's clear them out here.
 			remove_all_actions( 'admin_notices' );
 			remove_all_actions( 'all_admin_notices' );
+			remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
 
 			$this->currentPage = $page;
 			add_action( 'admin_enqueue_scripts', [ $this, 'enqueueAssets' ], 11 );
-			add_action( 'admin_enqueue_scripts', [ $this, 'dequeueTagDivOptinBuilderScript' ], 99999 );
+			add_action( 'admin_enqueue_scripts', [ aioseo()->filters, 'dequeueThirdPartyAssets' ], 99999 );
+			add_action( 'admin_enqueue_scripts', [ aioseo()->filters, 'dequeueThirdPartyAssetsEarly' ], 0 );
 
-			add_action( 'admin_footer_text', [ $this, 'addFooterText' ] );
+			add_filter( 'admin_footer_text', [ $this, 'addFooterText' ] );
 
 			// Only enqueue the media library if we need it in our module
 			if ( in_array( $page, [
@@ -914,7 +883,7 @@ class Admin {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @return void
+	 * @return string The footer text.
 	 */
 	public function addFooterText() {
 		$linkText = esc_html__( 'Give us a 5-star rating!', 'all-in-one-seo-pack' );
@@ -939,6 +908,22 @@ class Admin {
 			wp_kses_post( $link1 ),
 			wp_kses_post( $link2 )
 		);
+
+		// Stop WP Core from outputting its version number and instead add both theirs & ours.
+		global $wp_version;
+		printf(
+			wp_kses_post( '<p class="alignright">%1$s</p>' ),
+			sprintf(
+				// Translators: 1 - WP Core version number, 2 - AIOSEO version number.
+				esc_html__( 'WordPress %1$s | AIOSEO %2$s', 'all-in-one-seo-pack' ),
+				esc_html( $wp_version ),
+				esc_html( AIOSEO_VERSION )
+			)
+		);
+
+		remove_filter( 'update_footer', 'core_update_footer' );
+
+		return '';
 	}
 
 	/**
@@ -954,8 +939,7 @@ class Admin {
 		$postType               = get_post_type_object( $post->post_type );
 		if (
 			empty( $pageAnalysisCapability ) ||
-			empty( $postType->public ) ||
-			( aioseo()->helpers->isWooCommerceActive() && 'product' === $post->post_type )
+			empty( $postType->public )
 		) {
 			return;
 		}
@@ -1007,37 +991,13 @@ class Admin {
 	}
 
 	/**
-	 * Checks the admin query args to run appropriate tasks.
+	 * Check the query args to see if we need to redirect to an external URL.
 	 *
-	 * @since 4.0.0
+	 * @since 4.2.3
 	 *
 	 * @return void
 	 */
-	protected function checkAdminQueryArgs() {
-		// Redo the migration from the beginning.
-		if ( isset( $_GET['aioseo-v3-migration'] ) && 'i-want-to-migrate' === wp_unslash( $_GET['aioseo-v3-migration'] ) ) { // phpcs:ignore HM.Security.ValidatedSanitizedInput.InputNotSanitized
-			Migration\Helpers::redoMigration();
-		}
-
-		// Remove all AIOSEO cache.
-		if ( isset( $_GET['aioseo-clear-cache'] ) ) {
-			aioseo()->core->cache->clear();
-		}
-
-		if ( isset( $_GET['aioseo-remove-duplicates'] ) ) {
-			aioseo()->updates->removeDuplicateRecords();
-		}
-
-		if ( isset( $_GET['aioseo-unslash-escaped-data'] ) ) {
-			$this->scheduleUnescapeData();
-		}
-
-		if ( isset( $_GET['aioseo-image-rescan'] ) ) {
-			aioseo()->sitemap->query->resetImages();
-		}
-
-		$this->updateDeprecatedOptions();
-	}
+	protected function checkForRedirects() {}
 
 	/**
 	 * Starts the cleaning procedure to fix escaped, corrupted data.
@@ -1048,7 +1008,7 @@ class Admin {
 	 */
 	public function scheduleUnescapeData() {
 		aioseo()->core->cache->update( 'unslash_escaped_data_posts', time(), WEEK_IN_SECONDS );
-		aioseo()->helpers->scheduleSingleAction( 'aioseo_unslash_escaped_data_posts', 120 );
+		aioseo()->actionScheduler->scheduleSingle( 'aioseo_unslash_escaped_data_posts', 120 );
 	}
 
 	/**
@@ -1059,7 +1019,7 @@ class Admin {
 	 * @return void
 	 */
 	public function unslashEscapedDataPosts() {
-		$postsToUnslash = 200;
+		$postsToUnslash = apply_filters( 'aioseo_debug_unslash_escaped_posts', 200 );
 		$timeStarted    = gmdate( 'Y-m-d H:i:s', aioseo()->core->cache->get( 'unslash_escaped_data_posts' ) );
 
 		$posts = aioseo()->core->db->start( 'aioseo_posts' )
@@ -1076,7 +1036,7 @@ class Admin {
 			return;
 		}
 
-		aioseo()->helpers->scheduleSingleAction( 'aioseo_unslash_escaped_data_posts', 120, [], true );
+		aioseo()->actionScheduler->scheduleSingle( 'aioseo_unslash_escaped_data_posts', 120, [], true );
 
 		foreach ( $posts as $post ) {
 			$aioseoPost = Models\Post::getPost( $post->post_id );
@@ -1148,47 +1108,6 @@ class Admin {
 	}
 
 	/**
-	 * Updates deprecated options.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @return void
-	 */
-	protected function updateDeprecatedOptions() {
-		// Check if the user is forcefully wanting to add a deprecated option.
-		$allDeprecatedOptions = aioseo()->internalOptions->getAllDeprecatedOptions();
-		$deprecatedOptions    = aioseo()->internalOptions->internal->deprecatedOptions;
-		if ( isset( $_GET['aioseo-enable-option'] ) ) {
-			$changed = false;
-			foreach ( $allDeprecatedOptions as $deprecatedOption ) {
-				if ( $deprecatedOption === $_GET['aioseo-enable-option'] && ! in_array( $deprecatedOption, $deprecatedOptions, true ) ) {
-					$changed = true;
-					array_push( $deprecatedOptions, $deprecatedOption );
-				}
-			}
-
-			if ( $changed ) {
-				aioseo()->internalOptions->internal->deprecatedOptions = array_values( $deprecatedOptions );
-			}
-		}
-
-		if ( isset( $_GET['aioseo-disable-option'] ) ) {
-			$changed = false;
-			foreach ( $allDeprecatedOptions as $deprecatedOption ) {
-				if ( $deprecatedOption === $_GET['aioseo-disable-option'] && in_array( $deprecatedOption, $deprecatedOptions, true ) ) {
-					$changed = true;
-					$key     = array_search( $deprecatedOption, $deprecatedOptions, true );
-					unset( $deprecatedOptions[ $key ] );
-				}
-			}
-
-			if ( $changed ) {
-				aioseo()->internalOptions->internal->deprecatedOptions = array_values( $deprecatedOptions );
-			}
-		}
-	}
-
-	/**
 	 * Appends a message to the default WordPress "trashed" message.
 	 *
 	 * @since 4.1.2
@@ -1225,23 +1144,22 @@ class Admin {
 				$post->ID
 			);
 
-			if ( ! empty( $post ) ) {
-				$posts[] = [
-					'id'  => $id,
-					'url' => urlencode( str_replace( aioseo()->helpers->getSiteUrl(), '', str_replace( '__trashed', '', get_permalink( $post ) ) ) )
-				];
-			}
+			$posts[] = [
+				'url'    => str_replace( '__trashed', '', get_permalink( $post ) ),
+				'target' => '/',
+				'type'   => 301
+			];
 		}
 
 		if ( empty( $posts ) ) {
 			return $messages;
 		}
 
-		$url         = add_query_arg( 'aioseo-add-urls', base64_encode( wp_json_encode( $posts ) ), admin_url( 'admin.php?page=aioseo-redirects' ) );
+		$url         = aioseo()->slugMonitor->manualRedirectUrl( $posts );
 		$addRedirect = _n( 'Add Redirect to improve SEO', 'Add Redirects to improve SEO', count( $posts ), 'all-in-one-seo-pack' );
 
-		$messages['post']['trashed'] = $messages['post']['trashed'] . '&nbsp;<a href="' . $url . '">' . $addRedirect . '</a> |';
-		$messages['page']['trashed'] = $messages['page']['trashed'] . '&nbsp;<a href="' . $url . '">' . $addRedirect . '</a> |';
+		$messages['post']['trashed'] = $messages['post']['trashed'] . '&nbsp;<a href="' . $url . '" class="aioseo-redirects-trashed-post">' . $addRedirect . '</a> |';
+		$messages['page']['trashed'] = $messages['page']['trashed'] . '&nbsp;<a href="' . $url . '" class="aioseo-redirects-trashed-post">' . $addRedirect . '</a> |';
 
 		return $messages;
 	}
@@ -1257,9 +1175,11 @@ class Admin {
 	*/
 	private function getScoreClass( $score ) {
 		$scoreClass = 50 < $score ? 'score-orange' : 'score-red';
+
 		if ( 0 === $score ) {
 			$scoreClass = 'score-none';
 		}
+
 		if ( $score >= 80 ) {
 			$scoreClass = 'score-green';
 		}
@@ -1279,13 +1199,24 @@ class Admin {
 	}
 
 	/**
-	 * Dequeues a script from the tagDiv Opt-in Builder plugin that, accompanied by the Newspaper theme, crashes our menu pages.
+	 * Add the div for the modal portal.
 	 *
-	 * @since 4.1.9
+	 * @since 4.2.5
 	 *
 	 * @return void
 	 */
-	public function dequeueTagDivOptinBuilderScript() {
-		wp_dequeue_script( 'tds_js_vue_files_last' );
+	public function addAioseoModalPortal() {
+		echo '<div id="aioseo-modal-portal"></div>';
+	}
+
+	/**
+	 * Add the assets for the modal portal.
+	 *
+	 * @since 4.2.5
+	 *
+	 * @return void
+	 */
+	public function enqueueAioseoModalPortal() {
+		aioseo()->core->assets->load( 'src/vue/standalone/modal-portal/main.js' );
 	}
 }

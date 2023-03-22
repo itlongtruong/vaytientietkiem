@@ -12,6 +12,7 @@ use Nextend\Framework\Pattern\SingletonTrait;
 use Nextend\SmartSlider3\Application\ApplicationSmartSlider3;
 use Nextend\SmartSlider3\Settings;
 use Nextend\SmartSlider3\SmartSlider3Info;
+use Nextend\Framework\Request\Request;
 
 class HelperTinyMCE {
 
@@ -29,7 +30,7 @@ class HelperTinyMCE {
         if ((!current_user_can('edit_posts') && !current_user_can('edit_pages'))) {
             return;
         }
-        if (in_array(basename($_SERVER['PHP_SELF']), array(
+        if (in_array(basename(Request::$SERVER->getVar('PHP_SELF')), array(
             'post-new.php',
             'page-new.php',
             'post.php',

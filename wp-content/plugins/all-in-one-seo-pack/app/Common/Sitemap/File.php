@@ -274,7 +274,7 @@ class File {
 	 * @return array An array of files.
 	 */
 	public function files() {
-		require_once( ABSPATH . 'wp-admin/includes/file.php' );
+		require_once ABSPATH . 'wp-admin/includes/file.php';
 		$files = list_files( get_home_path(), 1 );
 		if ( ! count( $files ) ) {
 			return [];

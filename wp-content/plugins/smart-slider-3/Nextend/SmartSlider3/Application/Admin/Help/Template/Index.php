@@ -5,6 +5,8 @@ namespace Nextend\SmartSlider3\Application\Admin\Help;
 
 use Nextend\Framework\Filesystem\Filesystem;
 use Nextend\Framework\Platform\Platform;
+use Nextend\Framework\Request\Request;
+use Nextend\Framework\Sanitize;
 use Nextend\Framework\Url\Url;
 use Nextend\SmartSlider3\SmartSlider3Info;
 
@@ -39,15 +41,17 @@ $conflicts = $this->getConflicts();
             <div class="n2_help_center__conflicts_label"><?php n2_e('Possible conflicts'); ?></div>
             <div class="n2_help_center__conflicts_description">
                 <div class="n2_help_center__conflicts_test_api">
-                    <a href="<?php echo $this->getUrlHelpTestApi(); ?>">
+                    <a href="<?php echo esc_url($this->getUrlHelpTestApi()); ?>">
                         <?php n2_e('Test connection'); ?>
                     </a>
                 </div>
+                <?php
+                ?>
                 <?php if (empty($conflicts)): ?>
                     <div class="n2_help_center__no_conflicts_detected"><?php n2_e('No conflicts detected.'); ?></div>
                 <?php else: ?>
                     <?php foreach ($conflicts as $conflict): ?>
-                        <div class="n2_help_center__conflicts_detected"><?php echo $conflict; ?></div>
+                        <div class="n2_help_center__conflicts_detected"><?php echo wp_kses($conflict, Sanitize::$basicTags); ?></div>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
@@ -76,7 +80,7 @@ $conflicts = $this->getConflicts();
     <div class="n2_help_center__actions">
         <div class="n2_help_center__action">
             <a class="n2_help_center__action_link"
-               href="<?php echo 'https://smartslider.helpscoutdocs.com/?utm_campaign=' . SmartSlider3Info::$campaign . '&utm_source=dashboard-documentation&utm_medium=smartslider-' . Platform::getName() . '-' . SmartSlider3Info::$plan; ?>"
+               href="<?php echo esc_url('https://smartslider.helpscoutdocs.com/?utm_campaign=' . SmartSlider3Info::$campaign . '&utm_source=dashboard-documentation&utm_medium=smartslider-' . Platform::getName() . '-' . SmartSlider3Info::$plan); ?>"
                target="_blank"></a>
             <div class="n2_help_center__action_icon"><i class="ssi_48 ssi_48--doc"></i></div>
             <div class="n2_help_center__action_label"><?php n2_e('Documentation'); ?></div>
@@ -91,7 +95,7 @@ $conflicts = $this->getConflicts();
         </div>
         <div class="n2_help_center__action">
             <a class="n2_help_center__action_link"
-               href="<?php echo 'https://www.youtube.com/watch?v=3PPtkRU7D74&list=PLSawiBnEUNfvVeY7M8Yx7UdyOpBEmoH7Z&utm_campaign=' . SmartSlider3Info::$campaign . '&utm_source=dashboard-watch-videos&utm_medium=smartslider-' . Platform::getName() . '-' . SmartSlider3Info::$plan; ?>"
+               href="<?php echo esc_url('https://www.youtube.com/watch?v=3PPtkRU7D74&list=PLSawiBnEUNfvVeY7M8Yx7UdyOpBEmoH7Z&utm_campaign=' . SmartSlider3Info::$campaign . '&utm_source=dashboard-watch-videos&utm_medium=smartslider-' . Platform::getName() . '-' . SmartSlider3Info::$plan); ?>"
                target="_blank"></a>
             <div class="n2_help_center__action_icon"><i class="ssi_48 ssi_48--camera"></i></div>
             <div class="n2_help_center__action_label"><?php n2_e('Tutorial videos'); ?></div>
@@ -108,8 +112,8 @@ $conflicts = $this->getConflicts();
         foreach ($this->getArticles() as $article) {
             ?>
             <div class="n2_help_center__article">
-                <a class="n2_help_center__article_link" href="<?php echo $article['url']; ?>" target="_blank"></a>
-                <div class="n2_help_center__article_label"><?php echo $article['label']; ?></div>
+                <a class="n2_help_center__article_link" href="<?php echo esc_url($article['url']); ?>" target="_blank"></a>
+                <div class="n2_help_center__article_label"><?php echo esc_html($article['label']); ?></div>
                 <i class="ssi_16 ssi_16--breadcrumb n2_help_center__article_icon"></i>
             </div>
             <?php
@@ -126,15 +130,18 @@ $conflicts = $this->getConflicts();
             <div class="n2_help_center__conflicts_label"><?php n2_e('Possible conflicts'); ?></div>
             <div class="n2_help_center__conflicts_description">
                 <div class="n2_help_center__conflicts_test_api">
-                    <a href="<?php echo $this->getUrlHelpTestApi(); ?>">
+                    <a href="<?php echo esc_url($this->getUrlHelpTestApi()); ?>">
                         <?php n2_e('Test connection'); ?>
                     </a>
                 </div>
+                <?php
+                ?>
+
                 <?php if (empty($conflicts)): ?>
                     <div class="n2_help_center__no_conflicts_detected"><?php n2_e('No conflicts detected.'); ?></div>
                 <?php else: ?>
                     <?php foreach ($conflicts as $conflict): ?>
-                        <div class="n2_help_center__conflicts_detected"><?php echo $conflict; ?></div>
+                        <div class="n2_help_center__conflicts_detected"><?php echo wp_kses($conflict, Sanitize::$basicTags); ?></div>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
@@ -165,7 +172,7 @@ $conflicts = $this->getConflicts();
                 'Site url: ' . Platform::getSiteUrl(),
                 'Path: ' . Filesystem::getBasePath(),
                 'Uri: ' . Url::getBaseUri(),
-                'Browser: ' . $_SERVER['HTTP_USER_AGENT'],
+                'Browser: ' . Request::$SERVER->getVar('HTTP_USER_AGENT'),
                 ''
             );
 
@@ -271,7 +278,7 @@ $conflicts = $this->getConflicts();
 
             ?>
             <textarea readonly name="debug_information"
-                      style="width:100%;height:800px;"><?php echo htmlspecialchars(implode("\n", $debug), ENT_QUOTES, 'utf-8'); ?></textarea>
+                      style="width:100%;height:800px;"><?php echo esc_html(implode("\n", $debug)); ?></textarea>
         </form>
     </div>
 </div>

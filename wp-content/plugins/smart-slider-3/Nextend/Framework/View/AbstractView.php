@@ -31,6 +31,11 @@ abstract class AbstractView {
         $this->setMVCHelper($controller);
     }
 
+    /**
+     * @param $templateName
+     *
+     * @return false|string output is a safe file, so nothing to escape.
+     */
     protected function render($templateName) {
         ob_start();
         include self::getPath() . '/Template/' . $templateName . '.php';

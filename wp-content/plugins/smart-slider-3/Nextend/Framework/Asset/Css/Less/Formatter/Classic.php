@@ -4,6 +4,7 @@
 namespace Nextend\Framework\Asset\Css\Less\Formatter;
 
 
+#[\AllowDynamicProperties]
 class Classic {
 
     public $indentChar = "  ";

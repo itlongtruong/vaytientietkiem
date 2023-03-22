@@ -77,7 +77,7 @@ class ModelSliders extends AbstractModelTable {
         $join   = "";
 
         if ($status !== '*') {
-            $wheres[] = " WHERE _sliders.status LIKE " . Database::quote($status);
+            $wheres[] = " WHERE _sliders.slider_status LIKE " . Database::quote($status);
         }
 
         if ($witGroup) {
@@ -129,7 +129,7 @@ class ModelSliders extends AbstractModelTable {
         }
 
         if ($status !== '*') {
-            $wheres[] = "sliders.status LIKE " . Database::quote($status);
+            $wheres[] = "sliders.slider_status LIKE " . Database::quote($status);
         }
 
 
@@ -145,7 +145,7 @@ class ModelSliders extends AbstractModelTable {
                   
                   IF(sliders.type != 'group', 
                         (SELECT count(*) FROM " . $slidesModel->getTableName() . " AS slides2 WHERE slides2.slider = sliders.id GROUP BY slides2.slider),
-                        (SELECT count(*) FROM " . $this->xref->getTableName() . " AS xref2 LEFT JOIN " . $this->getTableName() . " AS sliders2 ON sliders2.id = xref2.slider_id WHERE xref2.group_id = sliders.id AND sliders2.status LIKE 'published' GROUP BY xref2.group_id)
+                        (SELECT count(*) FROM " . $this->xref->getTableName() . " AS xref2 LEFT JOIN " . $this->getTableName() . " AS sliders2 ON sliders2.id = xref2.slider_id WHERE xref2.group_id = sliders.id AND sliders2.slider_status LIKE 'published' GROUP BY xref2.group_id)
                   ) AS slides
             FROM " . $this->getTableName() . " AS sliders
             LEFT JOIN " . $this->xref->getTableName() . " AS xref ON xref.slider_id = sliders.id
@@ -183,7 +183,7 @@ class ModelSliders extends AbstractModelTable {
                         ) AS thumbnail,
                          IF(sliders.type != 'group', 
                         (SELECT count(*) FROM " . $slidesModel->getTableName() . " AS slides2 WHERE slides2.slider = sliders.id GROUP BY slides2.slider),
-                        (SELECT count(*) FROM " . $this->xref->getTableName() . " AS xref2 LEFT JOIN " . $this->getTableName() . " AS sliders2 ON sliders2.id = xref2.slider_id WHERE xref2.group_id = sliders.id AND sliders2.status LIKE 'published' GROUP BY xref2.group_id)
+                        (SELECT count(*) FROM " . $this->xref->getTableName() . " AS xref2 LEFT JOIN " . $this->getTableName() . " AS sliders2 ON sliders2.id = xref2.slider_id WHERE xref2.group_id = sliders.id AND sliders2.slider_status LIKE 'published' GROUP BY xref2.group_id)
                         ) AS slides
                         FROM " . $this->getTableName() . " AS sliders
                         LEFT JOIN " . $this->xref->getTableName() . " AS xref ON xref.slider_id = sliders.id
@@ -191,9 +191,9 @@ class ModelSliders extends AbstractModelTable {
                             (
                                 xref.group_id IS NULL 
                                 OR xref.group_id = 0
-                                OR (SELECT _sliders.status FROM " . $this->getTableName() . " AS _sliders WHERE _sliders.id = xref.group_id ) LIKE 'published'
+                                OR (SELECT _sliders.slider_status FROM " . $this->getTableName() . " AS _sliders WHERE _sliders.id = xref.group_id ) LIKE 'published'
                             )
-                            AND sliders.status LIKE 'published'
+                            AND sliders.slider_status LIKE 'published'
                             AND (" . implode(' OR ', $wheres) . ")
                             GROUP BY sliders.id 
                         ORDER BY " . $orderByExtra . "sliders.title ASC");
@@ -207,7 +207,7 @@ class ModelSliders extends AbstractModelTable {
         );
 
         if ($status !== '*') {
-            $wheres[] = "status LIKE " . Database::quote($status);
+            $wheres[] = "slider_status LIKE " . Database::quote($status);
         }
 
         return Database::queryAll("SELECT id, title FROM " . $this->getTableName() . " WHERE " . implode(' AND ', $wheres) . " ORDER BY title ASC");
@@ -564,7 +564,7 @@ class ModelSliders extends AbstractModelTable {
         }
 
         $this->table->update(array(
-            'status' => 'trash'
+            'slider_status' => 'trash'
         ), array(
             "id" => $sliderID
         ));
@@ -607,7 +607,7 @@ class ModelSliders extends AbstractModelTable {
         }
 
         $this->table->update(array(
-            'status' => 'published'
+            'slider_status' => 'published'
         ), array(
             "id" => $id
         ));

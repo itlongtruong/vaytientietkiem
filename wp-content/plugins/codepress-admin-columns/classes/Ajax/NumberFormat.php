@@ -3,15 +3,16 @@
 namespace AC\Ajax;
 
 use AC;
+use AC\Request;
 
-final class NumberFormat implements AC\Registrable {
+final class NumberFormat implements AC\Registerable {
 
 	/**
-	 * @var AC\Request
+	 * @var Request
 	 */
 	private $request;
 
-	public function __construct( $request ) {
+	public function __construct( Request $request ) {
 		$this->request = $request;
 	}
 

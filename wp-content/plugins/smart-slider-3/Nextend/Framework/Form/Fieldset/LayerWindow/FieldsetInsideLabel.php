@@ -5,6 +5,7 @@ namespace Nextend\Framework\Form\Fieldset\LayerWindow;
 
 
 use Nextend\Framework\Form\AbstractFieldset;
+use Nextend\Framework\Sanitize;
 use Nextend\Framework\View\Html;
 
 class FieldsetInsideLabel extends AbstractFieldset {
@@ -14,10 +15,10 @@ class FieldsetInsideLabel extends AbstractFieldset {
         $element = $this->first;
         while ($element) {
 
-            echo Html::openTag('div', array(
+            echo wp_kses(Html::openTag('div', array(
                     'class'      => 'n2_form__table_label_field ' . $element->getRowClass(),
                     'data-field' => $element->getID()
-                ) + $element->getRowAttributes());
+                ) + $element->getRowAttributes()), Sanitize::$adminFormTags);
             $element->displayElement();
             echo "</div>";
 

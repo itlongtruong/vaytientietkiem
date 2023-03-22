@@ -18,6 +18,6 @@ abstract class Message extends AbstractField {
     }
 
     protected function fetchElement() {
-        echo '<div class="' . implode(' ', $this->classes) . '">' . $this->description . '</div>';
+        return '<div class="' . implode(' ', $this->classes) . '">' . $this->description . '</div>';
     }
 }

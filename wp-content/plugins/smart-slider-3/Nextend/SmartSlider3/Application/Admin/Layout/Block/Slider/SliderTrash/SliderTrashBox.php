@@ -11,17 +11,17 @@ use Nextend\Framework\Sanitize;
 
 <div class="n2_slider_manager__box n2_slider_box<?php echo $this->isGroup() ? ' n2_slider_box--group' : ' n2_slider_box--slider'; ?>"
      data-group="<?php echo $this->isGroup() ? '1' : '0'; ?>"
-     data-sliderid="<?php echo $this->getSliderID(); ?>">
+     data-sliderid="<?php echo esc_attr($this->getSliderID()); ?>">
 
     <?php
-    $thumbnailUrl   = Sanitize::esc_attr($this->getThumbnail());
+    $thumbnailUrl   = esc_url($this->getThumbnail());
     $thumbnailStyle = '';
     if (!empty($thumbnailUrl)) {
         $thumbnailStyle = "background-image: url('" . $thumbnailUrl . "');";
     }
     ?>
 
-    <div class="n2_slider_box__content" style="<?php echo $thumbnailStyle; ?>">
+    <div class="n2_slider_box__content" style="<?php echo esc_attr($thumbnailStyle); ?>">
         <?php
         if ($this->isThumbnailEmpty()):
             $icon = "ssi_64 ssi_64--image";
@@ -32,7 +32,7 @@ use Nextend\Framework\Sanitize;
 
             <div class="n2_slider_box__icon">
                 <div class="n2_slider_box__icon_container">
-                    <i class="<?php echo $icon; ?>"></i>
+                    <i class="<?php echo esc_attr($icon); ?>"></i>
                 </div>
             </div>
 
@@ -51,7 +51,7 @@ use Nextend\Framework\Sanitize;
         <div class="n2_slider_box__slider_identifiers">
             <div class="n2_slider_box__slider_identifier">
                 <?php
-                echo '#' . $this->getSliderID();
+                echo '#' . esc_html($this->getSliderID());
                 ?>
             </div>
             <?php
@@ -70,7 +70,7 @@ use Nextend\Framework\Sanitize;
                 ?>
                 <div class="n2_slider_box__slider_identifier">
                     <?php
-                    echo $this->getSliderAlias();
+                    echo esc_html($this->getSliderAlias());
                     ?>
                 </div>
             <?php
@@ -95,12 +95,12 @@ use Nextend\Framework\Sanitize;
         ?>
         <div class="n2_slider_box__footer_title">
             <?php
-            echo Sanitize::esc_html($this->getSliderTitle());
+            echo esc_html($this->getSliderTitle());
             ?>
         </div>
         <div class="n2_slider_box__footer_children_count">
             <?php
-            echo $this->getChildrenCount();
+            echo esc_html($this->getChildrenCount());
             ?>
         </div>
     </div>

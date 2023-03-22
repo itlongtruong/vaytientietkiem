@@ -17,8 +17,8 @@ use Nextend\SmartSlider3\Application\Admin\Layout\Block\Forms\Button\BlockButton
 $slider = $this->getSlider();
 
 ?>
-<form id="n2_slider_add_slide_form" action="<?php echo $this->getUrlSliderSimpleEditAddSlide($slider['id'], $this->groupID); ?>" method="post">
-    <div id="slider-add-slide-region" role="region" tabindex="0" aria-label="<?php echo n2_('Add slide'); ?>">
+<form id="n2_slider_add_slide_form" action="<?php echo esc_url($this->getUrlSliderSimpleEditAddSlide($slider['id'], $this->groupID)); ?>" method="post">
+    <div id="slider-add-slide-region" role="region" tabindex="0" aria-label="<?php n2_e('Add slide'); ?>">
         <?php
         $form = new Form($this, 'slide');
 

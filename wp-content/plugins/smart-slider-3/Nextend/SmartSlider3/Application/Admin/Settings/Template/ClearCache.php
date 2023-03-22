@@ -6,7 +6,7 @@ namespace Nextend\SmartSlider3\Application\Admin\Settings;
  * @var $this ViewSettingsClearCache
  */
 ?>
-<form id="n2_slider_clear_cache_form" action="<?php echo $this->getAjaxUrlSettingsClearCache(); ?>" method="post">
+<form id="n2_slider_clear_cache_form" action="<?php echo esc_url($this->getAjaxUrlSettingsClearCache()); ?>" method="post">
     <?php
     $this->renderForm();
     ?>

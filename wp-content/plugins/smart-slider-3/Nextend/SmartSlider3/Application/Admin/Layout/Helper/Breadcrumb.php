@@ -4,6 +4,8 @@
 namespace Nextend\SmartSlider3\Application\Admin\Layout\Helper;
 
 
+use Nextend\Framework\Sanitize;
+
 class Breadcrumb {
 
     protected $label = '';
@@ -44,9 +46,9 @@ class Breadcrumb {
         $html .= '<span>' . $this->label . '</span>';
 
         if ($this->url == '#') {
-            echo '<div class="' . $this->getClass() . '">' . $html . '</div>';
+            echo wp_kses('<div class="' . $this->getClass() . '">' . $html . '</div>', Sanitize::$adminTemplateTags);
         } else {
-            echo '<a class="' . $this->getClass() . '" href="' . $this->url . '">' . $html . '</a>';
+            echo wp_kses('<a class="' . $this->getClass() . '" href="' . $this->url . '">' . $html . '</a>', Sanitize::$adminTemplateTags);
         }
     }
 

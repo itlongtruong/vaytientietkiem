@@ -4,12 +4,22 @@ namespace Nextend\Framework\Request\Parser;
 
 class WordPressRequestParser extends AbstractRequestParser {
 
+    private $isSlashed;
+
+    public function __construct() {
+        $this->isSlashed = did_action('init') > 0;
+    }
+
     public function parseData($data) {
-        if (is_array($data)) {
-            return $this->stripslashesRecursive($data);
+        if ($this->isSlashed) {
+            if (is_array($data)) {
+                return $this->stripslashesRecursive($data);
+            }
+
+            return stripslashes($data);
         }
 
-        return stripslashes($data);
+        return $data;
     }
 
     private function stripslashesRecursive($array) {

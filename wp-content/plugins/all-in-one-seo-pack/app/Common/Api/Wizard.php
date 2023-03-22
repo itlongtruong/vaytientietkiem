@@ -26,6 +26,7 @@ class Wizard {
 		$body           = $request->get_json_params();
 		$section        = ! empty( $body['section'] ) ? sanitize_text_field( $body['section'] ) : null;
 		$wizard         = ! empty( $body['wizard'] ) ? $body['wizard'] : null;
+		$network        = ! empty( $body['network'] ) ? $body['network'] : false;
 		$options        = aioseo()->options->noConflict();
 		$dynamicOptions = aioseo()->dynamicOptions->noConflict();
 
@@ -228,21 +229,21 @@ class Wizard {
 
 		// Save the features section.
 		if ( 'features' === $section && ! empty( $wizard['features'] ) ) {
-			$features = $wizard['features'];
+			$features   = $wizard['features'];
+			$pluginData = aioseo()->helpers->getPluginData();
 
 			// Install MI.
 			if ( in_array( 'analytics', $features, true ) ) {
 				$cantInstall = false;
-				$pluginData  = aioseo()->helpers->getPluginData();
 				if ( ! $pluginData['miPro']['activated'] && ! $pluginData['miLite']['activated'] ) {
 					if ( $pluginData['miPro']['installed'] ) {
-						aioseo()->addons->installAddon( 'miPro' );
+						aioseo()->addons->installAddon( 'miPro', $network );
 
 						// Stop the redirect from happening.
 						delete_transient( '_monsterinsights_activation_redirect' );
 					} else {
 						if ( $pluginData['miPro']['installed'] || aioseo()->addons->canInstall() ) {
-							aioseo()->addons->installAddon( 'miLite' );
+							aioseo()->addons->installAddon( 'miLite', $network );
 
 							// Stop the redirect from happening.
 							delete_transient( '_monsterinsights_activation_redirect' );
@@ -281,7 +282,7 @@ class Wizard {
 				if ( ! $pluginData['optinMonster']['activated'] ) {
 					if ( aioseo()->addons->canInstall() ) {
 						// Install and/or activate.
-						aioseo()->addons->installAddon( 'optinMonster' );
+						aioseo()->addons->installAddon( 'optinMonster', $network );
 
 						// Stop the redirect from happening.
 						delete_transient( 'optin_monster_api_activation_redirect' );
@@ -375,10 +376,12 @@ class Wizard {
 			if ( ! empty( $smartRecommendations['accountInfo'] ) && ! aioseo()->internalOptions->internal->siteAnalysis->connectToken ) {
 				$url      = defined( 'AIOSEO_CONNECT_DIRECT_URL' ) ? AIOSEO_CONNECT_DIRECT_URL : 'https://aioseo.com/wp-json/aioseo-lite-connect/v1/connect/';
 				$response = wp_remote_post( $url, [
-					'headers' => [
+					'timeout'    => 10,
+					'headers'    => array_merge( [
 						'Content-Type' => 'application/json'
-					],
-					'body'    => wp_json_encode( [
+					], aioseo()->helpers->getApiHeaders() ),
+					'user-agent' => aioseo()->helpers->getApiUserAgent(),
+					'body'       => wp_json_encode( [
 						'accountInfo' => $smartRecommendations['accountInfo'],
 						'homeurl'     => home_url()
 					] )

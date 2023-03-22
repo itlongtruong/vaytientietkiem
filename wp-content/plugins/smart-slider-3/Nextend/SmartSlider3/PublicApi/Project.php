@@ -36,20 +36,26 @@ class Project {
     }
 
     /**
-     * @param string $pathToFile
+     * @param string  $pathToFile
+     * @param integer $groupID
      *
      * @return bool|int projectID on success. false on failure.
      *
      * @example \Nextend\SmartSlider3\PublicApi\Project::import('/path/to/project.ss3');
      */
-    public static function import($pathToFile) {
+    public static function import($pathToFile, $groupID = 0) {
+
+        if (!is_admin()) {
+            require_once(ABSPATH . 'wp-admin/includes/file.php');
+        }
 
         $application = ApplicationSmartSlider3::getInstance();
 
         $applicationType = $application->getApplicationTypeAdmin();
 
-        $import    = new ImportSlider($applicationType);
-        $projectID = $import->import($pathToFile);
+        $import = new ImportSlider($applicationType);
+
+        $projectID = $import->import($pathToFile, $groupID);
 
         if ($projectID !== false) {
             return $projectID;

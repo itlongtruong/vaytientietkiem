@@ -42,20 +42,21 @@ trait Vue {
 		$isStaticHomePage = 'page' === get_option( 'show_on_front' );
 		$staticHomePage   = intval( get_option( 'page_on_front' ) );
 		$data = [
-			'page'             => $page,
-			'screen'           => [
+			'page'              => $page,
+			'screen'            => [
 				'base'        => isset( $screen->base ) ? $screen->base : '',
 				'postType'    => isset( $screen->post_type ) ? $screen->post_type : '',
 				'blockEditor' => isset( $screen->is_block_editor ) ? $screen->is_block_editor : false,
 				'new'         => isset( $screen->action ) && 'add' === $screen->action
 			],
-			'internalOptions'  => aioseo()->internalOptions->all(),
-			'options'          => aioseo()->options->all(),
-			'dynamicOptions'   => aioseo()->dynamicOptions->all(),
-			'settings'         => aioseo()->settings->all(),
-			'tags'             => aioseo()->tags->all( true ),
-			'nonce'            => wp_create_nonce( 'wp_rest' ),
-			'urls'             => [
+			'internalOptions'   => aioseo()->internalOptions->all(),
+			'options'           => aioseo()->options->all(),
+			'dynamicOptions'    => aioseo()->dynamicOptions->all(),
+			'deprecatedOptions' => aioseo()->internalOptions->getAllDeprecatedOptions( true ),
+			'settings'          => aioseo()->settings->all(),
+			'tags'              => aioseo()->tags->all( true ),
+			'nonce'             => wp_create_nonce( 'wp_rest' ),
+			'urls'              => [
 				'domain'            => $this->getSiteDomain(),
 				'mainSiteUrl'       => $this->getSiteUrl(),
 				'siteLogo'          => aioseo()->helpers->getSiteLogoUrl(),
@@ -91,12 +92,14 @@ trait Vue {
 					'monsterinsights'  => admin_url( 'admin.php?page=aioseo-monsterinsights' ),
 					'redirects'        => admin_url( 'admin.php?page=aioseo-redirects' ),
 					'searchAppearance' => admin_url( 'admin.php?page=aioseo-search-appearance' ),
+					'searchStatistics' => admin_url( 'admin.php?page=aioseo-search-statistics' ),
 					'seoAnalysis'      => admin_url( 'admin.php?page=aioseo-seo-analysis' ),
 					'settings'         => admin_url( 'admin.php?page=aioseo-settings' ),
 					'sitemaps'         => admin_url( 'admin.php?page=aioseo-sitemaps' ),
 					'socialNetworks'   => admin_url( 'admin.php?page=aioseo-social-networks' ),
 					'tools'            => admin_url( 'admin.php?page=aioseo-tools' ),
-					'wizard'           => admin_url( 'index.php?page=aioseo-setup-wizard' )
+					'wizard'           => admin_url( 'index.php?page=aioseo-setup-wizard' ),
+					'networkSettings'  => is_network_admin() ? network_admin_url( 'admin.php?page=aioseo-settings' ) : ''
 				],
 				'admin'             => [
 					'widgets'          => admin_url( 'widgets.php' ),
@@ -106,9 +109,9 @@ trait Vue {
 				],
 				'truSeoWorker'      => aioseo()->core->assets->jsUrl( 'src/app/tru-seo/analyzer/main.js' )
 			],
-			'backups'          => [],
-			'importers'        => [],
-			'data'             => [
+			'backups'           => [],
+			'importers'         => [],
+			'data'              => [
 				'server'              => [
 					'apache' => null,
 					'nginx'  => null
@@ -124,8 +127,8 @@ trait Vue {
 				],
 				'status'              => [],
 				'htaccess'            => '',
-				'multisite'           => is_multisite(),
-				'network'             => is_network_admin(),
+				'isMultisite'         => is_multisite(),
+				'isNetworkAdmin'      => is_network_admin(),
 				'mainSite'            => is_main_site(),
 				'subdomain'           => $this->isSubdomain(),
 				'isWooCommerceActive' => $this->isWooCommerceActive(),
@@ -135,43 +138,44 @@ trait Vue {
 				'staticBlogPageTitle' => get_the_title( $this->getBlogPageId() ),
 				'isDev'               => $this->isDev(),
 				'isSsl'               => is_ssl(),
-				'hasUrlTrailingSlash' => '/' === user_trailingslashit( '' )
+				'hasUrlTrailingSlash' => '/' === user_trailingslashit( '' ),
+				'permalinkStructure'  => get_option( 'permalink_structure' ),
+				'dateFormat'          => get_option( 'date_format' ),
+				'timeFormat'          => get_option( 'time_format' )
 			],
-			'user'             => [
-				'email'          => wp_get_current_user()->user_email,
-				'roles'          => $this->getUserRoles(),
-				'customRoles'    => $this->getCustomRoles(),
+			'user'              => [
 				'canManage'      => aioseo()->access->canManage(),
 				'capabilities'   => aioseo()->access->getAllCapabilities(),
-				'unfilteredHtml' => current_user_can( 'unfiltered_html' ),
-				'locale'         => function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale()
+				'customRoles'    => $this->getCustomRoles(),
+				'data'           => wp_get_current_user(),
+				'locale'         => function_exists( 'get_user_locale' ) ? get_user_locale() : get_locale(),
+				'roles'          => $this->getUserRoles(),
+				'unfilteredHtml' => current_user_can( 'unfiltered_html' )
 			],
-			'plugins'          => $this->getPluginData(),
-			'postData'         => [
+			'plugins'           => $this->getPluginData(),
+			'postData'          => [
 				'postTypes'    => $this->getPublicPostTypes( false, false, true ),
 				'taxonomies'   => $this->getPublicTaxonomies( false, true ),
 				'archives'     => $this->getPublicPostTypes( false, true, true ),
 				'postStatuses' => $this->getPublicPostStatuses()
 			],
-			'notifications'    => array_merge( Models\Notification::getNotifications( false ), [
+			'notifications'     => array_merge( Models\Notification::getNotifications( false ), [
 				'force' => $showNotificationsDrawer ? true : false
 			] ),
-			'addons'           => aioseo()->addons->getAddons(),
-			'version'          => AIOSEO_VERSION,
-			'wpVersion'        => $wp_version,
-			'helpPanel'        => json_decode( aioseo()->help->getDocs() ),
-			'scheduledActions' => [
+			'addons'            => aioseo()->addons->getAddons(),
+			'features'          => aioseo()->features->getFeatures(),
+			'version'           => AIOSEO_VERSION,
+			'wpVersion'         => $wp_version,
+			'helpPanel'         => aioseo()->help->getDocs(),
+			'scheduledActions'  => [
 				'sitemaps' => []
 			],
-			'integration'      => $integration
+			'integration'       => $integration
 		];
 
-		if ( is_multisite() && ! is_network_admin() ) {
-			switch_to_blog( $this->getNetworkId() );
-			$options = aioseo()->options->noConflict();
-			$options->initNetwork();
-			$data['networkOptions'] = $options->all();
-			restore_current_blog();
+		if ( is_multisite() ) {
+			$data['internalNetworkOptions'] = aioseo()->internalNetworkOptions->all();
+			$data['networkOptions']         = aioseo()->networkOptions->all();
 		}
 
 		if ( 'post' === $page ) {
@@ -186,9 +190,10 @@ trait Vue {
 				'priority'                       => ! empty( $post->priority ) ? $post->priority : 'default',
 				'frequency'                      => ! empty( $post->frequency ) ? $post->frequency : 'default',
 				'permalink'                      => get_permalink( $postId ),
-				'permalinkPath'                  => aioseo()->helpers->leadingSlashIt( aioseo()->helpers->getPermalinkPath( get_permalink( $postId ) ) ),
+				'editlink'                       => aioseo()->helpers->getPostEditLink( $postId ),
 				'title'                          => ! empty( $post->title ) ? $post->title : aioseo()->meta->title->getPostTypeTitle( $postTypeObj->name ),
 				'description'                    => ! empty( $post->description ) ? $post->description : aioseo()->meta->description->getPostTypeDescription( $postTypeObj->name ),
+				'descriptionIncludeCustomFields' => apply_filters( 'aioseo_description_include_custom_fields', true, $post ),
 				'keywords'                       => ! empty( $post->keywords ) ? $post->keywords : wp_json_encode( [] ),
 				'keyphrases'                     => Models\Post::getKeyphrasesDefaults( $post->keyphrases ),
 				'page_analysis'                  => ! empty( $post->page_analysis )
@@ -202,6 +207,7 @@ trait Vue {
 				'postType'                       => 'type' === $postTypeObj->name ? '_aioseo_type' : $postTypeObj->name,
 				'postStatus'                     => get_post_status( $postId ),
 				'isSpecialPage'                  => $this->isSpecialPage( $postId ),
+				'isHomePage'                     => $postId === $staticHomePage,
 				'isWooCommercePageWithoutSchema' => $this->isWooCommercePageWithoutSchema( $postId ),
 				'seo_score'                      => (int) $post->seo_score,
 				'pillar_content'                 => ( (int) $post->pillar_content ) === 0 ? false : true,
@@ -236,10 +242,9 @@ trait Vue {
 				'twitter_image_type'             => $post->twitter_image_type,
 				'twitter_title'                  => $post->twitter_title,
 				'twitter_description'            => $post->twitter_description,
-				'schema_type'                    => ( ! empty( $post->schema_type ) ) ? $post->schema_type : 'default',
-				'schema_type_options'            => ( ! empty( $post->schema_type_options ) )
-					? json_decode( Models\Post::getDefaultSchemaOptions( $post->schema_type_options ) )
-					: json_decode( Models\Post::getDefaultSchemaOptions() ),
+				'schema'                         => ( ! empty( $post->schema ) )
+					? Models\Post::getDefaultSchemaOptions( $post->schema )
+					: Models\Post::getDefaultSchemaOptions(),
 				'metaDefaults'                   => [
 					'title'       => aioseo()->meta->title->getPostTypeTitle( $postTypeObj->name ),
 					'description' => aioseo()->meta->description->getPostTypeDescription( $postTypeObj->name )
@@ -251,10 +256,8 @@ trait Vue {
 				'redirects'                      => [
 					'modalOpen' => false
 				],
-				'options'                        => Models\Post::getOptionsDefaults( $post->options )
+				'options'                        => $post->options
 			];
-
-			$data['user']['siteAuthors'] = $this->getSiteAuthors();
 
 			if ( empty( $integration ) ) {
 				$data['integration'] = aioseo()->helpers->getPostPageBuilderName( $postId );
@@ -277,9 +280,13 @@ trait Vue {
 
 		if ( 'dashboard' === $page ) {
 			$data['setupWizard']['isCompleted'] = aioseo()->standalone->setupWizard->isCompleted();
-			$data['rssFeed']                    = aioseo()->dashboard->getAioseoRssFeed();
 			$data['seoOverview']                = aioseo()->postSettings->getPostTypesOverview();
 			$data['importers']                  = aioseo()->importExport->plugins();
+		}
+
+		if ( 'search-statistics' === $page ) {
+			$data['seoOverview']      = aioseo()->postSettings->getPostTypesOverview();
+			$data['searchStatistics'] = aioseo()->searchStatistics->getVueData();
 		}
 
 		if ( 'sitemaps' === $page ) {
@@ -334,8 +341,24 @@ trait Vue {
 			$data['data']['logSizes'] = [
 				'badBotBlockerLog' => $this->convertFileSize( aioseo()->badBotBlocker->getLogSize() )
 			];
-			$data['data']['status']   = Tools\SystemStatus::getSystemStatusInfo();
-			$data['data']['htaccess'] = aioseo()->htaccess->getContents();
+			$data['data']['status']    = Tools\SystemStatus::getSystemStatusInfo();
+			$data['data']['htaccess']  = aioseo()->htaccess->getContents();
+			$data['data']['v3Options'] = ! empty( get_option( 'aioseop_options' ) );
+		}
+
+		if (
+			(
+				'tools' === $page ||
+				'settings' === $page
+			) &&
+			is_multisite() &&
+			is_network_admin()
+		) {
+			$data['data']['network'] = [
+				'sites'       => aioseo()->helpers->getSites( aioseo()->settings->tablePagination['networkDomains'] ),
+				'activeSites' => [],
+				'backups'     => []
+			];
 		}
 
 		if ( 'settings' === $page ) {
@@ -374,13 +397,18 @@ trait Vue {
 		}
 
 		foreach ( $translations->entries as $msgid => $entry ) {
-			$locale[ $msgid ] = $entry->translations;
-		}
+			if ( empty( $entry->translations ) || ! is_array( $entry->translations ) ) {
+				continue;
+			}
 
-		// If any of the translated strings incorrectly contains HTML line breaks, we need to return or else the admin is no longer accessible.
-		$json = wp_json_encode( $locale );
-		if ( preg_match( '/<br[\s\/\\\\]*>/', $json ) ) {
-			return [];
+			foreach ( $entry->translations as $translation ) {
+				// If any of the translated strings contains a HTML line break, we need to ignore it. Otherwise logging into the admin breaks.
+				if ( preg_match( '/<br[\s\/\\\\]*>/', $translation ) ) {
+					continue 2;
+				}
+			}
+
+			$locale[ $msgid ] = $entry->translations;
 		}
 
 		return $locale;
@@ -399,7 +427,7 @@ trait Vue {
 		// First, we need to remove our filter, so that it doesn't run unintentionally.
 		remove_filter( 'robots_txt', [ aioseo()->robotsTxt, 'buildRules' ], 10000 );
 		$robotsTxt = apply_filters( 'robots_txt', '', true );
-		add_filter( 'robots_txt', [ aioseo()->robotsTxt, 'buildRules' ], 10000, 2 );
+		add_filter( 'robots_txt', [ aioseo()->robotsTxt, 'buildRules' ], 10000 );
 
 		if ( ! $robotsTxt ) {
 			return [];

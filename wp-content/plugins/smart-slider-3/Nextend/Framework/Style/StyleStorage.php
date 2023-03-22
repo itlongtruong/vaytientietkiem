@@ -58,7 +58,7 @@ class StyleStorage {
         $this->load();
 
         for ($i = count($this->sets) - 1; $i >= 0; $i--) {
-            $this->sets[$i]['system']   = 1;
+            $this->sets[$i]['isSystem'] = 1;
             $this->sets[$i]['editable'] = 0;
             array_unshift($sets, $this->sets[$i]);
         }
@@ -72,7 +72,7 @@ class StyleStorage {
         if (isset($this->stylesBySet[$referenceKey])) {
             $_styles = &$this->stylesBySet[$referenceKey];
             for ($i = count($_styles) - 1; $i >= 0; $i--) {
-                $_styles[$i]['system']   = 1;
+                $_styles[$i]['isSystem'] = 1;
                 $_styles[$i]['editable'] = 0;
                 array_unshift($styles, $_styles[$i]);
             }
@@ -85,7 +85,7 @@ class StyleStorage {
         $this->load();
 
         if (isset($this->stylesById[$id])) {
-            $this->stylesById[$id]['system']   = 1;
+            $this->stylesById[$id]['isSystem'] = 1;
             $this->stylesById[$id]['editable'] = 0;
             $style                             = $this->stylesById[$id];
         }

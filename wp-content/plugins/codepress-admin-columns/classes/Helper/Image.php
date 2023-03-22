@@ -20,7 +20,15 @@ class Image {
 	 *
 	 * @return false|string
 	 */
-	public function resize( $file, $max_w, $max_h, $crop = false, $suffix = null, $dest_path = null, $jpeg_quality = 90 ) {
+	public function resize(
+		$file,
+		$max_w,
+		$max_h,
+		$crop = false,
+		$suffix = null,
+		$dest_path = null,
+		$jpeg_quality = 90
+	) {
 		$editor = wp_get_image_editor( $file );
 
 		if ( is_wp_error( $editor ) ) {
@@ -66,30 +74,43 @@ class Image {
 	 * @param int          $id
 	 * @param string|array $size
 	 *
-	 * @return string
+	 * @return string|false
 	 */
 	public function get_image_by_id( $id, $size ) {
-		$image = false;
-
 		if ( ! is_numeric( $id ) ) {
 			return false;
 		}
 
+		$attributes = wp_get_attachment_image_src( $id, $size );
+
 		// Is Image
-		if ( $attributes = wp_get_attachment_image_src( $id, $size ) ) {
-			$src = $attributes[0];
+		if ( $attributes ) {
+			[ $src, $width, $height ] = $attributes;
 
 			if ( is_array( $size ) ) {
 				$image = $this->markup_cover( $src, $size[0], $size[1], $id );
 			} else {
-				$image = $this->markup( $src, $attributes[1], $attributes[2], $id );
+				// In case of SVG
+				if ( 1 === (int) $width && 1 === (int) $height ) {
+					$_size = $this->get_image_sizes_by_name( $size );
+					$width = $_size['width'];
+					$height = $_size['height'];
+				}
+
+				$image = $this->markup( $src, $width, $height, $id );
 			}
-		} // Is File, use icon
-		else if ( $attributes = wp_get_attachment_image_src( $id, $size, true ) ) {
-			$image = $this->markup( $attributes[0], $this->scale_size( $attributes[1], 0.8 ), $this->scale_size( $attributes[2], 0.8 ), $id, true );
+
+			return $image;
 		}
 
-		return $image;
+		$attributes = wp_get_attachment_image_src( $id, $size, true );
+
+		// Is File, use icon
+		if ( $attributes ) {
+			return $this->markup( $attributes[0], $this->scale_size( $attributes[1], 0.8 ), $this->scale_size( $attributes[2], 0.8 ), $id, true );
+		}
+
+		return false;
 	}
 
 	/**
@@ -98,7 +119,7 @@ class Image {
 	 *
 	 * @return float
 	 */
-	private function scale_size( $size, $scale = 1 ) {
+	private function scale_size( $size, $scale = 1 ): float {
 		return round( absint( $size ) * $scale );
 	}
 
@@ -127,20 +148,17 @@ class Image {
 
 		if ( is_file( $image_path ) ) {
 			// try to resize image if it is not already resized
-			if ( ! $this->is_resized_image( $image_path ) && $resized = $this->resize( $image_path, $dimensions[0], $dimensions[1], true ) ) {
+			if ( ! $this->is_resized_image( $image_path ) && ( $resized = $this->resize( $image_path, $dimensions[0], $dimensions[1], true ) ) ) {
 				$src = str_replace( WP_CONTENT_DIR, WP_CONTENT_URL, $resized );
 
-				$image = $this->markup( $src, $dimensions[0], $dimensions[1] );
-			} else {
-
-				$image = $this->markup( $url, $dimensions[0], $dimensions[1] );
+				return $this->markup( $src, $dimensions[0], $dimensions[1] );
 			}
-		} // External image
-		else {
-			$image = $this->markup_cover( $image_path, $dimensions[0], $dimensions[1] );
+
+			return $this->markup( $url, $dimensions[0], $dimensions[1] );
 		}
 
-		return $image;
+		// External image
+		return $this->markup_cover( $image_path, $dimensions[0], $dimensions[1] );
 	}
 
 	/**
@@ -328,8 +346,11 @@ class Image {
 		}
 
 		$dom = new DOMDocument;
-		@$dom->loadHTML( $string );
+
+		libxml_use_internal_errors( true );
+		$dom->loadHTML( $string );
 		$dom->preserveWhiteSpace = false;
+		libxml_clear_errors();
 
 		$urls = [];
 

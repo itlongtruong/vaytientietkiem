@@ -5,6 +5,7 @@ namespace Nextend\SmartSlider3\Application\Admin\Layout\Block\Forms\FloatingMenu
 
 
 use Nextend\Framework\Asset\Js\Js;
+use Nextend\Framework\Sanitize;
 use Nextend\Framework\View\AbstractBlock;
 use Nextend\Framework\View\Html;
 use Nextend\SmartSlider3\Application\Admin\Layout\Block\Forms\Button\AbstractButton;
@@ -94,9 +95,9 @@ class BlockFloatingMenu extends AbstractBlock {
 
     public function renderAttributes() {
 
-        echo Html::renderAttributes($this->attributes + array(
+        echo wp_kses(Html::renderAttributes($this->attributes + array(
                 'class' => implode(' ', $this->classes)
-            ));
+            )), Sanitize::$adminTemplateTags);
     }
 
     public function setAttribute($name, $value) {

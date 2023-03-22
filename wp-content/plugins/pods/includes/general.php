@@ -5,12 +5,13 @@
 
 use Pods\Admin\Settings;
 use Pods\API\Whatsit\Value_Field;
+use Pods\Config_Handler;
+use Pods\Permissions;
+use Pods\Data\Map_Field_Values;
 use Pods\Whatsit;
 use Pods\Whatsit\Field;
 use Pods\Whatsit\Pod;
 use Pods\Whatsit\Store;
-use Pods\Permissions;
-use Pods\Static_Cache;
 
 /**
  * Standardize queries and error reporting. It replaces @wp_ with $wpdb->prefix.
@@ -134,6 +135,17 @@ function pods_message( $message, $type = null, $return = false ) {
 		$class = 'error';
 	}
 
+	// Maybe handle WP-CLI messages.
+	if ( defined( 'WP_CLI' ) ) {
+		if ( 'error' === $type ) {
+			WP_CLI::warning( $message );
+		} else {
+			WP_CLI::line( $message );
+		}
+
+		return null;
+	}
+
 	$html = '<div id="message" class="' . esc_attr( $class ) . ' fade"><p>' . $message . '</p></div>';
 
 	if ( $return ) {
@@ -141,9 +153,22 @@ function pods_message( $message, $type = null, $return = false ) {
 	}
 
 	echo $html;
+
+	return null;
 }
 
 $GLOBALS['pods_errors'] = array();
+
+/**
+ * The default exception handler for Pods errors.
+ *
+ * @since 2.9.4
+ *
+ * @param string|array $error The error message(s) to be thrown / displayed.
+ */
+function pods_error_exception( $error ) {
+	pods_error( $error, 'final_exception' );
+}
 
 /**
  * Error Handling which throws / displays errors
@@ -177,10 +202,14 @@ function pods_error( $error, $obj = null ) {
 	}
 
 	if ( is_object( $error ) && 'Exception' === get_class( $error ) ) {
+		$error_mode = 'exception';
+
+		if ( 'final_exception' === $display_errors ) {
+			$error_mode = 'exit';
+		}
+
 		/** @var Exception $error */
 		$error = $error->getMessage();
-
-		$error_mode = 'exception';
 	}
 
 	/**
@@ -207,15 +236,6 @@ function pods_error( $error, $obj = null ) {
 	 * @param object|boolean|string|null $obj
 	 */
 	$error_mode = apply_filters( 'pods_error_mode', $error_mode, $error, $obj );
-
-	/**
-	 * Allow filtering whether to force the error mode in cases where multiple exceptions have been used.
-	 *
-	 * @since 2.8.11
-	 *
-	 * @param bool $error_mode_force Whether to force the error mode in cases where multiple exceptions have been used.
-	 */
-	$error_mode_force = apply_filters( 'pods_error_mode_force', false );
 
 	if ( is_array( $error ) ) {
 		$error = array_map( 'wp_kses_post', $error );
@@ -250,17 +270,12 @@ function pods_error( $error, $obj = null ) {
 		$wp_error = new WP_Error( 'pods-error-' . md5( $error ), $error );
 	}//end if
 
-	$last_error = $pods_errors;
-
 	$pods_errors = array();
-
-	if ( $last_error === $error && 'exception' === $error_mode && ! $error_mode_force ) {
-		$error_mode = 'exit';
-	}
 
 	// Support testing debug messages.
 	if ( function_exists( 'codecept_debug' ) ) {
 		codecept_debug( 'Pods Debug Error: ' . $error );
+		pods_debug( debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS ) );
 	}
 
 	if ( ! empty( $error ) ) {
@@ -284,7 +299,7 @@ function pods_error( $error, $obj = null ) {
 			$exception_fallback_enabled = apply_filters( 'pods_error_exception_fallback_enabled', true, $error );
 
 			if ( $exception_fallback_enabled ) {
-				set_exception_handler( 'pods_error' );
+				set_exception_handler( 'pods_error_exception' );
 			}
 
 			throw new Exception( $error );
@@ -322,20 +337,53 @@ function pods_error( $error, $obj = null ) {
 }
 
 /**
+ * Get the last known timing difference.
+ *
+ * @since 2.9.10
+ *
+ * @return float The last known timing difference.
+ */
+function pods_get_timing() {
+	static $timer;
+
+	$now = microtime( true );
+
+	if ( ! $timer ) {
+		$timer = $now;
+	}
+
+	$last_diff = $now - $timer;
+
+	$timer = $now;
+
+	return $last_diff;
+}
+
+/**
+ * Get the last known timing difference as text.
+ *
+ * @since 2.9.10
+ *
+ * @return string The last known timing difference as text.
+ */
+function pods_get_debug_timing() {
+	return '[debug timing: ' . number_format( pods_get_timing(), 4 ) . 's]';
+}
+
+/**
  * Debug variable used in pods_debug to count the instances debug is used
  */
 global $pods_debug;
 $pods_debug = 0;
+
 /**
- * Debugging common issues using this function saves a few lines and is compatible with
- *
- * @param mixed   $debug The error message to be thrown / displayed
- * @param boolean $die   If set to true, a die() will occur, if set to (int) 2 then a wp_die() will occur
- * @param string  $prefix
- *
- * @return void
+ * Output information about a variable using var_dump() to save a few lines and is compatible with Xdebug and WP-CLI.
  *
  * @since 2.0.0
+ *
+ * @param mixed   $debug  The error message to be thrown / displayed.
+ * @param bool    $die    If set to true, a die() will occur, if set to (int) 2 then a wp_die() will occur.
+ * @param string  $prefix Extra information to output above the debug information.
  */
 function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 	global $pods_debug;
@@ -343,11 +391,12 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 	$pods_debug ++;
 
 	if ( function_exists( 'codecept_debug' ) ) {
+
 		if ( ! is_string( $debug ) ) {
 			$debug = var_export( $debug, true );
 		}
 
-		codecept_debug( 'Pods Debug: ' . $debug );
+		codecept_debug( 'Pods Debug: ' . $debug . ' ' . pods_get_debug_timing() );
 
 		return;
 	}
@@ -368,11 +417,23 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 		var_dump( $prefix );
 	}
 
+	$debug_line_number = 0;
+
 	if ( '_null' !== $debug ) {
 		var_dump( $debug );
+
+		$debug_line_number = __LINE__ - 2;
 	} else {
-		var_dump( 'Pods Debug #' . $pods_debug );
+		var_dump( 'Pods Debug #' . $pods_debug . ' ' . pods_get_debug_timing() );
+
+		$debug_line_number = __LINE__ - 2;
 	}
+
+	$debug_line_check = sprintf(
+		'<small>%s:%s:</small>',
+		__FILE__,
+		$debug_line_number
+	);
 
 	$debug = ob_get_clean();
 
@@ -382,6 +443,19 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 		}
 
 		$debug = '<pre>' . $debug . '</pre>';
+	} elseif ( false !== strpos( $debug, $debug_line_check ) ) {
+		// Attempt to replace the backtrace file/line from our var_dump() above with where the pods_debug() itself was called.
+		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 2 );
+
+		if ( ! empty( $backtrace[0] ) ) {
+			$debug_line_replace = sprintf(
+				'<small>%s:%s:</small>',
+				$backtrace[0]['file'],
+				$backtrace[0]['line']
+			);
+
+			$debug = str_replace( $debug_line_check, $debug_line_replace, $debug );
+		}
 	}
 
 	$debug = '<e>' . $debug;
@@ -393,6 +467,70 @@ function pods_debug( $debug = '_null', $die = false, $prefix = '_null' ) {
 	}
 
 	echo $debug;
+}
+
+/**
+ * Log debug information if WP_DEBUG_LOG is used.
+ *
+ * @since 2.9.12
+ *
+ * @param mixed $debug The error message to be thrown / displayed.
+ */
+function pods_debug_log( $debug ) {
+	// Maybe support additional arguments.
+	if ( 1 < func_get_args() ) {
+		$debug = func_get_args();
+	}
+
+	if ( function_exists( 'codecept_debug' ) || defined( 'WP_CLI' ) ) {
+		pods_debug( $debug, false, 'Output from pods_debug_log()' );
+	}
+
+	if ( in_array( strtolower( (string) WP_DEBUG_LOG ), array( 'true', '1' ), true ) ) {
+		$log_path = WP_CONTENT_DIR . '/debug.log';
+	} elseif ( is_string( WP_DEBUG_LOG ) ) {
+		$log_path = WP_DEBUG_LOG;
+	} else {
+		return;
+	}
+
+	ob_start();
+
+	var_dump( $debug );
+
+	$debug_line_number = __LINE__ - 2;
+
+	$debug_line_check = sprintf(
+		'<small>%s:%s:</small>',
+		__FILE__,
+		$debug_line_number
+	);
+
+	$debug = ob_get_clean();
+
+	if ( false === strpos( $debug, "<pre class='xdebug-var-dump'" ) ) {
+		if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) {
+			$debug = esc_html( $debug );
+		}
+	} elseif ( false !== strpos( $debug, $debug_line_check ) ) {
+		// Attempt to replace the backtrace file/line from our var_dump() above with where the pods_debug() itself was called.
+		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 2 );
+
+		if ( ! empty( $backtrace[0] ) ) {
+			$debug_line_replace = sprintf(
+				'<small>%s:%s:</small>',
+				$backtrace[0]['file'],
+				$backtrace[0]['line']
+			);
+
+			$debug = str_replace( $debug_line_check, $debug_line_replace, $debug );
+		}
+	}
+
+	$debug = 'pods_debug_log: ' . $debug;
+
+	// Log the debug line.
+	error_log( $debug, 0, $log_path );
 }
 
 /**
@@ -618,6 +756,20 @@ function pods_light() {
 }
 
 /**
+ * Determine whether Pods is in a demo from pods.io or not.
+ *
+ * @return bool Whether Pods is in a demo.
+ *
+ * @since TBD
+ */
+function pods_is_demo() {
+	return (
+		1 === (int) pods_v( 'pods_wasm_demo' )
+		|| 1 === (int) pods_v( 'pods_demo' )
+	);
+}
+
+/**
  * Determine if Strict Mode is enabled
  *
  * @param bool $include_debug Whether to include WP_DEBUG in strictness level
@@ -748,16 +900,18 @@ function pods_deprecated( $function, $version, $replacement = null ) {
 /**
  * Inline help
  *
- * @param string $text Help text
- * @param string $url  Documentation URL
+ * @param string      $text      Help text.
+ * @param null|string $url       Documentation URL.
+ * @param null|string $container The HTML container path for where the inline help will live.
  *
  * @return void
  *
  * @since 2.0.0
  */
-function pods_help( $text, $url = null ) {
+function pods_help( $text, $url = null, $container = null ) {
 	if ( ! wp_script_is( 'jquery-qtip2', 'registered' ) ) {
 		wp_register_script( 'jquery-qtip2', PODS_URL . 'ui/js/qtip/jquery.qtip.min.js', array( 'jquery' ), '3.0.3' );
+		wp_enqueue_script( 'jquery-qtip2' );
 	} elseif ( ! wp_script_is( 'jquery-qtip2', 'queue' ) && ! wp_script_is( 'jquery-qtip2', 'to_do' ) && ! wp_script_is( 'jquery-qtip2', 'done' ) ) {
 		wp_enqueue_script( 'jquery-qtip2' );
 	}
@@ -770,6 +924,24 @@ function pods_help( $text, $url = null ) {
 		pods_form_enqueue_script( 'pods-qtip-init' );
 	} elseif ( ! wp_script_is( 'pods-qtip-init', 'queue' ) && ! wp_script_is( 'pods-qtip-init', 'to_do' ) && ! wp_script_is( 'pods-qtip-init', 'done' ) ) {
 		pods_form_enqueue_script( 'pods-qtip-init' );
+	}
+
+	pods_form_enqueue_script( 'pods' );
+	pods_form_enqueue_style( 'pods' );
+
+	static $pods_qtip_added = [];
+
+	if ( null !== $container && ! isset( $pods_qtip_added[ $container ] ) ) {
+		wp_add_inline_script(
+			'pods',
+			"
+				jQuery( function ( $ ) {
+					$( document ).Pods( 'qtip', '" . esc_js( $container ) . "' );
+				} );
+			"
+		);
+
+		$pods_qtip_added[ $container ] = true;
 	}
 
 	if ( is_array( $text ) ) {
@@ -1923,15 +2095,17 @@ function pods_function_or_file( $function_or_file, $function_name = null, $file_
 /**
  * Redirects to another page.
  *
- * @param string  $location The path to redirect to
- * @param int     $status   Status code to use
- * @param boolean $die      If true, PHP code exection will stop
- *
- * @return void
- *
  * @since 2.0.0
+ *
+ * @param string|null $location The path to redirect to.
+ * @param int         $status   Status code to use.
+ * @param boolean     $die      If true, PHP code exection will stop.
  */
-function pods_redirect( $location, $status = 302, $die = true ) {
+function pods_redirect( $location = null, $status = 302, $die = true ) {
+	if ( empty( $location ) ) {
+		$location = $_SERVER['REQUEST_URI'];
+	}
+
 	if ( ! headers_sent() ) {
 		wp_redirect( $location, $status );
 		if ( $die ) {
@@ -2036,7 +2210,7 @@ function pods_by_title( $title, $output = OBJECT, $type = 'page', $status = null
 /**
  * Get a field value from a Pod.
  *
- * @param string|null  $pod    The pod name.
+ * @param string|null  $pod    The pod name, or if you are in The Loop then you can just provide the field name to auto-detect pod/id using loop information.
  * @param mixed|null   $id     The ID or slug of the item.
  * @param string|array $name   The field name, or an associative array of parameters.
  * @param boolean      $single For tableless fields, to return the whole array or the just the first item.
@@ -2070,9 +2244,59 @@ function pods_field( $pod, $id = null, $name = null, $single = false ) {
 }
 
 /**
+ * Get the data field value.
+ *
+ * @since 2.9.4
+ *
+ * @param Pods|string|null $obj        The pod name or Pods object.
+ * @param string           $field_name The field name.
+ *
+ * @return mixed The data field value.
+ */
+function pods_data_field( $obj, $field_name ) {
+	if ( is_string( $obj ) ) {
+		$obj = pods( $obj );
+	}
+
+	$traverse_fields = explode( '.', $field_name );
+	$is_traversal    = 1 < count( $traverse_fields );
+	$first_field     = $traverse_fields[0];
+
+	// Get the first field name data.
+	$field_data = $obj ? $obj->fields( $first_field ) : null;
+
+	// Ensure the field name is using the correct name and not the alias.
+	if ( $field_data ) {
+		$first_field = $field_data['name'];
+
+		if ( ! $is_traversal ) {
+			$field_name = $first_field;
+		}
+	}
+
+	if ( $obj && ! $field_data && ! $is_traversal ) {
+		// Get the full field name data.
+		$field_data = $obj->fields( $field_name );
+	}
+
+	$is_field_set = false;
+
+	if ( $field_data instanceof Object_Field ) {
+		$is_field_set = true;
+	} elseif ( $field_data instanceof Field ) {
+		$is_field_set = true;
+	}
+
+	// Handle custom/supported value mappings.
+	$map_field_values = pods_container( Map_Field_Values::class );
+
+	return $map_field_values->map_value( $first_field, $traverse_fields, $is_field_set ? $field_data : null, $obj );
+}
+
+/**
  * Get a field display value from a Pod.
  *
- * @param string|null  $pod    The pod name.
+ * @param string|null  $pod    The pod name, or if you are in The Loop then you can just provide the field name to auto-detect pod/id using loop information.
  * @param mixed|null   $id     The ID or slug of the item.
  * @param string|array $name   The field name, or an associative array of parameters.
  * @param boolean      $single For tableless fields, to return the whole array or the just the first item.
@@ -2507,31 +2731,103 @@ function pods_template_part( $template, $data = null, $return = false ) {
 }
 
 /**
- * Add a new Pod outside of the DB
- *
- * @see   PodsMeta::register
+ * Add a new Pod outside of the DB.
  *
  * @param string $type   The pod type ('post_type', 'taxonomy', 'media', 'user', 'comment')
  * @param string $name   The pod name
- * @param array  $object (optional) Pod array, including any 'fields' arrays
+ * @return array|boolean|WP_Error Field data or WP_Error if unsuccessful.
  *
  * @return array|boolean Pod data or false if unsuccessful
  * @since 2.1.0
  */
 function pods_register_type( $type, $name, $object = null ) {
 	if ( empty( $object ) ) {
-		$object = array();
+		$object = [];
 	}
 
 	if ( ! empty( $name ) ) {
 		$object['name'] = $name;
 	}
 
-	return pods_meta()->register( $type, $object );
+	if ( ! empty( $type ) ) {
+		$object['type'] = $type;
+	}
+
+	if ( ! isset( PodsMeta::$queue[ $object['type'] ] ) ) {
+		PodsMeta::$queue[ $object['type'] ] = [];
+	}
+
+	$groups = [];
+	$fields = [];
+
+	if ( isset( $object['groups'] ) ) {
+		$groups = $object['groups'];
+
+		unset( $object['groups'] );
+	}
+
+	if ( isset( $object['fields'] ) ) {
+		$fields = $object['fields'];
+
+		unset( $object['fields'] );
+	}
+
+	// Maybe set the code source for this type.
+	if (
+		! isset( $object['_pods_code_source'] )
+		&& (
+			! isset( $object['object_storage_type'] )
+			|| 'file' !== $object['object_storage_type']
+		)
+	) {
+		$debug_info = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 3 );
+
+		foreach ( $debug_info as $debug ) {
+			// Skip Pods-related and WP-related hook registrations.
+			if ( 0 === strpos( $debug['file'], PODS_DIR ) || 0 === strpos( $debug['file'], WPINC ) ) {
+				continue;
+			}
+
+			$object['_pods_code_source'] = sprintf(
+				'%s : %s %d',
+				$debug['file'],
+				esc_html__( 'Line', 'pods' ),
+				$debug['line']
+			);
+
+			break;
+		}
+	}
+
+	$registered = pods_register_object( $object, 'pod' );
+
+	if ( true === $registered ) {
+		try {
+			$object_collection = Store::get_instance();
+
+			$registered_object = $object_collection->get_object( 'pod/' . $object['name'] );
+
+			if ( $registered_object ) {
+				PodsMeta::$queue[ $object['type'] ][ $object['name'] ] = $registered_object;
+			}
+		} catch ( Exception $exception ) {
+			return new WP_Error( 'pods-register-type-error', $exception->getMessage() );
+		}
+	}
+
+	foreach ( $groups as $group ) {
+		pods_register_group( $group, $object['name'] );
+	}
+
+	foreach ( $fields as $field ) {
+		pods_register_field( $object['name'], $field['name'], $field );
+	}
+
+	return $registered;
 }
 
 /**
- * Add a new Pod field outside of the DB
+ * Add a new Pod field outside of the DB.
  *
  * @see   PodsMeta::register_field
  *
@@ -2539,19 +2835,23 @@ function pods_register_type( $type, $name, $object = null ) {
  * @param string       $name   The name of the Pod
  * @param array        $object (optional) Pod array, including any 'fields' arrays
  *
- * @return array|boolean Field data or false if unsuccessful
+ * @return array|boolean|WP_Error Field data or WP_Error if unsuccessful.
  * @since 2.1.0
  */
 function pods_register_field( $pod, $name, $field = null ) {
+	$pod_name = is_string( $pod ) ? $pod : $pod['name'];
+
 	if ( empty( $field ) ) {
-		$field = array();
+		$field = [];
 	}
 
 	if ( ! empty( $name ) ) {
 		$field['name'] = $name;
 	}
 
-	return pods_meta()->register_field( $pod, $field );
+	$field['parent'] = 'pod/' . $pod_name;
+
+	return pods_register_object( $field, 'field' );
 }
 
 /**
@@ -2594,11 +2894,18 @@ function pods_register_related_object( $name, $label, $options = null ) {
  * @return true|WP_Error True if successful, or else an WP_Error with the problem.
  */
 function pods_register_object( array $object, $type ) {
-	$object['object_type']  = $type;
-	$object['object_storage_type'] = 'collection';
+	$object['object_type'] = $type;
 
-	$object_collection = Store::get_instance();
-	$object_collection->register_object( $object );
+	if ( ! isset( $object['object_storage_type'] ) || 'post_type' === $object['object_storage_type'] ) {
+		$object['object_storage_type'] = 'collection';
+	}
+
+	try {
+		$object_collection = Store::get_instance();
+		$object_collection->register_object( $object );
+	} catch ( Exception $exception ) {
+		return new WP_Error( 'pods-register-object-error', $exception->getMessage() );
+	}
 
 	return true;
 }
@@ -2614,8 +2921,16 @@ function pods_register_object( array $object, $type ) {
  *
  * @return true|WP_Error True if successful, or else an WP_Error with the problem.
  */
-function pods_register_group( array $group, $pod, array $fields ) {
-	$group['parent'] = 'pod/' . $pod;
+function pods_register_group( array $group, $pod, array $fields = [] ) {
+	$pod_name = is_string( $pod ) ? $pod : $pod['name'];
+
+	$group['parent'] = 'pod/' . $pod_name;
+
+	if ( isset( $group['fields'] ) ) {
+		$fields = $group['fields'];
+
+		unset( $group['fields'] );
+	}
 
 	pods_register_object( $group, 'group' );
 
@@ -2638,8 +2953,11 @@ function pods_register_group( array $group, $pod, array $fields ) {
  * @return true|WP_Error True if successful, or else an WP_Error with the problem.
  */
 function pods_register_group_field( array $field, $group, $pod ) {
-	$field['parent'] = 'pod/' . $pod;
-	$field['group']  = $group;
+	$pod_name   = is_string( $pod ) ? $pod : $pod['name'];
+	$group_name = is_string( $group ) ? $group : $group['name'];
+
+	$field['parent'] = 'pod/' . $pod_name;
+	$field['group']  = $group_name;
 
 	pods_register_object( $field, 'field' );
 
@@ -2710,6 +3028,79 @@ function pods_register_block_collection( array $collection ) {
 	$object_collection->register_object( $collection );
 
 	return true;
+}
+
+/**
+ * Register a custom config file to use with Pods configs.
+ *
+ * @since 2.9.0
+ *
+ * @param string $file        The config file to use.
+ * @param string $config_type The config file type to use (defaults to json).
+ */
+function pods_register_config_file( $file, $config_type = 'json' ) {
+	try {
+		$config_handler = pods_container( Config_Handler::class );
+
+		$config_handler->register_file( $file, $config_type );
+	} catch ( Exception $exception ) {
+		// Container does not exist yet, we cannot do anything at this point.
+	}
+}
+
+/**
+ * Register a custom config path to use with Pods configs.
+ *
+ * @since 2.9.0
+ *
+ * @param string $path The config path to use.
+ */
+function pods_register_config_path( $path ) {
+	try {
+		$config_handler = pods_container( Config_Handler::class );
+
+		$config_handler->register_path( $path );
+	} catch ( Exception $exception ) {
+		// Container does not exist yet, we cannot do anything at this point.
+	}
+}
+
+/**
+ * Register a custom config type to use with Pods configs.
+ *
+ * For custom config types, use the pods_config_parse_$type filter along with this to support other format parsing.
+ *
+ * Default support for json and yml can be filtered with the pods_config_parse filter to override them.
+ *
+ * @since 2.9.0
+ *
+ * @param string $type The config type to use.
+ */
+function pods_register_config_type( $type ) {
+	try {
+		$config_handler = pods_container( Config_Handler::class );
+
+		$config_handler->register_config_type( $type );
+	} catch ( Exception $exception ) {
+		// Container does not exist yet, we cannot do anything at this point.
+	}
+}
+
+/**
+ * Register a custom config item type to use with Pods configs.
+ *
+ * @since 2.9.0
+ *
+ * @param string $item_type The config path to use.
+ */
+function pods_register_config_item_type( $item_type ) {
+	try {
+		$config_handler = pods_container( Config_Handler::class );
+
+		$config_handler->register_config_item_type( $item_type );
+	} catch ( Exception $exception ) {
+		// Container does not exist yet, we cannot do anything at this point.
+	}
 }
 
 /**
@@ -3544,22 +3935,16 @@ function pods_is_modal_window() {
 }
 
 /**
- * Check if the pod object is valid and the pod exists.
+ * Check if the Pods object is exists and is valid.
  *
- * @param Pods|mixed $pod The pod object or something that isn't a pod object
+ * @param Pods|mixed $pod The Pods object or something that isn't a pod object.
  *
- * @return bool Whether the pod object is valid and exists
+ * @return bool Whether the Pods object is exists and is valid.
  *
  * @since 2.7.0
  */
 function pod_is_valid( $pod ) {
-	$is_valid = false;
-
-	if ( $pod && $pod instanceof Pods && $pod->valid() ) {
-		$is_valid = true;
-	}
-
-	return $is_valid;
+	return $pod instanceof Pods && $pod->valid();
 }
 
 /**
@@ -3572,13 +3957,24 @@ function pod_is_valid( $pod ) {
  * @since 2.7.0
  */
 function pod_has_items( $pod ) {
-	$has_items = false;
-
-	if ( pod_is_valid( $pod ) && ( $pod->id && $pod->exists() ) || ( ! empty( $pod->params ) && 0 < $pod->total() ) ) {
-		$has_items = true;
+	if ( ! pod_is_valid( $pod ) ) {
+		return false;
 	}
 
-	return $has_items;
+	if (
+		(
+			$pod->id
+			&& $pod->exists()
+		)
+		|| (
+			! empty( $pod->params )
+			&& 0 < $pod->total()
+		)
+	) {
+		return true;
+	}
+
+	return false;
 }
 
 /**
@@ -3674,16 +4070,13 @@ function pods_config_merge_fields( $configs_to_merge_into, $configs_to_merge_fro
  * @return array[]|Field[] The list of all fields, including object fields.
  */
 function pods_config_get_all_fields( $pod ) {
-	if ( $pod instanceof Pod ) {
-		return $pod->get_all_fields();
-	} elseif ( $pod instanceof Pods ) {
-		return $pod->pod_data->get_all_fields();
+	$pod = pods_config_for_pod( $pod );
+
+	if ( ! $pod ) {
+		return [];
 	}
 
-	$fields        = (array) pods_v( 'fields', $pod, [] );
-	$object_fields = (array) pods_v( 'object_fields', $pod, [] );
-
-	return pods_config_merge_fields( $fields, $object_fields );
+	return $pod->get_all_fields();
 }
 
 /**
@@ -3744,36 +4137,14 @@ function pods_config_get_fields_from_value_fields( array $value_fields ) {
  * @return array|Field|null The field data or null if not found.
  */
 function pods_config_get_field_from_all_fields( $field, $pod, $arg = null ) {
-	// Get the pod data from the Pods object if it's there.
-	if ( $pod instanceof Pods ) {
-		$pod = $pod->pod_data;
-	}
-
-	// Get the field directly from the Pod.
-	if ( $pod instanceof Pod ) {
-		return $pod->get_field( $field, $arg );
-	}
+	$pod = pods_config_for_pod( $pod );
 
 	// The pod isn't there or valid.
 	if ( empty( $pod ) ) {
 		return null;
 	}
 
-	$fields        = (array) pods_v( 'fields', $pod, [] );
-	$object_fields = (array) pods_v( 'object_fields', $pod, [] );
-
-	// Return the object field.
-	if ( isset( $object_fields[ $field ] ) ) {
-		return $object_fields[ $field ];
-	}
-
-	// Return the pod field.
-	if ( isset( $fields[ $field ] ) ) {
-		return $fields[ $field ];
-	}
-
-	// No field found.
-	return null;
+	return $pod->get_field( $field );
 }
 
 /**
@@ -3781,9 +4152,9 @@ function pods_config_get_field_from_all_fields( $field, $pod, $arg = null ) {
  *
  * @since 2.8.0
  *
- * @param Pod|Pods|string $pod The Pod configuration object, Pods() object, or name.
+ * @param Pod|Pods|array|string $pod   The Pod configuration object, Pods() object, old-style array, or name.
  *
- * @return false|Pod The Pod object.
+ * @return false|Pod The Pod object or false if invalid.
  */
 function pods_config_for_pod( $pod ) {
 	if ( $pod instanceof Pod ) {
@@ -3816,9 +4187,64 @@ function pods_config_for_pod( $pod ) {
 		return $pod;
 	}
 
-	// @todo Support arrays in the future by migrating them into a Pod() object.
+	if ( ! is_array( $pod ) ) {
+		return false;
+	}
 
-	return false;
+	$pod = new Pod( $pod );
+
+	if ( ! $pod->is_valid() ) {
+		return false;
+	}
+
+	return $pod;
+}
+
+/**
+ * Get a normalized Field configuration.
+ *
+ * @since 2.9.8
+ *
+ * @param Field|array|string    $field The Field configuration object, Pods() object, old-style array, or name.
+ * @param Pod|Pods|array|string $pod   The Pod configuration object, Pods() object, old-style array, or name.
+ *
+ * @return false|Field The Field object or false if invalid.
+ */
+function pods_config_for_field( $field, $pod = null ) {
+	if ( $field instanceof Field ) {
+		return $field;
+	}
+
+	if ( $pod ) {
+		$pod = pods_config_for_pod( $pod );
+
+		if ( ! $pod ) {
+			$pod = null;
+		}
+	}
+
+	if ( $pod && is_string( $field ) ) {
+		$field = $pod->get_field( $field );
+
+		// Check if the $field is invalid.
+		if ( ! $field ) {
+			return false;
+		}
+
+		return $field;
+	}
+
+	if ( ! is_array( $field ) ) {
+		return false;
+	}
+
+	$field = new Field( $field );
+
+	if ( ! $field->is_valid() ) {
+		return false;
+	}
+
+	return $field;
 }
 
 function is_pods_alternative_cache_activated() {

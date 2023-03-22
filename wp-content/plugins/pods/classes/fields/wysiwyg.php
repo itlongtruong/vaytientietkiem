@@ -40,24 +40,15 @@ class PodsField_WYSIWYG extends PodsField {
 	public function options() {
 
 		$options = array(
-			static::$type . '_repeatable'        => array(
-				'label'             => __( 'Repeatable Field', 'pods' ),
-				'default'           => 0,
-				'type'              => 'boolean',
-				'help'              => __( 'Making a field repeatable will add controls next to the field which allows users to Add/Remove/Reorder additional values. These values are saved in the database as an array, so searching and filtering by them may require further adjustments".', 'pods' ),
-				'boolean_yes_label' => '',
-				'dependency'        => true,
-				'developer_mode'    => true,
-			),
 			static::$type . '_editor'            => array(
 				'label'      => __( 'Editor', 'pods' ),
 				'default'    => 'tinymce',
 				'type'       => 'pick',
 				'data'       => apply_filters(
 					'pods_form_ui_field_wysiwyg_editors', array(
-						'tinymce'  => __( 'TinyMCE (WP Default)', 'pods' ),
+						'tinymce'  => __( 'TinyMCE (WP Default, cannot be used with repeatable fields)', 'pods' ),
 						'quill'    => __( 'Quill Editor (Limited line break functionality)', 'pods' ),
-						'cleditor' => __( 'CLEditor (No longer available, now using Quill Editor)', 'pods' ),
+						'cleditor' => __( 'CLEditor (No longer available, the fallback uses Quill Editor)', 'pods' ),
 					)
 				),
 				'pick_show_select_text' => 0,
@@ -238,9 +229,12 @@ class PodsField_WYSIWYG extends PodsField {
 		$options         = ( is_array( $options ) || is_object( $options ) ) ? $options : (array) $options;
 		$form_field_type = PodsForm::$field_type;
 
-		if ( is_array( $value ) ) {
-			$value = implode( "\n", $value );
+		// Force TinyMCE repeatable fields to not be repeatable because it lacks compatibility.
+		if ( 1 === (int) pods_v( 'repeatable', $options ) && 'tinymce' === pods_v( static::$type . '_editor', $options, 'tinymce', true ) ) {
+			$options['repeatable'] = 0;
 		}
+
+		$value = $this->normalize_value_for_input( $value, $options, "\n" );
 
 		// Normalize the line breaks for React.
 		$value = str_replace( "\r\n", "\n", $value );
@@ -259,10 +253,15 @@ class PodsField_WYSIWYG extends PodsField {
 
 			$field_type = 'textarea';
 		} elseif ( 'tinymce' === pods_v( static::$type . '_editor', $options ) ) {
+			// TinyMCE does not support repeatable.
+			if ( is_array( $value ) ) {
+				$value = implode( "\n", $value );
+			}
+
 			$field_type = 'tinymce';
 
 			// Enforce boolean.
-			$options[ static::$type . '_media_buttons' ]  = filter_var( pods_v( static::$type . '_editor', $options, true ), FILTER_VALIDATE_BOOLEAN );
+			$options[ static::$type . '_media_buttons' ]  = filter_var( pods_v( static::$type . '_media_buttons', $options, true ), FILTER_VALIDATE_BOOLEAN );
 
 			// Set up default editor.
 			// @todo Support this properly in React, which will be a challenge.
@@ -280,7 +279,9 @@ class PodsField_WYSIWYG extends PodsField {
 			$settings['media_buttons'] = false;
 
 			if ( ! ( defined( 'PODS_DISABLE_FILE_UPLOAD' ) && true === PODS_DISABLE_FILE_UPLOAD ) && ! ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && true === PODS_UPLOAD_REQUIRE_LOGIN && ! is_user_logged_in() ) && ! ( defined( 'PODS_UPLOAD_REQUIRE_LOGIN' ) && ! is_bool( PODS_UPLOAD_REQUIRE_LOGIN ) && ( ! is_user_logged_in() || ! current_user_can( PODS_UPLOAD_REQUIRE_LOGIN ) ) ) ) {
-				$settings['media_buttons'] = (boolean) pods_v( static::$type . '_media_buttons', $options, true );
+				$settings['media_buttons'] = $options[ static::$type . '_media_buttons' ];
+			} else {
+				$options[ static::$type . '_media_buttons' ] = false;
 			}
 
 			$editor_height = (int) pods_v( static::$type . '_editor_height', $options, false );
@@ -307,7 +308,14 @@ class PodsField_WYSIWYG extends PodsField {
 				unset( $styles->done[ $found_editor_buttons ] );
 			}
 
+			$found_dashicons = array_search( 'dashicons', $styles->done, true );
+
+			if ( false !== $found_dashicons ) {
+				unset( $styles->done[ $found_dashicons ] );
+			}
+
 			wp_print_styles( 'editor-buttons' );
+			wp_print_styles( 'dashicons' );
 		} elseif ( 'quill' === pods_v( static::$type . '_editor', $options ) ) {
 			$field_type = 'quill';
 		} elseif ( 'cleditor' === pods_v( static::$type . '_editor', $options ) ) {

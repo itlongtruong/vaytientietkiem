@@ -367,7 +367,7 @@ class WPSEO_Addon_Manager {
 		if ( $subscription && $this->has_subscription_expired( $subscription ) ) {
 			echo '<br><br>';
 			/* translators: %1$s is the plugin name, %2$s and %3$s are a link. */
-			echo '<strong><span class="wp-ui-text-notification alert dashicons dashicons-warning"></span> ' . sprintf( esc_html__( 'A new version of %1$s is available. %2$sRenew your subscription%3$s if you want to update to the latest version.', 'wordpress-seo' ), esc_html( $plugin_data['name'] ), '<a href="' . esc_attr( WPSEO_Shortlinker::get( 'https://yoa.st/4ey' ) ) . '">', '</a>' ) . '</strong>';
+			echo '<strong><span class="wp-ui-text-notification alert dashicons dashicons-warning"></span> ' . sprintf( esc_html__( 'A new version of %1$s is available. %2$sRenew your subscription%3$s if you want to update to the latest version.', 'wordpress-seo' ), esc_html( $plugin_data['name'] ), '<a href="' . esc_url( WPSEO_Shortlinker::get( 'https://yoa.st/4ey' ) ) . '">', '</a>' ) . '</strong>';
 		}
 	}
 
@@ -671,7 +671,12 @@ class WPSEO_Addon_Manager {
 		global $pagenow;
 
 		// Force re-check on license & dashboard pages.
-		$current_page = $this->get_current_page();
+		$current_page = null;
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
+		if ( isset( $_GET['page'] ) && is_string( $_GET['page'] ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Reason: We are not processing form information, We are only strictly comparing and thus no need to sanitize.
+			$current_page = wp_unslash( $_GET['page'] );
+		}
 
 		// Check whether the licenses are valid or whether we need to show notifications.
 		$quick = ( $current_page === 'wpseo_licenses' || $current_page === 'wpseo_dashboard' );
@@ -685,17 +690,6 @@ class WPSEO_Addon_Manager {
 		}
 
 		return get_transient( self::SITE_INFORMATION_TRANSIENT );
-	}
-
-	/**
-	 * Returns the current page.
-	 *
-	 * @codeCoverageIgnore
-	 *
-	 * @return string The current page.
-	 */
-	protected function get_current_page() {
-		return filter_input( INPUT_GET, 'page' );
 	}
 
 	/**

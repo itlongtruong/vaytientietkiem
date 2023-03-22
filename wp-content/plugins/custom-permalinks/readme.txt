@@ -1,8 +1,8 @@
 === Custom Permalinks ===
 Contributors: sasiddiqui
 Tags: permalink, url, link, address, custom, redirect, custom post type, GDPR, GDPR Compliant
-Tested up to: 6.0
-Stable tag: 2.4.0
+Tested up to: 6.1
+Stable tag: 2.5.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -17,8 +17,6 @@ Lay out your site the way *you* want it. Set the URL of any post, page, tag or c
 > Be warned: *This plugin is not a replacement for WordPress's built-in permalink system*. Check your WordPress administration's "Permalinks" settings page first, to make sure that this doesn't already meet your needs.
 
 This plugin is only useful for assigning custom permalinks for *individual* posts, pages, tags or categories. It will not apply whole permalink structures or automatically apply a category's custom permalink to the posts within that category.
-
-> If anyone wants the different Structure Tags for their Post types or use symbols in the URLs So, use the [Permalinks Customizer](https://wordpress.org/plugins/permalinks-customizer/) which is a fork of this plugin and contains the enhancement of this plugin.
 
 == Privacy Policy ==
 
@@ -199,6 +197,23 @@ This process defines you the steps to follow either you are installing through W
 
 == Changelog ==
 
+= 2.5.2 - Feb 14, 2023 =
+
+* Bug
+  * [Error in new update](https://wordpress.org/support/topic/error-in-new-update-3/)
+
+= 2.5.1 - Feb 14, 2023 =
+
+* Bug
+  * [“http//” is added in front of permalinks](https://github.com/samiahmedsiddiqui/custom-permalinks/issues/71)
+
+= 2.5.0 - Jan 02, 2023 =
+
+* Bugs
+  * [Retreiving info from installed plugin (GDPR)](https://wordpress.org/support/topic/retreiving-info-from-installed-plugin-gdpr/)
+* Enhancement
+	* Same permalink with WPML different domain
+
 = 2.4.0 - Nov 26, 2021 =
 
 * Bugs
@@ -208,16 +223,6 @@ This process defines you the steps to follow either you are installing through W
   * [Notice: Undefined variable: site_url in custom-permalinks/admin/class-custom-permalinks-post-types-table.php on line 306](https://github.com/samiahmedsiddiqui/custom-permalinks/issues/56)
 * Enhancements
   * [Pending Post Preview Link](https://wordpress.org/support/topic/pending-post-preview-link/)
-
-= 2.3.0 - Sep 21, 2021 =
-
-* Bugs
-  * [is_numeric warning in plugin API](https://wordpress.org/support/topic/is_numeric-error-for-plugin-api/)
-  * [Missing default WP redirect from URLs with no ending trailing slash](https://wordpress.org/support/topic/missing-default-wp-redirect-from-urls-with-no-ending-trailing-slash/)
-  * [trailing slash](https://wordpress.org/support/topic/trailing-slash-9/)
-  * Fixed JS Error on updating Static page
-* Enhancements
-  * Allow period in the permalink
 
 = Earlier versions =
 

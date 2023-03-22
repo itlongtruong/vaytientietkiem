@@ -4,6 +4,7 @@
 namespace Nextend\SmartSlider3\Application\Admin\Layout\Block\Core\AdminEditor;
 
 
+use Nextend\Framework\Sanitize;
 use Nextend\Framework\View\AbstractBlock;
 use Nextend\Framework\View\Html;
 use Nextend\SmartSlider3\Application\Admin\Layout\Block\Slide\EditorOverlay\BlockEditorOverlay;
@@ -56,10 +57,10 @@ class BlockAdminEditor extends AbstractBlock {
 
     public function renderAttributes() {
 
-        echo Html::renderAttributes($this->attributes + array(
+        echo wp_kses(Html::renderAttributes($this->attributes + array(
                 'id'    => $this->id,
                 'class' => implode(' ', $this->classes)
-            ));
+            )), Sanitize::$adminTemplateTags);
     }
 
     public function displayEditorOverlay() {

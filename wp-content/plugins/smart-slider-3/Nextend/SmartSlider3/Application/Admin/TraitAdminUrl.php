@@ -2,6 +2,7 @@
 
 namespace Nextend\SmartSlider3\Application\Admin;
 
+use JUri;
 use Nextend\Framework\Pattern\MVCHelperTrait;
 
 trait TraitAdminUrl {
@@ -659,13 +660,7 @@ trait TraitAdminUrl {
      *
      * @return string
      */
-    public function getUrlHelpCurl() {
-        return $this->createUrl(array(
-            'help/index',
-            array(
-                'curl' => 1
-            )
-        ));
+    public function getUrlHelpRepairDatabase() {
     }
 
     public function getUrlUpdateDownload() {

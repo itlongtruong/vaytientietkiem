@@ -193,16 +193,7 @@ class PostsTerms {
 	 * @return string            The custom field content.
 	 */
 	private static function getAnalysisContent( $post = null ) {
-		$post            = ( $post && is_object( $post ) ) ? $post : aioseo()->helpers->getPost( $post );
-		$customFieldKeys = aioseo()->dynamicOptions->searchAppearance->postTypes->{$post->post_type}->customFields;
-
-		if ( empty( $customFieldKeys ) ) {
-			return get_post_field( 'post_content', $post->ID );
-		}
-
-		$customFieldKeys    = explode( ' ', sanitize_text_field( $customFieldKeys ) );
-		$customFieldContent = aioseo()->helpers->getCustomFieldsContent( $post->ID, $customFieldKeys );
-		$analysisContent    = $post->post_content . apply_filters( 'aioseo_analysis_content', $customFieldContent );
+		$analysisContent = apply_filters( 'aioseo_analysis_content', aioseo()->helpers->getPostContent( $post ) );
 
 		return sanitize_post_field( 'post_content', $analysisContent, $post->ID, 'display' );
 	}
@@ -237,7 +228,6 @@ class PostsTerms {
 		$body['twitter_title']       = ! empty( $body['twitter_title'] ) ? sanitize_text_field( $body['twitter_title'] ) : null;
 		$body['twitter_description'] = ! empty( $body['twitter_description'] ) ? sanitize_text_field( $body['twitter_description'] ) : null;
 
-		// @TODO: Refactor this as it's not the best way to look for errors.
 		$error = Models\Post::savePost( $postId, $body );
 
 		if ( ! empty( $error ) ) {

@@ -23,7 +23,7 @@ use Nextend\SmartSlider3\Renderable\Item\YouTube\ItemYouTube;
 
 class ItemFactory {
 
-    use SingletonTrait, PluggableTrait;
+    use SingletonTrait, PluggableTrait, OrderableTrait;
 
     public static $i = array();
     /** @var AbstractItem[][] */
@@ -172,7 +172,7 @@ class ItemFactory {
 
         $this->makePluggable('RenderableItem');
 
-        OrderableTrait::uasort(self::$items);
+        self::uasort(self::$items);
 
         self::$itemGroups[n2_x('Basic', 'Layer group')] = array();
         self::$itemGroups[n2_x('Media', 'Layer group')] = array();

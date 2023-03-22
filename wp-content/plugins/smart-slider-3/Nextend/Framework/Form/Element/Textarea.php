@@ -17,8 +17,6 @@ class Textarea extends AbstractField {
 
     protected $minHeight = 44;
 
-    protected $resize = 'vertical';
-
     protected $classes = array(
         'n2_field_textarea'
     );
@@ -34,7 +32,7 @@ class Textarea extends AbstractField {
             'id'           => $this->fieldID,
             'name'         => $this->getFieldName(),
             'autocomplete' => 'off',
-            'style'        => 'width:' . $this->width . 'px;height:' . $this->height . 'px;min-height:' . $this->minHeight . 'px;resize:' . $this->resize . ';'
+            'style'        => 'width:' . $this->width . 'px;height:' . $this->height . 'px;min-height:' . $this->minHeight . 'px;'
         ), Sanitize::esc_textarea($this->getValue())));
     }
 
@@ -60,13 +58,6 @@ class Textarea extends AbstractField {
      */
     public function setMinHeight($minHeight) {
         $this->minHeight = $minHeight;
-    }
-
-    /**
-     * @param string $resize
-     */
-    public function setResize($resize) {
-        $this->resize = $resize;
     }
 
     public function setFieldStyle($style) {

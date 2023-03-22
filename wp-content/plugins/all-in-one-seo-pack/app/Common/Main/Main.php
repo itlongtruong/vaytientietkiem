@@ -20,8 +20,8 @@ class Main {
 	 * @since 4.0.0
 	 */
 	public function __construct() {
-		$this->media     = new Media();
-		$this->queryArgs = new QueryArgs();
+		new Media();
+		new QueryArgs();
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueueTranslations' ] );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueueFrontEndAssets' ] );
@@ -57,7 +57,7 @@ class Main {
 			return;
 		}
 
-		aioseo()->core->assets->enqueueCss( 'admin-bar.css', [], 'src/vue/assets/scss/app/admin-bar.scss' );
+		aioseo()->core->assets->enqueueCss( 'src/vue/assets/scss/app/admin-bar.scss', [], 'src/vue/assets/scss/app/admin-bar.scss' );
 	}
 
 	/**

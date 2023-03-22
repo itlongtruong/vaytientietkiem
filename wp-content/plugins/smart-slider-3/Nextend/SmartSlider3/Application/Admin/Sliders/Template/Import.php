@@ -13,7 +13,7 @@ use Nextend\Framework\Asset\Js\Js;
 JS::addInline('new _N2.SliderImport();');
 ?>
 
-<form id="n2-ss-form-slider-import" action="<?php echo $this->getAjaxUrlImport($this->getGroupID()); ?>" method="post">
+<form id="n2-ss-form-slider-import" action="<?php echo esc_url($this->getAjaxUrlImport($this->getGroupID())); ?>" method="post">
     <?php
     $this->renderForm();
     ?>

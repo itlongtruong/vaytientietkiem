@@ -277,7 +277,7 @@ class BadBotBlocker {
 			$fs->putContents( $filePath, '' );
 		}
 
-		return $this->getLogSize( $filePath );
+		return $this->getLogSize();
 	}
 
 	/**
@@ -414,7 +414,7 @@ class BadBotBlocker {
 	/**
 	 * Quote List for Regex
 	 *
-	 * @since ?
+	 * @since 4.0.0
 	 *
 	 * @param        $list
 	 * @param string $quote

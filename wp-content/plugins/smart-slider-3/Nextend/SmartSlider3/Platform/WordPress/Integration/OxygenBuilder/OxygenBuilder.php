@@ -4,17 +4,14 @@
 namespace Nextend\SmartSlider3\Platform\WordPress\Integration\OxygenBuilder;
 
 
+use Nextend\Framework\Request\Request;
 use Nextend\SmartSlider3\Platform\WordPress\Shortcode\Shortcode;
 
 class OxygenBuilder {
 
     public function __construct() {
-        if (defined('CT_VERSION')) {
-            if (isset($_REQUEST['action'])) {
-                if ($_REQUEST['action'] == 'ct_render_shortcode' || $_REQUEST['action'] == 'ct_get_post_data') {
-                    self::forceShortcodeIframe();
-                }
-            }
+        if (defined('CT_VERSION') && (Request::$REQUEST->getCmd('action') == 'ct_render_shortcode' || Request::$REQUEST->getCmd('action') == 'ct_get_post_data')) {
+            self::forceShortcodeIframe();
         }
     }
 

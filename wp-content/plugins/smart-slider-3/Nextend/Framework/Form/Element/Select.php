@@ -109,7 +109,7 @@ class Select extends AbstractFieldHidden {
 
     protected function renderOption($value, $label) {
 
-        return '<option value="' . $value . '" ' . $this->isSelected($value) . '>' . $label . '</option>';
+        return '<option value="' . esc_attr($value) . '" ' . $this->isSelected($value) . '>' . $label . '</option>';
     }
 
     protected function isSelected($value) {

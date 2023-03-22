@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-05-13 07:44+0200\n"
-"PO-Revision-Date: 2022-05-17 12:52+0200\n"
+"POT-Creation-Date: 2023-01-18 09:52+0100\n"
+"PO-Revision-Date: 2023-01-24 19:04-0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es\n"
@@ -10,13 +10,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.0\n"
+"X-Generator: Poedit 3.2.2\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: ;n2_;n2_e;n2_n:1,2;n2_en:1,2;n2_x:1,2c;n2_ex:1,2c\n"
 "X-Poedit-Flags-xgettext: --no-location\n"
-
-msgid "Debug error"
-msgstr "Error de depuración"
 
 msgid "CURL disabled in your php.ini configuration. Please enable it!"
 msgstr ""
@@ -607,7 +604,7 @@ msgid "Duplicate"
 msgstr "Duplicar"
 
 msgid "Copy"
-msgstr "Copiar"
+msgstr "Copia"
 
 msgid "Paste"
 msgstr "Pegar"
@@ -1026,12 +1023,13 @@ msgstr "Resultado"
 msgid "Change slider type"
 msgstr "Cambiar el tipo de slider"
 
+#, javascript-format
 msgid ""
 "Changing your slider type is irreversible. After changing your slider type, "
-"<b>you will lose all slider type related settings</b>."
+"%syou will lose all slider type related settings%s."
 msgstr ""
 "Cambiar el tipo de slider es irreversible. Tras hacer este cambio, "
-"<b>perderás todas las opciones relacionadas al tipo de slider</b>."
+"%sperderás todas las opciones relacionadas al tipo de slider%s."
 
 msgid "Slider type"
 msgstr "Tipo de slider"
@@ -1347,6 +1345,13 @@ msgstr "Loop infinito"
 msgid "Finish autoplay"
 msgstr "Finalizar la reproducción automática"
 
+msgid ""
+"The Carousel option is disabled, so the Autoplay will stop after the last "
+"slide appeared."
+msgstr ""
+"La opción Carrusel está desactivada, por lo que Reproducción Automática se "
+"detendrá después de que el último slide aparezca."
+
 msgid "Stop on click"
 msgstr "Detener con un click"
 
@@ -1583,9 +1588,6 @@ msgstr "Fijo"
 msgid "Background video"
 msgstr "Video de fondo"
 
-msgid "Muted"
-msgstr "Mudo"
-
 msgctxt "Video/Audio play"
 msgid "Loop"
 msgstr "Loop"
@@ -1763,27 +1765,27 @@ msgid "Max"
 msgstr "Max"
 
 msgid "Breakpoints"
-msgstr "Puntos de parada o \"breakpoints\""
+msgstr "Puntos de ruptura o \"breakpoints\""
 
 msgid ""
 "Breakpoints define the browser width in pixel when the slider switches to a "
 "different device."
 msgstr ""
-"Los puntos de parada o \"breakpoints\" definen el ancho del navegador en "
+"Los puntos de ruptura o \"breakpoints\" definen el ancho del navegador en "
 "pixeles cuando el slider cambia a un dispositivo diferente."
 
 msgid "Global breakpoints"
-msgstr "Puntos de parada (breakpoints) globales"
+msgstr "Puntos de ruptura (breakpoints) globales"
 
 #, php-format
 msgid ""
 "You can use the global breakpoints, or adjust them locally here. You can "
-"configure the Global breakpoints at <a href=\"%1$s\" target=\"_blank"
-"\">Global settings</a> > General > Breakpoints"
+"configure the Global breakpoints at %1$sGlobal settings%2$s > General > "
+"Breakpoints"
 msgstr ""
-"Puedes utilizar los puntos de parada (breakpoints), o los ajustas aquí. "
-"Puedes configurar los puntos de parada en <a href=\"%1$s\" target=\"_blank"
-"\">Ajustes</a> en General > Puntos de parada"
+"Puedes utilizar los puntos de ruptura (breakpoints) globales, o ajustarlos "
+"localmente aquí. Puedes configurar los puntos de ruptura en %1$sAjustes%2$s "
+"> General > Puntos de ruptura"
 
 msgid "Custom size"
 msgstr "Tamaño personalizado"
@@ -1791,13 +1793,13 @@ msgstr "Tamaño personalizado"
 #, php-format
 msgid ""
 "Use this option to customize the aspect ratio for each device. %1$s Read "
-"more in the documentation%2$s. <b>Beware:</b> This option is rarely needed "
+"more in the documentation%2$s. %3$sBeware:%4$s This option is rarely needed "
 "and might be hard to set properly!"
 msgstr ""
 "Utiliza esta opción para personalizar la relación de aspecto de cada "
-"dispositivo. %1$s Puedes leer más en la documentación%2$s. <b>Importante:</"
-"b> ¡Ten en cuenta que está opción se necesita rara vez y puede ser difícil "
-"configurarla correctamente!"
+"dispositivo. %1$s Puedes leer más en la documentación%2$s. %3$sTen cuidado:"
+"%4$s ¡Está opción raramente se necesita y puede ser complicado ajustarla "
+"correctamente!"
 
 msgid "Slides"
 msgstr "Slides"
@@ -1968,12 +1970,12 @@ msgid "Get started with the Pro version now!"
 msgstr "¡Comienza con la versión Pro ahora!"
 
 #, php-format
-msgid "Unable to connect to the API (%s)."
-msgstr "No se pudo conectar a la API (%s)."
-
-msgid "See <b>Debug Information</b> for more details!"
+msgid ""
+"Unable to connect to the API (%1$s). %2$s See %3$sDebug Information%4$s for "
+"more details!"
 msgstr ""
-"¡Consulta la <b>Información de Depuración</b> para obtener más detalles!"
+"No fue posible conectarse a la API (%1$s). %2$s ¡Consulta la %3$sInformación "
+"de depuración%4$s para más detalles!"
 
 msgid "Successful connection with the API."
 msgstr "Conexión exitosa con la API."
@@ -2414,18 +2416,18 @@ msgstr "Título de la imagen"
 
 msgctxt "Layer animation"
 msgid "In"
-msgstr "Dentro"
+msgstr "Entrada"
 
 msgctxt "Layer animation"
 msgid "Out"
-msgstr "Fuera"
+msgstr "Salida"
 
 msgctxt "Layer animation"
 msgid "Events"
 msgstr "Eventos"
 
 msgid "Plays in when"
-msgstr "Reproducir \"dentro\" cuando"
+msgstr "Reproducir \"Entrada\" cuando"
 
 msgid "Plays out when"
 msgstr "Reproducir \"fuera\" cuando"
@@ -2592,6 +2594,13 @@ msgstr "El bloque debe contener solo un slide. ¿Necesitas más?"
 msgid "Convert to slider"
 msgstr "Convertir a slider"
 
+msgid "Single slides are duplicated while autoplay is used."
+msgstr ""
+"Se duplican los slides únicos cuando la reproducción automática es activada."
+
+msgid "autoplay settings"
+msgstr "opciones de reproducción automática"
+
 msgid "Slide one"
 msgstr "Slide uno"
 
@@ -2740,9 +2749,10 @@ msgid "Delete resized image cache"
 msgstr "Eliminar cache de imágenes redimencionadas"
 
 #, php-format
-msgid "If enabled the following folder will be <b>permanently deleted</b>: %s"
+msgid ""
+"If enabled the following folder will be %1$spermanently deleted%2$s: %3$s"
 msgstr ""
-"Si se activa la siguiente carpeta se <b>eliminará permanentemente</b>: %s"
+"Si se activa la siguiente carpeta se %1$seliminará permanentemente%2$s: %3$s"
 
 msgid "Configuration"
 msgstr "Configuración"
@@ -2831,19 +2841,6 @@ msgstr ""
 
 msgid "Load Font Awesome 4"
 msgstr "Cargar Font Awesome 4"
-
-msgid "API requests"
-msgstr "Solicitudes de la API"
-
-#, php-format
-msgctxt "Curl"
-msgid "Use %s"
-msgstr "Usar %s"
-
-#, php-format
-msgctxt "curl proxy"
-msgid "Clean %s"
-msgstr "Limpiar %s"
 
 msgid "General settings"
 msgstr "Ajustes generales"
@@ -2939,7 +2936,7 @@ msgstr "Excluir plugins"
 msgid ""
 "At each slider you can override the global breakpoints with local values."
 msgstr ""
-"En cada slider puedes sobrescribir los puntos de parada (breakpoint) "
+"En cada slider puedes sobrescribir los puntos de ruptura (breakpoints) "
 "globales con los valores locales."
 
 msgid "Focus offset"
@@ -3070,8 +3067,11 @@ msgstr ""
 "tienes un archivo de exportación mayor utiliza el método de importación de "
 "archivos local."
 
-msgid "You have to unzip your "
-msgstr "Tienes que descomprimir tu "
+#, php-format
+msgid "You have to unzip your %1$s file to find the importable *.ss3 files!"
+msgstr ""
+"¡Debes descomprimir primero tu archivo zip %1$s para encontrar los archivos "
+"*.ss3 que debes importar!"
 
 msgid "Only *.ss3 files can be uploaded!"
 msgstr "¡Solo se pueden cargar archivos con extensión .ss3!"
@@ -3112,9 +3112,9 @@ msgid "File"
 msgstr "Archivo"
 
 #, php-format
-msgid "Files with <i>.ss3</i> extension are listed from: %s"
+msgid "Files with %1$s.ss3%2$s extension are listed from: %3$s"
 msgstr ""
-"Los archivos con la extensión <i>.ss3</i> son los que se muestran en: %s"
+"Los archivos con la extensión %1$s.ss3%2$s son los que se muestran en: %3$s"
 
 msgid "Delete file"
 msgstr "Eliminar archivo"
@@ -3242,6 +3242,19 @@ msgstr "Usted no puede importar sliders de Smart Slider 2."
 msgid "Export file corrupted! Slider data is missing."
 msgstr "¡Archivo de exportación corrupto! Falta información del slider."
 
+#, php-format
+msgid ""
+"The importing failed as the slider export contained an invalid class name: "
+"%1$s"
+msgstr ""
+"La importación falló debido a que el slider exportado contenía un nombre de "
+"clase inválido: %1$s"
+
+#, php-format
+msgid "The importing failed as we are not able to unserialize the type: \"%s\""
+msgstr ""
+"La importación falló debido a que no revertir la seriación del tipo: \"%s\""
+
 msgid "Learn more"
 msgstr "Aprender más"
 
@@ -3260,6 +3273,11 @@ msgstr ""
 
 msgid "Unable to connect to the API"
 msgstr "No se pudo conectar a la API"
+
+#, php-format
+msgid "See %1$sDebug Information%2$s for more details!"
+msgstr ""
+"¡Consulta la %1$sInformación de Depuración%2$s para obtener más detalles!"
 
 msgid "MySQL table missing"
 msgstr "Falta una tabla de MySQL"
@@ -3310,6 +3328,13 @@ msgstr ""
 "dinámicos cuando %1$s se establece en %2$s. Además ten en cuenta que no ha "
 "recibido ninguna actualización desde WordPress 3.9."
 
+msgid ""
+"Optimization plugins often create issues, so if you see anything wrong, "
+"follow our documentation:"
+msgstr ""
+"Los plugins de optimización suelen crear conflicto, si tienes problemas "
+"consulta nuestra documentación:"
+
 msgid "Add column"
 msgstr "Agregar columna"
 
@@ -3330,6 +3355,14 @@ msgstr "Minuto"
 
 msgid "Stack"
 msgstr "Amontonar"
+
+msgid "Deprecation"
+msgstr "Descontinuado"
+
+msgid ""
+"This generator will get deprecated soon, so you shouldn't use it anymore!"
+msgstr ""
+"Se descontinuará pronto este generador, ¡por lo que no podrás utilizarlo más!"
 
 msgid "No description."
 msgstr "Sin descripción."
@@ -3367,20 +3400,40 @@ msgstr ""
 msgid "Tags"
 msgstr "Etiquetas"
 
+msgid "Access level"
+msgstr "Nivel de acceso"
+
 msgid "Featured"
 msgstr "Destacado"
 
 msgid "User ID"
 msgstr "ID del usuario"
 
+msgid "Included article IDs"
+msgstr "IDs de artículos incluidos"
+
+msgid "Excluded article IDs"
+msgstr "IDs de artículos excluidos"
+
 msgid "Language"
 msgstr "Idioma"
+
+msgid "Fields"
+msgstr "Campos"
 
 msgid "Extra variables"
 msgstr "Variables extra"
 
 msgid "Turn on these options to generate more variables for the slides."
 msgstr "Activa esta opción para generar más variables de los slides."
+
+msgid "Remove shortcodes"
+msgstr "Remover shortcodes"
+
+msgid "Remove shortcodes from article description with the following patterns."
+msgstr ""
+"Remover shortcodes de la descripción de los artículos con el siguiente "
+"criterio."
 
 msgid "Date format"
 msgstr "Formato de fecha"
@@ -3492,17 +3545,23 @@ msgstr "Método de comparación"
 msgid "Field value"
 msgstr "Valor del campo"
 
+msgid "Field type"
+msgstr "Tipo de campo"
+
 msgid "Meta comparison"
 msgstr "Comparación Meta"
 
+#, php-format
 msgid ""
-"Same as the previous option, just you can write down more comparisons. Read "
-"the \"Field name\" and \"Compare method\" out from the previous option. "
-"Example:"
+"You can create other comparisons based on the previous \"Post Meta "
+"Comparison\" options. Use the following format: name||compare||value||"
+"type%1$s%1$s Example:%1$spublished||=||yes||CHAR%1$s%1$sWrite one comparison "
+"per line."
 msgstr ""
-"Al igual que la opción anterior, puedes escribir más comparaciones. Lee el "
-"\"Nombre de campo\" y \"Método de comparación\" de la anterior opción. Por "
-"ejemplo:"
+"Puedes crear otra comparación basada en las opciones previas \"Comparación "
+"meta de artículo\". Utiliza el siguiente formato: nombre||comparar||valor||"
+"tipo%1$s%1$s Por ejemplo:%1$spublished||=||yes||CHAR%1$s%1$s Escribe una "
+"comparación por línea."
 
 msgid "Post date"
 msgstr "Fecha de entrada"
@@ -3536,16 +3595,6 @@ msgid ""
 msgstr ""
 "Los ID's de artículos seleccionados no aparecerán en el generador, incluso "
 "si coinciden con los filtros seleccionados. %1$s Escribe un ID por línea."
-
-#, php-format
-msgid ""
-"You can create other comparison based on the previous \"Field name\" and "
-"\"Compare method\" options. %1$s Use the following format: published||=||yes "
-"%1$s Write one comparison per line."
-msgstr ""
-"Puedes crear otra comparación basada en las opciones previas \"Nombre de "
-"campo\" y \"Método de comparación\". %1$s Utiliza el siguiente formato "
-"published||=||yes %1$s Escribe una comparación por línea."
 
 msgid "Post option"
 msgstr "Opción de artículo"
@@ -3648,9 +3697,6 @@ msgstr "Crea slides de tus artículos en las categorías seleccionadas."
 
 msgid "Categories"
 msgstr "Categorías"
-
-msgid "Remove shortcodes"
-msgstr "Remover shortcodes"
 
 msgid ""
 "You can remove shortcodes from variables to avoid 3rd party content "
@@ -4935,11 +4981,32 @@ msgstr "Olas enmascaradas"
 msgid "Ribbon"
 msgstr "Listón"
 
+msgid "Creates slides by your custom settings."
+msgstr "Crea slides para tus opciones personalizadas."
+
+#, php-format
+msgid ""
+"You don't have custom generators yet. %1$s Check the documentation %2$s to "
+"learn how to create your own generator."
+msgstr ""
+"No tienes ningún generador personalizado todavía. %1$s Consulta la "
+"documentación %2$s para aprender como crear tu propio generador."
+
+msgid "No options given"
+msgstr "No se ingresaron opciones"
+
 msgid "The secret is empty. Please insert that value too!"
 msgstr "¡El texto secreto está vacío. Por favor ingresa ese valor!"
 
 msgid "The App ID is empty. Please insert that value too!"
 msgstr "¡El ID de la app está vacío. Por favor ingresa ese valor!"
+
+msgid ""
+"The Facebook generator will get deprecated soon, so you shouldn't use it "
+"anymore!"
+msgstr ""
+"El generador de Facebook será descontinuado muy pronto, ¡y no podrás "
+"utilizarlo más!"
 
 #, php-format
 msgid ""
@@ -5269,6 +5336,9 @@ msgstr "Lista de reproducción"
 msgid "optional"
 msgstr "opcional"
 
+msgid "Privacy status"
+msgstr "Estado de privacidad"
+
 #, php-format
 msgid "Creates slides from %1$s content."
 msgstr "Crea slides del contenido de %1$s."
@@ -5523,6 +5593,12 @@ msgstr ""
 "Escribe los ID's de productos que quieres mostrar aquí, en el orden que "
 "quieres que aparezcan en el generador. Un ID de producto por línea."
 
+msgid ""
+"Update your Ignite Gallery! Only Ignite Gallery 4.8+ versions are supported."
+msgstr ""
+"¡Actualiza tu versión de Ignite Gallery! Solo las versiones superiores a la "
+"4.8 son soportadas."
+
 msgid "One time events"
 msgstr "Eventos de una única vez"
 
@@ -5577,20 +5653,6 @@ msgstr "Galería"
 
 msgid "View gallery"
 msgstr "Ver galería"
-
-msgid "Creates slides by your custom settings."
-msgstr "Crea slides para tus opciones personalizadas."
-
-#, php-format
-msgid ""
-"You don't have custom generators yet. %1$s Check the documentation %2$s to "
-"learn how to create your own generator."
-msgstr ""
-"No tienes ningún generador personalizado todavía. %1$s Consulta la "
-"documentación %2$s para aprender como crear tu propio generador."
-
-msgid "No options given"
-msgstr "No se ingresaron opciones"
 
 #, php-format
 msgid "Creates slides from %1$s events."
@@ -5908,12 +5970,14 @@ msgid "Vertical pendulum 3D"
 msgstr "Péndulo vertical 3D"
 
 msgid "We are Passionate About"
-msgstr ""
+msgstr "Nos apasiona"
 
 msgid ""
 "Amazing Food\n"
 "Great Hospitality"
 msgstr ""
+"La comida es increíble\n"
+"y la atención mucho mejor"
 
 msgid "Before text"
 msgstr "Antes del texto"
@@ -6111,7 +6175,7 @@ msgid "Inner before"
 msgstr "Dentro antes"
 
 msgid "Inner after"
-msgstr "Dentro despúes"
+msgstr "Dentro después"
 
 msgid "Pre"
 msgstr "Antes de"
@@ -6187,13 +6251,11 @@ msgstr "Redirigir a la URL"
 msgid "Choose what happens after the counter reached zero."
 msgstr "Selecciona lo que ocurre cuando el contador alcanza el cero."
 
-#, fuzzy
-#| msgid "The image is empty"
 msgid "This page is"
-msgstr "La imagen está vacía"
+msgstr "La página es"
 
 msgid "Amazing"
-msgstr ""
+msgstr "Increíble"
 
 #, php-format
 msgid "Circle %d"
@@ -6243,20 +6305,24 @@ msgid "HTML"
 msgstr "HTML"
 
 msgid "Empty element"
-msgstr ""
+msgstr "Elemento vacío"
 
+#, php-format
 msgid ""
-"Please note that <b>we do not support</b> the HTML layer and the 3rd party "
+"Please note that %1$swe do not support%2$s the HTML layer and the 3rd party "
 "codes loaded by it. We only suggest using this layer if you are a developer. "
-"<br>Also, make sure your HTML code is valid! Invalid HTML codes can mess up "
+"%3$sAlso, make sure your HTML code is valid! Invalid HTML codes can mess up "
 "the entire slide and the only way resolving this problem is deleting the "
 "slide."
 msgstr ""
-"Ten en cuenta que <b> no damos soporte</b> sobre la capa HTML y los códigos "
-"de terceros que incluyas en ella. Sugerimos que solo utilices capa si eres "
-"un/a desarrollador/a. <br>También asegúrate que el código HTML sea válido. "
-"Los códigos HTML no válidos pueden romper todo el slide y la única forma de "
-"resolverlo sería eliminarlo."
+"Ten en cuenta que %1$sno damos soporte%2$s acerca de la capa HTML y los "
+"códigos de terceros que incluyas en ella. Sugerimos que solo utilices esta "
+"capa si eres un/a desarrollador/a. %3$sTambién asegúrate que el código HTML "
+"sea válido. Los códigos HTML no válidos pueden romper todo el slide y la "
+"única forma de resolverlo sería eliminarlo."
+
+msgid "Repair HTML errors"
+msgstr "Reparar errores en el HTML"
 
 msgid "Item"
 msgstr "Item"
@@ -6367,15 +6433,16 @@ msgstr "Enter an %1$s aria-label attribute %2$s that describes the link."
 msgid "Iframe"
 msgstr "Iframe"
 
+#, php-format
 msgid ""
-"Please note, that <b>we do not support</b> customized coding! The iframe "
+"Please note, that %1$swe do not support%2$s customized coding! The iframe "
 "layer often needs code customizations what you have to do yourself, so we "
 "only suggest using this layer if you are a developer!"
 msgstr ""
-"Ten en cuenta que <b>no damos soporte</b> sobre el código personalizado. ¡La "
-"capa iframe por lo general necesita código personalizado que debes realizar "
-"tu mismo/a, así que sugerimos que utilices esta capa solo si eres un "
-"desarrollador/a!"
+"Ten en cuenta que %1$sno damos soporte%2$s sobre el código personalizado. "
+"¡La capa iframe por lo general necesita código personalizado que debes "
+"realizar tu mismo/a, así que sugerimos que utilices esta capa solo si eres "
+"un desarrollador/a!"
 
 msgid "Iframe url"
 msgstr "Url del iframe"
@@ -6391,6 +6458,9 @@ msgstr "Área de la imagen"
 
 msgid "Image box"
 msgstr "Caja de imagen"
+
+msgid "Aria label"
+msgstr "Etiqueta Aria"
 
 msgid ""
 "Positions the text inside the layer. Only works with left and right layout."
@@ -6475,15 +6545,16 @@ msgstr "Precarga"
 msgid "Joomla module"
 msgstr "Módulo de Joomla"
 
+#, php-format
 msgid ""
-"Please note, that <b>we do not support</b> the Joomla module layer!<br>The "
+"Please note, that %1$swe do not support%2$s the Joomla module layer!%3$sThe "
 "loaded module often needs code customizations what you have to do yourself, "
 "so we only suggest using this layer if you are a developer!"
 msgstr ""
-"Por favor ten en cuenta que <b>no damos soporte</b> sobre la capa de módulos "
-"de Joomla.<br>El código que carga el modulo con frecuencia necesita código "
-"personalizado que debes escribir, ¡te sugerimos que utilices esta capa solo "
-"sí eres un desarrollador!"
+"Por favor ten en cuenta que %1$sno damos soporte%2$s sobre la capa de "
+"módulos de Joomla.%3$sEl código que carga el modulo con frecuencia necesita "
+"código personalizado que debes escribir, ¡Te sugerimos que utilices esta "
+"capa solo sí eres un desarrollador/a!"
 
 msgid "Position name or module ID"
 msgstr "Nombre de la posición o ID del módulo"
@@ -6747,6 +6818,41 @@ msgstr "Color de la pista"
 msgid "Bar color"
 msgstr "Color de la barra"
 
+#~ msgid "Debug error"
+#~ msgstr "Error de depuración"
+
+#~ msgid ""
+#~ "Same as the previous option, just you can write down more comparisons. "
+#~ "Read the \"Field name\" and \"Compare method\" out from the previous "
+#~ "option. Example:"
+#~ msgstr ""
+#~ "Al igual que la opción anterior, puedes escribir más comparaciones. Lee "
+#~ "el \"Nombre de campo\" y \"Método de comparación\" de la anterior opción. "
+#~ "Por ejemplo:"
+
+#~ msgid "You have to unzip your "
+#~ msgstr "Tienes que descomprimir tu "
+
+#~ msgid "Muted"
+#~ msgstr "Mudo"
+
+#, php-format
+#~ msgid "Unable to connect to the API (%s)."
+#~ msgstr "No se pudo conectar a la API (%s)."
+
+#~ msgid "API requests"
+#~ msgstr "Solicitudes de la API"
+
+#, php-format
+#~ msgctxt "Curl"
+#~ msgid "Use %s"
+#~ msgstr "Usar %s"
+
+#, php-format
+#~ msgctxt "curl proxy"
+#~ msgid "Clean %s"
+#~ msgstr "Limpiar %s"
+
 #~ msgctxt "Default Google font family for admin"
 #~ msgid "Montserrat"
 #~ msgstr "Montserrat"
@@ -6906,9 +7012,6 @@ msgstr "Color de la barra"
 
 #~ msgid "ZigZag 3"
 #~ msgstr "ZigZag 3"
-
-#~ msgid "Aria label"
-#~ msgstr "Etiqueta Aria"
 
 #~ msgid "iframe"
 #~ msgstr "iframe"

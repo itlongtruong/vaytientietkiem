@@ -135,6 +135,7 @@ class QueryArgs {
 			);
 		}
 
+		$allowedQueryArgs      = array_unique( $allowedQueryArgs );
 		$allowedQueryArgs      = apply_filters( 'aioseo_unrecognized_allowed_query_args', $allowedQueryArgs );
 		$currentUrlQueryArgs   = explode( '&', $currentUrlParsed['query'] );
 		$recognizedQueryArgs   = [];
@@ -170,7 +171,7 @@ class QueryArgs {
 			header_remove( 'Last-Modified' );
 			header_remove( 'X-Pingback' );
 
-			wp_safe_redirect( add_query_arg( $recognizedQueryArgs, $newUrl ), 301, AIOSEO_PLUGIN_SHORT_NAME );
+			wp_safe_redirect( add_query_arg( $recognizedQueryArgs, $newUrl ), 301, AIOSEO_PLUGIN_SHORT_NAME . ' Crawl Cleanup' );
 			exit;
 		}
 	}
@@ -478,11 +479,16 @@ class QueryArgs {
 		return [
 			'/^attribute_/',
 			'/_id$/',
+			'_wcsnonce',
 			'add-to-cart',
 			'add_coupon',
 			'item',
-			'_wcsnonce',
-			'post_type'
+			'key',
+			'orderby',
+			'post_type',
+			'product',
+			'product_cat',
+			'reset-link-sent'
 		];
 	}
 }

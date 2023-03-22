@@ -53,7 +53,7 @@ class Meta {
 	 */
 	public function migratePostMeta() {
 		if ( aioseo()->core->cache->get( 'v3_migration_in_progress_settings' ) ) {
-			aioseo()->helpers->scheduleSingleAction( 'aioseo_migrate_post_meta', 30, [], true );
+			aioseo()->actionScheduler->scheduleSingle( 'aioseo_migrate_post_meta', 30, [], true );
 
 			return;
 		}

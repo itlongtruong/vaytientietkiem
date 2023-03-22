@@ -66,11 +66,9 @@ class GoogleAnalytics {
 			is_user_logged_in()
 		) {
 			$currentUser = wp_get_current_user();
-			if ( ! empty( $currentUser ) ) {
-				$intersect = array_intersect( $excludeUsers, $currentUser->roles );
-				if ( ! empty( $intersect ) ) {
-					return true;
-				}
+			$intersect   = array_intersect( $excludeUsers, $currentUser->roles );
+			if ( ! empty( $intersect ) ) {
+				return true;
 			}
 		}
 

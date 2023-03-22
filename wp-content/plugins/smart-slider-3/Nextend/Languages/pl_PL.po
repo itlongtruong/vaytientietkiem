@@ -1,10 +1,10 @@
-# NEXTEND 02 <ramona@nextendweb.com>, 2020.
+# NEXTEND, 2020.
 msgid ""
 msgstr ""
 "Project-Id-Version: VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-13 07:44+0200\n"
-"PO-Revision-Date: 2022-05-17 13:58+0200\n"
+"PO-Revision-Date: 2022-11-28 14:13+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pl\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 3.0\n"
+"X-Generator: Poedit 3.2\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: ;n2_;n2_e;n2_n:1,2;n2_en:1,2;n2_x:1,2c;n2_ex:1,2c\n"
 "X-Poedit-Flags-xgettext: --no-location\n"
@@ -3203,7 +3203,7 @@ msgid "Cache expiration"
 msgstr "Wygaśnięcie pamięci podręcznej"
 
 msgid "Hours"
-msgstr "Horas"
+msgstr "Godzin"
 
 msgid "Start index"
 msgstr "Indeks startowy"
@@ -6097,13 +6097,13 @@ msgid "Countdown"
 msgstr "Licznik"
 
 msgid "Days"
-msgstr "Dias"
+msgstr "Dni"
 
 msgid "Minutes"
-msgstr "Acta"
+msgstr "Minut"
 
 msgid "Seconds"
-msgstr "Segundos"
+msgstr "Sekund"
 
 #, fuzzy
 #| msgid "First slide changed."

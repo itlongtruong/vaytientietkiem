@@ -29,7 +29,7 @@ class Playbook extends WP_CLI_Command {
 	 * : Whether to run the playbook in test mode and not add/change/remove any data in the database.
 	 *
 	 * [--continue-on-error]
-	 * : Whether to continue on errors when the playbook is rim.
+	 * : Whether to continue on errors when the playbook is run.
 	 *
 	 * ## EXAMPLES
 	 *
@@ -156,9 +156,9 @@ class Playbook extends WP_CLI_Command {
 				// translators: %s: The action name.
 				WP_CLI::warning( sprintf( __( 'Action not supported: %s', 'pods' ), $action_name ) );
 			}
-		} catch ( Exception $e ) {
+		} catch ( Exception $exception ) {
 			// translators: %s: The exception error message.
-			$playbook_error_message = sprintf( __( 'Playbook error: %s', 'pods' ), $e->getMessage() );
+			$playbook_error_message = sprintf( __( 'Playbook error: %s', 'pods' ), $exception->getMessage() );
 
 			if ( $continue_on_error ) {
 				WP_CLI::warning( $playbook_error_message );

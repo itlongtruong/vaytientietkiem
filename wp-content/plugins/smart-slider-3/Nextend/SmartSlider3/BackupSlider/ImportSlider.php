@@ -72,6 +72,12 @@ class ImportSlider {
             return false;
         }
 
+
+        $parser = new Serialize\Parser;
+        if (!$parser->isValidData($importData['data'])) {
+            return false;
+        }
+
         $this->backup = unserialize($importData['data']);
 
         if (!empty($this->backup->slider['type']) && $this->backup->slider['type'] == 'group') {

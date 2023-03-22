@@ -83,12 +83,12 @@ class CacheSlider extends Manifest {
 
                 $generatorGroup = $generatorModel->getGeneratorGroup($group);
                 if (!$generatorGroup) {
-                    echo n2_('Slider error! Generator group not found: ' . $group);
+                    echo esc_html(n2_('Slider error! Generator group not found: ') . $group);
                 } else {
 
                     $generatorSource = $generatorGroup->getSource($type);
                     if (!$generatorSource) {
-                        echo n2_('Slider error! Generator source not found: ' . $type);
+                        echo esc_html(n2_('Slider error! Generator source not found: ') . $type);
                     } else {
 
                         $fileName .= call_user_func(array(

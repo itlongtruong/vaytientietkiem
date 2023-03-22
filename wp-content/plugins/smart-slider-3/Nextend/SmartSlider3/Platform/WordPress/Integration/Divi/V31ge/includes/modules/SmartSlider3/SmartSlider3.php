@@ -38,10 +38,12 @@ class ET_Builder_Module_SmartSlider3 extends ET_Builder_Module {
 
             <?php
             $path = ApplicationTypeFrontend::getAssetsPath() . '/dist/iframe.min.js';
+            add_filter('js_escape', 'Nextend\Framework\Sanitize::esc_js_filter', 10, 2);
             if (file_exists($path)) {
-                echo file_get_contents($path);
+                echo esc_js(file_get_contents($path));
             } else {
             }
+            remove_filter('js_escape', 'Nextend\Framework\Sanitize::esc_js_filter', 10);
             ?>
         </script>
         <?php
@@ -62,8 +64,8 @@ class ET_Builder_Module_SmartSlider3 extends ET_Builder_Module {
 
         $slidersModel = new ModelSliders($applicationType);
 
-        $defaultID = '';
-        $options   = array();
+        $options    = array();
+        $options[-1] = 'None';
         foreach ($slidersModel->getAll(0, 'published') as $slider) {
             if ($slider['type'] == 'group') {
 
@@ -72,9 +74,6 @@ class ET_Builder_Module_SmartSlider3 extends ET_Builder_Module {
                     $subChoices[$slider['alias']] = '-- ' . n2_('Whole group') . ' - ' . $slider['title'] . ' #Alias: ' . $slider['alias'];
                 }
                 $subChoices[$slider['id']] = '-- ' . n2_('Whole group') . ' - ' . $slider['title'] . ' #' . $slider['id'];
-                if ($defaultID === '') {
-                    $defaultID = $slider['id'];
-                }
 
                 foreach ($slidersModel->getAll($slider['id'], 'published') as $_slider) {
                     if (!empty($_slider['alias'])) {
@@ -89,23 +88,19 @@ class ET_Builder_Module_SmartSlider3 extends ET_Builder_Module {
                     $options[$slider['alias']] = $slider['title'] . ' #Alias: ' . $slider['alias'];
                 }
                 $options[$slider['id']] = $slider['title'] . ' #' . $slider['id'];
-                if ($defaultID === '') {
-                    $defaultID = $slider['id'];
-                }
             }
         }
 
         return array(
             'slider' => array(
-                'default'         => $defaultID,
+                'default'         => -1,
                 'label'           => 'Slider',
                 'option_category' => 'basic_option',
                 'type'            => 'select',
                 'options'         => $options,
-
-                'description'   => esc_html__('Here you can create the content that will be used within the module.', 'et_builder'),
-                'is_fb_content' => true,
-                'toggle_slug'   => 'main_content',
+                'description'     => esc_html__('Here you can create the content that will be used within the module.', 'et_builder'),
+                'is_fb_content'   => true,
+                'toggle_slug'     => 'main_content',
             ),
         );
     }

@@ -186,8 +186,8 @@ class SliderSize extends AbstractSliderTab {
 
         new OnOff($row2, 'responsive-breakpoint-global', n2_('Global breakpoints'), 0, array(
             'tipLabel'       => n2_('Global breakpoints'),
-            'tipDescription' => sprintf(n2_('You can use the global breakpoints, or adjust them locally here. You can configure the Global breakpoints at <a href="%1$s" target="_blank">Global settings</a> > General > Breakpoints'), $this->form->getMVCHelper()
-                                                                                                                                                                                                                                                   ->getUrlSettingsDefault())
+            'tipDescription' => sprintf(n2_('You can use the global breakpoints, or adjust them locally here. You can configure the Global breakpoints at %1$sGlobal settings%2$s > General > Breakpoints'), sprintf('<a href="%s" target="_blank">', $this->form->getMVCHelper()
+                                                                                                                                                                                                                                                                 ->getUrlSettingsDefault()), '</a>')
         ));
         new Breakpoint($row2, 'breakpoints', array(
             'tabletportrait-portrait'  => 'sliderresponsive-breakpoint-tablet-portrait',

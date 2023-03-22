@@ -6,7 +6,6 @@ namespace Nextend\SmartSlider3\Application\Admin\Slides;
 use Nextend\Framework\Asset\Js\Js;
 use Nextend\Framework\Platform\Platform;
 use Nextend\Framework\Request\Request;
-use Nextend\Framework\Sanitize;
 use Nextend\Framework\View\Html;
 use Nextend\SmartSlider3\Application\Model\ModelLicense;
 use Nextend\SmartSlider3\Settings;
@@ -20,11 +19,11 @@ use Nextend\SmartSlider3Pro\LayerAnimation\LayerAnimationStorage;
 
 JS::addGlobalInline('document.documentElement.classList.add("n2_html--application-only");');
 
-$externals = Sanitize::esc_attr(Settings::get('external-css-files'));
+$externals = esc_attr(Settings::get('external-css-files'));
 if (!empty($externals)) {
     $externals = explode("\n", $externals);
     foreach ($externals as $external) {
-        echo "<link rel='stylesheet' href='" . $external . "' type='text/css' media='all'>";
+        echo "<link rel='stylesheet' href='" . esc_url($external) . "' type='text/css' media='all'>";
     }
 }
 
@@ -41,12 +40,14 @@ $renderedSlider = $this->renderedSlider;
     </form>
 
     <div id='n2-ss-slide-canvas-container' class='n2_slide_editor_slider'>
-        <?php echo Html::tag('div', array(
-            'class' => "n2_slide_editor_slider__editor",
-            'style' => 'width:' . $slider->features->responsive->sizes['desktopPortrait']['width'] . 'px'
-        ), Html::tag('div', array(
-            'class' => "n2_slide_editor_slider__editor_inner"
-        ), $renderedSlider)); ?>
+        <div class="n2_slide_editor_slider__editor" style="width: <?php esc_attr($slider->features->responsive->sizes['desktopPortrait']['width']); ?>px">
+            <div class="n2_slide_editor_slider__editor_inner">
+                <?php
+                // PHPCS - Content already escaped
+                echo $renderedSlider; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                ?>
+            </div>
+        </div>
     </div>
 
     <?php

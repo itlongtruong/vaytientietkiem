@@ -11,7 +11,7 @@ use Nextend\SmartSlider3\Slider\Feature\Responsive;
 
 class ResponsiveTypeFactory {
 
-    use SingletonTrait, PluggableTrait;
+    use SingletonTrait, PluggableTrait, OrderableTrait;
 
     /**
      * @var AbstractResponsiveType[]
@@ -64,7 +64,7 @@ class ResponsiveTypeFactory {
             $adminTypes[$name] = $type->createAdmin();
         }
 
-        OrderableTrait::uasort($adminTypes);
+        self::uasort($adminTypes);
 
         return $adminTypes;
     }

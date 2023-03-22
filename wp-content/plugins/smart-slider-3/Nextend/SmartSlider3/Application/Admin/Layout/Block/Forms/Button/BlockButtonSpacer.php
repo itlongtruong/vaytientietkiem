@@ -18,7 +18,7 @@ class BlockButtonSpacer extends AbstractBlock {
             $classes[] = 'n2_button_spacer--visible';
         }
 
-        echo '<div class="' . implode(' ', $classes) . '"></div>';
+        echo '<div class="' . esc_attr(implode(' ', $classes)) . '"></div>';
     }
 
     /**

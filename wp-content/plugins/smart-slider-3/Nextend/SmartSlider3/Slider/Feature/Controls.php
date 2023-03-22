@@ -23,9 +23,12 @@ class Controls {
         $this->slider = $slider;
 
         $this->mousewheel               = intval($slider->params->get('controlsScroll', 0));
-        $this->touch                    = $slider->params->get('controlsTouch', 'horizontal');
         $this->keyboard                 = intval($slider->params->get('controlsKeyboard', 1));
         $this->blockCarouselInteraction = intval($slider->params->get('controlsBlockCarouselInteraction', 1));
+        $this->touch                    = $slider->params->get('controlsTouch', 'horizontal');
+        if ($slider->getSlidesCount() < 2) {
+            $this->touch = 0;
+        }
     }
 
     public function makeJavaScriptProperties(&$properties) {

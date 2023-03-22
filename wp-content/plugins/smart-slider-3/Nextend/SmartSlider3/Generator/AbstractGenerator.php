@@ -3,7 +3,9 @@
 namespace Nextend\SmartSlider3\Generator;
 
 use Nextend\Framework\Data\Data;
+use Nextend\Framework\Form\Container\ContainerTable;
 use Nextend\Framework\Form\ContainerInterface;
+use Nextend\Framework\Form\Element\Message\Warning;
 use Nextend\SmartSlider3\Platform\WordPress\Shortcode\Shortcode;
 
 abstract class AbstractGenerator {
@@ -40,6 +42,12 @@ abstract class AbstractGenerator {
      */
     public function renderFields($container) {
 
+        if ($this->group->isDeprecated()) {
+            $table = new ContainerTable($container, 'deprecation', n2_('Deprecation'));
+
+            $row = $table->createRow('deprecation-row');
+            new Warning($row, 'deprecation-warning', n2_('This generator will get deprecated soon, so you shouldn\'t use it anymore!'));
+        }
     }
 
     public function setData($data) {

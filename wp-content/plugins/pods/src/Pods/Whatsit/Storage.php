@@ -33,13 +33,26 @@ abstract class Storage {
 
 	/**
 	 * Storage constructor.
+	 *
+	 * @since 2.8.0
 	 */
 	public function __construct() {
 		// @todo Bueller?
 	}
 
 	/**
+	 * Get the object storage label.
+	 *
+	 * @return string The object storage label.
+	 */
+	public function get_label() {
+		return __( 'Object Storage', 'pods' );
+	}
+
+	/**
 	 * Get the object storage type.
+	 *
+	 * @since 2.8.0
 	 *
 	 * @return string The object storage type.
 	 */
@@ -50,6 +63,8 @@ abstract class Storage {
 	/**
 	 * Get object from storage.
 	 *
+	 * @since 2.8.0
+	 *
 	 * @return Whatsit|null
 	 */
 	public function get() {
@@ -57,7 +72,23 @@ abstract class Storage {
 	}
 
 	/**
+	 * Get object by identifier from storage.
+	 *
+	 * @since 2.9.10
+	 *
+	 * @param string|int|Whatsit      $identifier The object identifier.
+	 * @param null|string|int|Whatsit $parent     The parent object.
+	 *
+	 * @return Whatsit|null
+	 */
+	public function get_by_identifier( $identifier, $parent = null ) {
+		return null;
+	}
+
+	/**
 	 * Find objects in storage.
+	 *
+	 * @since 2.8.0
 	 *
 	 * @param array $args Arguments to use.
 	 *
@@ -69,6 +100,8 @@ abstract class Storage {
 
 	/**
 	 * Setup arg with any potential variations.
+	 *
+	 * @since 2.8.0
 	 *
 	 * @param array  $args List of arguments.
 	 * @param string $arg  Argument to setup.
@@ -88,6 +121,8 @@ abstract class Storage {
 
 	/**
 	 * Get arg value.
+	 *
+	 * @since 2.8.0
 	 *
 	 * @param array  $args List of arguments.
 	 * @param string $arg  Argument to get values for.
@@ -132,6 +167,8 @@ abstract class Storage {
 	/**
 	 * Add an object.
 	 *
+	 * @since 2.8.0
+	 *
 	 * @param Whatsit $object Object to add.
 	 *
 	 * @return string|int|false Object name, object ID, or false if not added.
@@ -142,6 +179,8 @@ abstract class Storage {
 
 	/**
 	 * Add an object.
+	 *
+	 * @since 2.8.0
 	 *
 	 * @param Whatsit $object Object to add.
 	 *
@@ -206,6 +245,8 @@ abstract class Storage {
 	/**
 	 * Save an object.
 	 *
+	 * @since 2.8.0
+	 *
 	 * @param Whatsit $object Object to save.
 	 *
 	 * @return string|int|false Object name, object ID, or false if not saved.
@@ -216,6 +257,8 @@ abstract class Storage {
 
 	/**
 	 * Save an object.
+	 *
+	 * @since 2.8.0
 	 *
 	 * @param Whatsit $object Object to save.
 	 *
@@ -280,6 +323,8 @@ abstract class Storage {
 	/**
 	 * Duplicate an object.
 	 *
+	 * @since 2.8.0
+	 *
 	 * @param Whatsit $object Object to duplicate.
 	 *
 	 * @return string|int|false Duplicated object name, duplicated object ID, or false if not duplicated.
@@ -320,6 +365,8 @@ abstract class Storage {
 	/**
 	 * Delete an object.
 	 *
+	 * @since 2.8.0
+	 *
 	 * @param Whatsit $object Object to delete.
 	 *
 	 * @return bool
@@ -330,6 +377,8 @@ abstract class Storage {
 
 	/**
 	 * Delete an object.
+	 *
+	 * @since 2.8.0
 	 *
 	 * @param Whatsit $object Object to delete.
 	 *
@@ -386,6 +435,8 @@ abstract class Storage {
 	/**
 	 * Reset an object's item data.
 	 *
+	 * @since 2.8.0
+	 *
 	 * @param Whatsit $object Object of items to reset.
 	 *
 	 * @return bool
@@ -397,6 +448,8 @@ abstract class Storage {
 	/**
 	 * Get object argument data.
 	 *
+	 * @since 2.8.0
+	 *
 	 * @param Whatsit $object Object with arguments to save.
 	 *
 	 * @return array
@@ -407,6 +460,8 @@ abstract class Storage {
 
 	/**
 	 * Save object argument data.
+	 *
+	 * @since 2.8.0
 	 *
 	 * @param Whatsit $object Object with arguments to save.
 	 *
@@ -423,6 +478,20 @@ abstract class Storage {
 	 */
 	public function fallback_mode( $enabled = true ) {
 		$this->fallback_mode = (boolean) $enabled;
+	}
+
+	/**
+	 * Setup object from an identifier.
+	 *
+	 * @since 2.9.10
+	 *
+	 * @param string $value         The identifier.
+	 * @param bool   $force_refresh Whether to force the refresh of the object.
+	 *
+	 * @return Whatsit|null
+	 */
+	public function to_object( $value, $force_refresh = false ) {
+		return null;
 	}
 
 }

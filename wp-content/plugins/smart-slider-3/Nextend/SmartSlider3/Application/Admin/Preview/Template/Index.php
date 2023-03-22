@@ -3,7 +3,6 @@
 namespace Nextend\SmartSlider3\Application\Admin\Preview;
 
 use Nextend\Framework\Asset\Js\Js;
-use Nextend\Framework\Sanitize;
 
 /**
  * @var $this ViewPreviewIndex
@@ -15,10 +14,10 @@ Js::addFirstCode("new _N2.SliderPreview();");
 
 ?>
 <div class="n2_preview">
-    <form target="n2_preview__device_screen_inner_frame" action="<?php echo $this->getUrlPreviewFull($this->getSliderID()); ?>" method="post">
-        <input type="hidden" name="sliderData" value="<?php echo Sanitize::esc_attr(json_encode($this->sliderData)); ?>">
-        <input type="hidden" name="slidesData" value="<?php echo Sanitize::esc_attr(json_encode($this->slidesData)); ?>">
-        <input type="hidden" name="generatorData" value="<?php echo Sanitize::esc_attr(json_encode($this->generatorData)); ?>">
+    <form target="n2_preview__device_screen_inner_frame" action="<?php echo esc_url($this->getUrlPreviewFull($this->getSliderID())); ?>" method="post">
+        <input type="hidden" name="sliderData" value="<?php echo esc_attr(json_encode($this->sliderData)); ?>">
+        <input type="hidden" name="slidesData" value="<?php echo esc_attr(json_encode($this->slidesData)); ?>">
+        <input type="hidden" name="generatorData" value="<?php echo esc_attr(json_encode($this->generatorData)); ?>">
     </form>
     <div class="n2_preview__ruler">
         <div class="n2_preview__ruler_label"></div>
@@ -30,7 +29,7 @@ Js::addFirstCode("new _N2.SliderPreview();");
     </div>
 
     <div class="n2_preview__device_screen">
-        <div class="n2_preview__device_screen_inner" style="<?php echo $this->getWidthCSS(); ?>">
+        <div class="n2_preview__device_screen_inner" style="<?php echo esc_attr($this->getWidthCSS()); ?>">
             <iframe name="n2_preview__device_screen_inner_frame"></iframe>
             <div class="n2_preview__frame_overlay"></div>
             <div class="n2_preview__resize_width">

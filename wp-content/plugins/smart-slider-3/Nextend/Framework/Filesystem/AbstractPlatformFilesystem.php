@@ -48,10 +48,10 @@ abstract class AbstractPlatformFilesystem {
                 if ($this->is_writable($base)) {
                     $this->createFolder($cacheFolder);
                 } else {
-                    die('<div style="position:fixed;background:#fff;width:100%;height:100%;top:0;left:0;z-index:100000;">' . sprintf('<h2><b>%s</b> is not writable.</h2>', $base) . '</div>');
+                    die('<div style="position:fixed;background:#fff;width:100%;height:100%;top:0;left:0;z-index:100000;">' . sprintf('<h2><b>%s</b> is not writable.</h2>', esc_html($base)) . '</div>');
                 }
             } else if (!$this->is_writable($cacheFolder)) {
-                die('<div style="position:fixed;background:#fff;width:100%;height:100%;top:0;left:0;z-index:100000;">' . sprintf('<h2><b>%s</b> is not writable.</h2>', $cacheFolder) . '</div>');
+                die('<div style="position:fixed;background:#fff;width:100%;height:100%;top:0;left:0;z-index:100000;">' . sprintf('<h2><b>%s</b> is not writable.</h2>', esc_html($cacheFolder)) . '</div>');
             }
             $checked[$base . '/' . $folder] = true;
         }

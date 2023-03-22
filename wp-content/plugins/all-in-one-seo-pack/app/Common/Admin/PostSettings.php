@@ -22,6 +22,15 @@ class PostSettings {
 	 * @return void
 	 */
 	public function __construct() {
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return;
+		}
+
+		// Clear the Post Type Overview cache.
+		add_action( 'save_post', [ $this, 'clearPostTypeOverviewCache' ], 100 );
+		add_action( 'delete_post', [ $this, 'clearPostTypeOverviewCache' ], 100 );
+		add_action( 'wp_trash_post', [ $this, 'clearPostTypeOverviewCache' ], 100 );
+
 		if ( wp_doing_ajax() || wp_doing_cron() || ! is_admin() ) {
 			return;
 		}
@@ -39,11 +48,6 @@ class PostSettings {
 		add_action( 'save_post', [ $this, 'saveSettingsMetabox' ] );
 		add_action( 'edit_attachment', [ $this, 'saveSettingsMetabox' ] );
 		add_action( 'add_attachment', [ $this, 'saveSettingsMetabox' ] );
-
-		// Clear the Post Type Overview cache.
-		add_action( 'save_post', [ $this, 'clearPostTypeOverviewCache' ], 100 );
-		add_action( 'delete_post', [ $this, 'clearPostTypeOverviewCache' ], 100 );
-		add_action( 'wp_trash_post', [ $this, 'clearPostTypeOverviewCache' ], 100 );
 
 		// Filter the sql clauses to show posts filtered by our params.
 		add_filter( 'posts_clauses', [ $this, 'changeClausesToFilterPosts' ], 10, 2 );
@@ -74,6 +78,7 @@ class PostSettings {
 
 			aioseo()->core->assets->load( 'src/vue/standalone/post-settings/main.js', [], aioseo()->helpers->getVueData( $page ) );
 			aioseo()->core->assets->load( 'src/vue/standalone/link-format/main.js', [], aioseo()->helpers->getVueData( $page ) );
+			aioseo()->admin->enqueueAioseoModalPortal();
 		}
 
 		$screen = get_current_screen();
@@ -171,10 +176,13 @@ class PostSettings {
 	 * @return void
 	 */
 	public function postSettingsHiddenField() {
-		if ( isset( $this->postSettingsHiddenFieldExists ) ) {
+		static $fieldExists = false;
+		if ( $fieldExists ) {
 			return;
 		}
-		$this->postSettingsHiddenFieldExists = true;
+
+		$fieldExists = true;
+
 		?>
 		<div id="aioseo-post-settings-field">
 			<input type="hidden" name="aioseo-post-settings" id="aioseo-post-settings" value=""/>
@@ -236,7 +244,7 @@ class PostSettings {
 			return;
 		}
 
-		aioseo()->cache->delete( $postType . '_overview_data' );
+		aioseo()->core->cache->delete( $postType . '_overview_data' );
 	}
 
 	/**
@@ -255,7 +263,8 @@ class PostSettings {
 				! $dynamicOptions->searchAppearance->postTypes->has( $postType ) ||
 				! $dynamicOptions->searchAppearance->postTypes->$postType->show ||
 				! $dynamicOptions->searchAppearance->postTypes->$postType->advanced->showMetaBox ||
-				'attachment' === $postType
+				'attachment' === $postType ||
+				aioseo()->helpers->isBBPressPostType( $postType )
 			) {
 				continue;
 			}
@@ -271,11 +280,11 @@ class PostSettings {
 	 *
 	 * @since 4.2.0
 	 *
-	 * @param string $postType The post type name.
-	 * @return array           The overview for the given post type.
+	 * @param  string $postType The post type name.
+	 * @return array            The overview for the given post type.
 	 */
 	public function getPostTypeOverview( $postType ) {
-		$overview = aioseo()->cache->get( $postType . '_overview_data' );
+		$overview = aioseo()->core->cache->get( $postType . '_overview_data' );
 		if ( null !== $overview ) {
 			return $overview;
 		}
@@ -319,7 +328,7 @@ class PostSettings {
 			}
 		}
 
-		aioseo()->cache->update( $postType . '_overview_data', $overview, WEEK_IN_SECONDS );
+		aioseo()->core->cache->update( $postType . '_overview_data', $overview, WEEK_IN_SECONDS );
 
 		return $overview;
 	}
@@ -343,6 +352,7 @@ class PostSettings {
 			return $clauses;
 		}
 
+		$whereClause        = '';
 		$noKeyphrasesClause = " (aioseo_p.keyphrases = '' OR aioseo_p.keyphrases IS NULL OR aioseo_p.keyphrases LIKE '{\"focus\":[]%') ";
 		switch ( $filter ) {
 			case 'withoutFocusKeyphrase':
@@ -359,8 +369,8 @@ class PostSettings {
 				break;
 		}
 
-		$prefix            = aioseo()->db->prefix;
-		$postsTable        = aioseo()->db->db->posts;
+		$prefix            = aioseo()->core->db->prefix;
+		$postsTable        = aioseo()->core->db->db->posts;
 		$clauses['join']  .= " LEFT JOIN {$prefix}aioseo_posts AS aioseo_p ON ({$postsTable}.ID = aioseo_p.post_id) ";
 		$clauses['where'] .= $whereClause;
 

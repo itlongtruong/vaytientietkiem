@@ -59,6 +59,6 @@ class PostSettings extends CommonAdmin\PostSettings {
 			return;
 		}
 
-		include_once( AIOSEO_DIR . '/app/Lite/Views/taxonomy-upsell.html' );
+		include_once AIOSEO_DIR . '/app/Lite/Views/taxonomy-upsell.html';
 	}
 }

@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-05-24 09:10+0200\n"
+"POT-Creation-Date: 2023-01-18 09:52+0100\n"
 "PO-Revision-Date: 2020-03-10 19:30+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -11,16 +11,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.2.2\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: ;n2_;n2_e;n2_n:1,2;n2_en:1,2;n2_x:1,2c;n2_ex:1,2c\n"
 "X-Poedit-Flags-xgettext: --no-location\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: Framework/Asset/Builder/cache\n"
-
-msgid "Debug error"
-msgstr ""
 
 msgid "CURL disabled in your php.ini configuration. Please enable it!"
 msgstr ""
@@ -982,7 +979,8 @@ msgstr ""
 msgid "Change slider type"
 msgstr ""
 
-msgid "Changing your slider type is irreversible. After changing your slider type, <b>you will lose all slider type related settings</b>."
+#, javascript-format
+msgid "Changing your slider type is irreversible. After changing your slider type, %syou will lose all slider type related settings%s."
 msgstr ""
 
 msgid "Slider type"
@@ -1267,6 +1265,9 @@ msgstr ""
 msgid "Finish autoplay"
 msgstr ""
 
+msgid "The Carousel option is disabled, so the Autoplay will stop after the last slide appeared."
+msgstr ""
+
 msgid "Stop on click"
 msgstr ""
 
@@ -1459,9 +1460,6 @@ msgstr ""
 msgid "Background video"
 msgstr ""
 
-msgid "Muted"
-msgstr ""
-
 msgctxt "Video/Audio play"
 msgid "Loop"
 msgstr ""
@@ -1625,14 +1623,14 @@ msgid "Global breakpoints"
 msgstr ""
 
 #, php-format
-msgid "You can use the global breakpoints, or adjust them locally here. You can configure the Global breakpoints at <a href=\"%1$s\" target=\"_blank\">Global settings</a> > General > Breakpoints"
+msgid "You can use the global breakpoints, or adjust them locally here. You can configure the Global breakpoints at %1$sGlobal settings%2$s > General > Breakpoints"
 msgstr ""
 
 msgid "Custom size"
 msgstr ""
 
 #, php-format
-msgid "Use this option to customize the aspect ratio for each device. %1$s Read more in the documentation%2$s. <b>Beware:</b> This option is rarely needed and might be hard to set properly!"
+msgid "Use this option to customize the aspect ratio for each device. %1$s Read more in the documentation%2$s. %3$sBeware:%4$s This option is rarely needed and might be hard to set properly!"
 msgstr ""
 
 msgid "Slides"
@@ -1778,10 +1776,7 @@ msgid "Get started with the Pro version now!"
 msgstr ""
 
 #, php-format
-msgid "Unable to connect to the API (%s)."
-msgstr ""
-
-msgid "See <b>Debug Information</b> for more details!"
+msgid "Unable to connect to the API (%1$s). %2$s See %3$sDebug Information%4$s for more details!"
 msgstr ""
 
 msgid "Successful connection with the API."
@@ -2326,6 +2321,12 @@ msgstr ""
 msgid "Convert to slider"
 msgstr ""
 
+msgid "Single slides are duplicated while autoplay is used."
+msgstr ""
+
+msgid "autoplay settings"
+msgstr ""
+
 msgid "Slide one"
 msgstr ""
 
@@ -2474,7 +2475,7 @@ msgid "Delete resized image cache"
 msgstr ""
 
 #, php-format
-msgid "If enabled the following folder will be <b>permanently deleted</b>: %s"
+msgid "If enabled the following folder will be %1$spermanently deleted%2$s: %3$s"
 msgstr ""
 
 msgid "Configuration"
@@ -2539,19 +2540,6 @@ msgid "Google Fonts, icon and lightbox CSS are loaded in a non-blocking way. Dis
 msgstr ""
 
 msgid "Load Font Awesome 4"
-msgstr ""
-
-msgid "API requests"
-msgstr ""
-
-#, php-format
-msgctxt "Curl"
-msgid "Use %s"
-msgstr ""
-
-#, php-format
-msgctxt "curl proxy"
-msgid "Clean %s"
 msgstr ""
 
 msgid "General settings"
@@ -2741,7 +2729,8 @@ msgstr ""
 msgid "Your server has an upload file limit at %s, so if you have bigger export file, please use the local import file method."
 msgstr ""
 
-msgid "You have to unzip your "
+#, php-format
+msgid "You have to unzip your %1$s file to find the importable *.ss3 files!"
 msgstr ""
 
 msgid "Only *.ss3 files can be uploaded!"
@@ -2779,7 +2768,7 @@ msgid "File"
 msgstr ""
 
 #, php-format
-msgid "Files with <i>.ss3</i> extension are listed from: %s"
+msgid "Files with %1$s.ss3%2$s extension are listed from: %3$s"
 msgstr ""
 
 msgid "Delete file"
@@ -2904,6 +2893,14 @@ msgstr ""
 msgid "Export file corrupted! Slider data is missing."
 msgstr ""
 
+#, php-format
+msgid "The importing failed as the slider export contained an invalid class name: %1$s"
+msgstr ""
+
+#, php-format
+msgid "The importing failed as we are not able to unserialize the type: \"%s\""
+msgstr ""
+
 msgid "Learn more"
 msgstr ""
 
@@ -2916,6 +2913,10 @@ msgid "Decrease %1$s below 15 in php.ini to prevent fatal errors on plugin updat
 msgstr ""
 
 msgid "Unable to connect to the API"
+msgstr ""
+
+#, php-format
+msgid "See %1$sDebug Information%2$s for more details!"
 msgstr ""
 
 msgid "MySQL table missing"
@@ -2943,6 +2944,9 @@ msgstr ""
 msgid "This plugin breaks the filtering options of the dynamic slide generators when %1$s is set to %2$s. Also it has not received any updates since WordPress 3.9."
 msgstr ""
 
+msgid "Optimization plugins often create issues, so if you see anything wrong, follow our documentation:"
+msgstr ""
+
 msgid "Add column"
 msgstr ""
 
@@ -2962,6 +2966,12 @@ msgid "Minute"
 msgstr ""
 
 msgid "Stack"
+msgstr ""
+
+msgid "Deprecation"
+msgstr ""
+
+msgid "This generator will get deprecated soon, so you shouldn't use it anymore!"
 msgstr ""
 
 msgid "No description."
@@ -2998,19 +3008,37 @@ msgstr ""
 msgid "Tags"
 msgstr ""
 
+msgid "Access level"
+msgstr ""
+
 msgid "Featured"
 msgstr ""
 
 msgid "User ID"
 msgstr ""
 
+msgid "Included article IDs"
+msgstr ""
+
+msgid "Excluded article IDs"
+msgstr ""
+
 msgid "Language"
+msgstr ""
+
+msgid "Fields"
 msgstr ""
 
 msgid "Extra variables"
 msgstr ""
 
 msgid "Turn on these options to generate more variables for the slides."
+msgstr ""
+
+msgid "Remove shortcodes"
+msgstr ""
+
+msgid "Remove shortcodes from article description with the following patterns."
 msgstr ""
 
 msgid "Date format"
@@ -3111,10 +3139,14 @@ msgstr ""
 msgid "Field value"
 msgstr ""
 
+msgid "Field type"
+msgstr ""
+
 msgid "Meta comparison"
 msgstr ""
 
-msgid "Same as the previous option, just you can write down more comparisons. Read the \"Field name\" and \"Compare method\" out from the previous option. Example:"
+#, php-format
+msgid "You can create other comparisons based on the previous \"Post Meta Comparison\" options. Use the following format: name||compare||value||type%1$s%1$s Example:%1$spublished||=||yes||CHAR%1$s%1$sWrite one comparison per line."
 msgstr ""
 
 msgid "Post date"
@@ -3144,10 +3176,6 @@ msgstr ""
 
 #, php-format
 msgid "The selected post IDs won't appear in the generator, even if they they match the set filters. %1$s Write one ID per line."
-msgstr ""
-
-#, php-format
-msgid "You can create other comparison based on the previous \"Field name\" and \"Compare method\" options. %1$s Use the following format: published||=||yes %1$s Write one comparison per line."
 msgstr ""
 
 msgid "Post option"
@@ -3227,9 +3255,6 @@ msgid "Creates slides from your posts in the selected categories."
 msgstr ""
 
 msgid "Categories"
-msgstr ""
-
-msgid "Remove shortcodes"
 msgstr ""
 
 msgid "You can remove shortcodes from variables to avoid 3rd party content rendering in your slider."
@@ -4403,10 +4428,23 @@ msgstr ""
 msgid "Ribbon"
 msgstr ""
 
+msgid "Creates slides by your custom settings."
+msgstr ""
+
+#, php-format
+msgid "You don't have custom generators yet. %1$s Check the documentation %2$s to learn how to create your own generator."
+msgstr ""
+
+msgid "No options given"
+msgstr ""
+
 msgid "The secret is empty. Please insert that value too!"
 msgstr ""
 
 msgid "The App ID is empty. Please insert that value too!"
+msgstr ""
+
+msgid "The Facebook generator will get deprecated soon, so you shouldn't use it anymore!"
 msgstr ""
 
 #, php-format
@@ -4669,6 +4707,9 @@ msgstr ""
 msgid "optional"
 msgstr ""
 
+msgid "Privacy status"
+msgstr ""
+
 #, php-format
 msgid "Creates slides from %1$s content."
 msgstr ""
@@ -4913,6 +4954,9 @@ msgstr ""
 msgid "Write the product IDs you want to display here, in the order you want them to appear in the generator. One product ID per line."
 msgstr ""
 
+msgid "Update your Ignite Gallery! Only Ignite Gallery 4.8+ versions are supported."
+msgstr ""
+
 msgid "One time events"
 msgstr ""
 
@@ -4966,16 +5010,6 @@ msgid "Gallery"
 msgstr ""
 
 msgid "View gallery"
-msgstr ""
-
-msgid "Creates slides by your custom settings."
-msgstr ""
-
-#, php-format
-msgid "You don't have custom generators yet. %1$s Check the documentation %2$s to learn how to create your own generator."
-msgstr ""
-
-msgid "No options given"
 msgstr ""
 
 #, php-format
@@ -5601,7 +5635,11 @@ msgstr ""
 msgid "Empty element"
 msgstr ""
 
-msgid "Please note that <b>we do not support</b> the HTML layer and the 3rd party codes loaded by it. We only suggest using this layer if you are a developer. <br>Also, make sure your HTML code is valid! Invalid HTML codes can mess up the entire slide and the only way resolving this problem is deleting the slide."
+#, php-format
+msgid "Please note that %1$swe do not support%2$s the HTML layer and the 3rd party codes loaded by it. We only suggest using this layer if you are a developer. %3$sAlso, make sure your HTML code is valid! Invalid HTML codes can mess up the entire slide and the only way resolving this problem is deleting the slide."
+msgstr ""
+
+msgid "Repair HTML errors"
 msgstr ""
 
 msgid "Item"
@@ -5710,7 +5748,8 @@ msgstr ""
 msgid "Iframe"
 msgstr ""
 
-msgid "Please note, that <b>we do not support</b> customized coding! The iframe layer often needs code customizations what you have to do yourself, so we only suggest using this layer if you are a developer!"
+#, php-format
+msgid "Please note, that %1$swe do not support%2$s customized coding! The iframe layer often needs code customizations what you have to do yourself, so we only suggest using this layer if you are a developer!"
 msgstr ""
 
 msgid "Iframe url"
@@ -5806,7 +5845,8 @@ msgstr ""
 msgid "Joomla module"
 msgstr ""
 
-msgid "Please note, that <b>we do not support</b> the Joomla module layer!<br>The loaded module often needs code customizations what you have to do yourself, so we only suggest using this layer if you are a developer!"
+#, php-format
+msgid "Please note, that %1$swe do not support%2$s the Joomla module layer!%3$sThe loaded module often needs code customizations what you have to do yourself, so we only suggest using this layer if you are a developer!"
 msgstr ""
 
 msgid "Position name or module ID"

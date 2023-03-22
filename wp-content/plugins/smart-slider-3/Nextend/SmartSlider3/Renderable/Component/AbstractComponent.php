@@ -564,7 +564,7 @@ abstract class AbstractComponent {
             $x = intval($this->data->get('bgimagex', 50));
             $y = intval($this->data->get('bgimagey', 50));
 
-            $backgroundStyle     .= '--n2bgimage:URL("' . ResourceTranslator::toUrl($image) . '");';
+            $backgroundStyle     .= '--n2bgimage:URL("' . esc_url(ResourceTranslator::toUrl($image)) . '");';
             $backgroundStyle     .= 'background-position:50% 50%,' . $x . '% ' . $y . '%;';
             $this->hasBackground = true;
 

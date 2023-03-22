@@ -136,6 +136,74 @@ class Field extends Whatsit {
 	}
 
 	/**
+	 * Determine whether this is a required field.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @return bool Whether this is a required field.
+	 */
+	public function is_required() {
+		return filter_var( $this->get_arg( 'required', false ), FILTER_VALIDATE_BOOLEAN );
+	}
+
+	/**
+	 * Determine whether this is a unique field.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @return bool Whether this is a unique field.
+	 */
+	public function is_unique() {
+		$parent_object = $this->get_parent_object();
+
+		if ( ! $parent_object instanceof Pod ) {
+			return false;
+		}
+
+		// Only table-based Pods can have unique fields.
+		if ( ! $parent_object->is_table_based() ) {
+			return false;
+		}
+
+		return filter_var( $this->get_arg( 'unique', false ), FILTER_VALIDATE_BOOLEAN );
+	}
+
+	/**
+	 * Determine whether this is a repeatable field.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @return bool Whether this is a repeatable field.
+	 */
+	public function is_repeatable() {
+		$parent_object = $this->get_parent_object();
+
+		// Only non table-based Pods can have repeatable fields.
+		if ( $parent_object instanceof Whatsit && $parent_object->is_table_based() ) {
+			return false;
+		}
+
+		$repeatable_field_types = PodsForm::repeatable_field_types();
+
+		$type = $this->get_type();
+
+		// It must be a repeatable field type.
+		if ( ! in_array( $type, $repeatable_field_types, true ) ) {
+			return false;
+		}
+
+		// Disable repeatable for WYSIWYG TinyMCE fields.
+		if ( 'wysiwyg' === $type && 'tinymce' === $this->get_arg( 'wysiwyg_editor', 'tinymce' ) ) {
+			return false;
+		}
+
+		return (
+			filter_var( $this->get_arg( 'repeatable', false ), FILTER_VALIDATE_BOOLEAN )
+			&& 1 !== (int) $this->get_arg( 'repeatable_limit', 0 )
+		);
+	}
+
+	/**
 	 * Get related object type from field.
 	 *
 	 * @since 2.8.0
@@ -158,7 +226,7 @@ class Field extends Whatsit {
 		$related_type = $this->get_arg( $type . '_object', $this->get_arg( 'pick_object', null, true ), true );
 
 		if ( '__current__' === $related_type ) {
-			$related_type = $this->get_object_type();
+			$related_type = $this->get_parent_type();
 		}
 
 		if ( empty( $related_type ) && 'avatar' === $type ) {
@@ -204,7 +272,7 @@ class Field extends Whatsit {
 		$related_name = $this->get_arg( $type . '_val', $this->get_arg( 'pick_val', $related_type, true ), true );
 
 		if ( '__current__' === $related_name ) {
-			$related_name = $this->get_name();
+			$related_name = $this->get_parent_name();
 		}
 
 		if ( 'table' === $related_type ) {
@@ -271,6 +339,47 @@ class Field extends Whatsit {
 	}
 
 	/**
+	 * Determine whether this is a relationship field (pick/file/etc).
+	 *
+	 * @since 2.9.7
+	 *
+	 * @return bool Whether this is a relationship field (pick/file/etc).
+	 */
+	public function is_file() {
+		$type = $this->get_type();
+
+		$file_field_types = PodsForm::file_field_types();
+
+		return in_array( $type, $file_field_types, true );
+	}
+
+	/**
+	 * Determine whether this is an autocomplete relationship field.
+	 *
+	 * @since 2.9.4
+	 *
+	 * @return bool Whether this is an autocomplete relationship field.
+	 */
+	public function is_autocomplete_relationship() {
+		if ( ! $this->is_relationship() ) {
+			return false;
+		}
+
+		$autocomplete_formats = [
+			'autocomplete',
+			'list',
+		];
+
+		$single_multi = $this->get_single_multi();
+
+		$default = 'single' === $single_multi ? 'dropdown' : 'list';
+
+		$format = $this->get_type_arg( 'format_' . $single_multi, $default, true );
+
+		return in_array( $format, $autocomplete_formats, true );
+	}
+
+	/**
 	 * Determine whether the relationship field is a simple relationship.
 	 *
 	 * @since 2.8.9
@@ -287,12 +396,27 @@ class Field extends Whatsit {
 
 		// Only continue if this is related to an object.
 		if ( null === $related_type ) {
-			return null;
+			return true;
 		}
 
 		$simple_tableless_objects = PodsForm::simple_tableless_objects();
 
 		return in_array( $related_type, $simple_tableless_objects, true );
+	}
+
+	/**
+	 * Determine whether the separator is excluded for this field.
+	 *
+	 * @since 2.9.8
+	 *
+	 * @return bool Whether the separator is excluded for this field.
+	 */
+	public function is_separator_excluded() {
+		$type = $this->get_type();
+
+		$separator_excluded_field_types = PodsForm::separator_excluded_field_types();
+
+		return in_array( $type, $separator_excluded_field_types, true );
 	}
 
 	/**
@@ -303,6 +427,11 @@ class Field extends Whatsit {
 	 * @return Whatsit|null The bi-directional field if it is set.
 	 */
 	public function get_bidirectional_field() {
+		// Only continue if this is a relationship field.
+		if ( ! $this->is_relationship() ) {
+			return null;
+		}
+
 		$sister_id = $this->get_arg( 'sister_id' );
 
 		if ( ! $sister_id ) {
@@ -327,7 +456,10 @@ class Field extends Whatsit {
 	 * @return int The field value limit.
 	 */
 	public function get_limit() {
-		$type = $this->get_type();
+		// If this is a repeatable field then use the repeatable limit (if any).
+		if ( $this->is_repeatable() ) {
+			return $this->get_arg( 'repeatable_limit', 0 );
+		}
 
 		if ( 'multi' === $this->get_single_multi() ) {
 			return (int) $this->get_type_arg( 'limit', 0 );
@@ -355,6 +487,18 @@ class Field extends Whatsit {
 		}
 
 		return $format_type;
+	}
+
+	/**
+	 * Determine whether this is a multiple value field.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @return bool Whether this is a multiple value field.
+	 */
+	public function is_multi_value() {
+		// This is a multiple value field if the limit is not 1 (0 for no limit or 2+).
+		return 1 !== $this->get_limit();
 	}
 
 	/**

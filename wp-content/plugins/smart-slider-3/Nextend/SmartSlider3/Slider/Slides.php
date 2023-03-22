@@ -100,6 +100,11 @@ class Slides {
             shuffle($slides);
         }
 
+        $reverse = intval($this->slider->params->get('reverse-slides', 0));
+        if ($reverse) {
+            $slides = array_reverse($slides);
+        }
+
         if ($this->maximumSlideCount > 0) {
             $mustShowSlides = array();
             if (!empty($slidesData)) {
@@ -122,11 +127,6 @@ class Slides {
                 $slides = array_merge($slides, $mustShowSlides);
             }
 
-        }
-
-        $reverse = intval($this->slider->params->get('reverse-slides', 0));
-        if ($reverse) {
-            $slides = array_reverse($slides);
         }
 
         if (!$randomizeCache && $randomizeFirst) {

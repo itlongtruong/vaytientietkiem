@@ -24,7 +24,7 @@ class Ping {
 			return;
 		}
 
-		add_filter( 'init', [ $this, 'scheduleRecurring' ] );
+		add_action( 'init', [ $this, 'scheduleRecurring' ] );
 
 		// Ping sitemap on each post update.
 		add_action( 'save_post', [ $this, 'schedule' ], 1000, 2 );
@@ -56,9 +56,9 @@ class Ping {
 		}
 
 		// First, unschedule any ping actions that might already be enqueued.
-		aioseo()->helpers->unscheduleAction( 'aioseo_sitemap_ping' );
+		aioseo()->actionScheduler->unschedule( 'aioseo_sitemap_ping' );
 		// Then, schedule the new ping.
-		aioseo()->helpers->scheduleSingleAction( 'aioseo_sitemap_ping', 30 );
+		aioseo()->actionScheduler->scheduleSingle( 'aioseo_sitemap_ping', 30 );
 	}
 
 	/**
@@ -108,8 +108,7 @@ class Ping {
 
 		foreach ( $endpoints as $endpoint ) {
 			foreach ( $sitemapUrls as $url ) {
-				wp_remote_get( urlencode( $endpoint . $url ) );
-				// @TODO: [V4+] Log bad responses using dedicated logger class once available.
+				wp_remote_get( $endpoint . urlencode( $url ) );
 			}
 		}
 	}

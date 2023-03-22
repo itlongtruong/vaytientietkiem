@@ -4,6 +4,7 @@
 namespace Nextend\SmartSlider3\Slider\Feature;
 
 
+#[\AllowDynamicProperties]
 class LazyLoad {
 
     private $slider;

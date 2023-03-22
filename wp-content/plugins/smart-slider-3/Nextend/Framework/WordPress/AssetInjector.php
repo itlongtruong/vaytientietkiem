@@ -26,17 +26,23 @@ class AssetInjector {
 
     protected function init() {
 
-        $this->outputBuffer = OutputBuffer::getInstance();
-        if (defined('SMART_SLIDER_OB_START') && SMART_SLIDER_OB_START >= 0) {
-            $this->outputBuffer->setExtraObStart(SMART_SLIDER_OB_START);
+        if (defined('WP_CLI') && WP_CLI) {
+            //Do not start output buffering while WP_CLI active
+
+        } else {
+
+            $this->outputBuffer = OutputBuffer::getInstance();
+            if (defined('SMART_SLIDER_OB_START') && SMART_SLIDER_OB_START >= 0) {
+                $this->outputBuffer->setExtraObStart(SMART_SLIDER_OB_START);
+            }
+
+            $this->addInjectCSSComment();
+
+            add_filter('wordpress_prepare_output', array(
+                $this,
+                'prepareOutput'
+            ));
         }
-
-        $this->addInjectCSSComment();
-
-        add_filter('wordpress_prepare_output', array(
-            $this,
-            'prepareOutput'
-        ));
     }
 
     public function prepareOutput($buffer) {
@@ -163,7 +169,7 @@ class AssetInjector {
     public function injectCSSComment() {
         static $once;
         if (!$once) {
-            echo self::$cssComment;
+            echo wp_kses(self::$cssComment, array());
             $once = true;
         }
     }

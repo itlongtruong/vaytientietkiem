@@ -85,7 +85,7 @@ class Pods_Term_Splitting {
 				$pod_info = $api->load_pod( $params, false );
 			}
 		} catch ( Exception $exception ) {
-			// Do nothing.
+			pods_debug_log( $exception );
 		}
 
 		return $pod_info;
@@ -101,7 +101,7 @@ class Pods_Term_Splitting {
 		$task = "update_podsrel_taxonomy_{$pod_id}";
 
 		if ( ! $this->have_done( $task ) ) {
-			if ( pods_podsrel_enabled() ) {
+			if ( pods_podsrel_enabled( null, __METHOD__ ) ) {
 				// UPDATE {$wpdb->prefix}podsrel SET item_id = {$new_term_id} WHERE pod_id = {$pod_id} AND item_id = {$term_id}
 				$table = "{$wpdb->prefix}podsrel";
 
@@ -172,6 +172,8 @@ class Pods_Term_Splitting {
 		try {
 			$all_pods = pods_api()->load_pods();
 		} catch ( Exception $exception ) {
+			pods_debug_log( $exception );
+
 			return;
 		}
 
@@ -223,7 +225,7 @@ class Pods_Term_Splitting {
 		$task = "update_podsrel_related_term_{$field_id}";
 
 		if ( ! $this->have_done( $task ) ) {
-			if ( pods_podsrel_enabled() ) {
+			if ( pods_podsrel_enabled( null, __METHOD__ ) ) {
 				// UPDATE {$wpdb->prefix}podsrel SET related_item_id = {$new_term_id} WHERE field_id = {$field_id} AND related_item_id = {$term_id}
 				$table = "{$wpdb->prefix}podsrel";
 
@@ -304,8 +306,8 @@ class Pods_Term_Splitting {
 				WHERE
 				    meta.meta_key = %s
 					AND t.post_type = %s
-					AND meta_value LIKE '%%%s%%'
-				", $target_serialized, $replace_serialized, $meta_key, $pod_name, pods_sanitize_like( $target_serialized ) ) );
+					AND meta_value LIKE %s
+				", $target_serialized, $replace_serialized, $meta_key, $pod_name, '%' . pods_sanitize_like( $target_serialized ) . '%' ) );
 
 			$this->append_progress( $task );
 		}//end if
@@ -351,8 +353,8 @@ class Pods_Term_Splitting {
 					meta_value = REPLACE( meta_value, %s, %s )
 				WHERE
 				    meta_key = %s
-					AND meta_value LIKE '%%%s%%'
-				", $target_serialized, $replace_serialized, $meta_key, pods_sanitize_like( $target_serialized ) ) );
+					AND meta_value LIKE %s
+				", $target_serialized, $replace_serialized, $meta_key, '%' . pods_sanitize_like( $target_serialized ) . '%' ) );
 
 			$this->append_progress( $task );
 		}//end if
@@ -398,8 +400,8 @@ class Pods_Term_Splitting {
 					meta_value = REPLACE( meta_value, %s, %s )
 				WHERE
 				    meta_key = %s
-					AND meta_value LIKE '%%%s%%'
-				", $target_serialized, $replace_serialized, $meta_key, pods_sanitize_like( $target_serialized ) ) );
+					AND meta_value LIKE %s
+				", $target_serialized, $replace_serialized, $meta_key, '%' . pods_sanitize_like( $target_serialized ) . '%' ) );
 
 			$this->append_progress( $task );
 		}//end if
@@ -448,8 +450,8 @@ class Pods_Term_Splitting {
 					option_value = REPLACE( option_value, %s, %s )
 				WHERE
 					option_name = %s
-					AND option_value LIKE '%%%s%%'
-				", $target_serialized, $replace_serialized, $option_name, pods_sanitize_like( $target_serialized ) ) );
+					AND option_value LIKE %s
+				", $target_serialized, $replace_serialized, $option_name, '%' . pods_sanitize_like( $target_serialized ) . '%' ) );
 
 			$this->append_progress( $task );
 		}//end if

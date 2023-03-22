@@ -33,7 +33,11 @@ class ViewAjaxGeneratorRecordsTable extends AbstractViewAjax {
             foreach ($recordGroup as $record) {
                 $rows[$i][] = $i + 1;
                 foreach ($record as $recordValue) {
-                    $rows[$i][] = htmlspecialchars($recordValue, ENT_QUOTES, "UTF-8");
+                    if ($recordValue === null) {
+                        $rows[$i][] = '';
+                    } else {
+                        $rows[$i][] = htmlspecialchars($recordValue, ENT_QUOTES, "UTF-8");
+                    }
                 }
             }
             $i++;

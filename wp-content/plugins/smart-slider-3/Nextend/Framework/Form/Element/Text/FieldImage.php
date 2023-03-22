@@ -51,7 +51,7 @@ class FieldImage extends AbstractChooserText {
             return '';
         }
 
-        return 'background-image:URL(' . Sanitize::esc_attr(ResourceTranslator::toUrl($image)) . ');';
+        return 'background-image: url(' . esc_url(ResourceTranslator::toUrl($image)) . ');';
     }
 
     /**

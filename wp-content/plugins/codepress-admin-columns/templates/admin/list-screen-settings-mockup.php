@@ -45,8 +45,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<div class="ac-setbox__row" id="hide-on-screen">
 			<div class="ac-setbox__row__th">
-				<label><?= __( 'Hide on screen', 'codepress-admin-columns' ); ?></label>
-				<small><?= __( 'Select items to hide from the list table screen.', 'codepress-admin-columns' ); ?></small>
+				<label><?= __( 'Table Elements', 'codepress-admin-columns' ); ?></label>
+				<small><?= __( 'Show or hide elements from the table list screen.', 'codepress-admin-columns' ); ?></small>
 			</div>
 			<div class="ac-setbox__row__fields">
 				<div class="ac-setbox__row__fields__inner">
@@ -59,7 +59,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							__( 'Filters', 'codepress-admin-columns' ),
 							__( 'Smart Filters', 'codepress-admin-columns' ),
 							__( 'Export', 'codepress-admin-columns' ),
-							__( 'Quick Add', 'codepress-admin-columns' ),
+							__( 'Add Row', 'codepress-admin-columns' ),
 							__( 'Status (Quick Links)', 'codepress-admin-columns' ),
 							__( 'Search', 'codepress-admin-columns' ),
 							__( 'Bulk Actions', 'codepress-admin-columns' ),

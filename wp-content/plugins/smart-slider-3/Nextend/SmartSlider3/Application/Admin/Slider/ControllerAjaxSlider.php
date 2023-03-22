@@ -250,6 +250,8 @@ class ControllerAjaxSlider extends AdminAjaxController {
     public function actionChangeSliderType() {
         $this->validateToken();
 
+        $this->validatePermission('smartslider_edit');
+
         $sliderID = Request::$GET->getInt('sliderID');
         if ($sliderID > 0) {
             $targetSliderType = Request::$POST->getVar('targetSliderType');
@@ -272,6 +274,8 @@ class ControllerAjaxSlider extends AdminAjaxController {
 
     public function actionRenderResponsiveType() {
         $this->validateToken();
+
+        $this->validatePermission('smartslider_config');
 
         $responsiveType = ResponsiveTypeFactory::getType(Request::$POST->getVar('value'))
                                                ->createAdmin();
@@ -347,6 +351,8 @@ class ControllerAjaxSlider extends AdminAjaxController {
 
     private function renderWidgetForm($type) {
         $this->validateToken();
+        
+        $this->validatePermission('smartslider_config');
 
         $group = WidgetGroupFactory::getGroup($type);
 

@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.0.0
  */
 abstract class Graph {
+	use Traits\Image;
 	use Traits\SocialProfiles;
 
 	/**
@@ -20,89 +21,6 @@ abstract class Graph {
 	 * @since 4.0.0
 	 */
 	abstract public function get();
-
-	/**
-	 * Builds the graph data for a given image with a given schema ID.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @param int    $imageId The image ID.
-	 * @param string $graphId The graph ID.
-	 * @return array $data    The image graph data.
-	 */
-	protected function image( $imageId, $graphId ) {
-		$attachmentId = is_string( $imageId ) && ! is_numeric( $imageId ) ? aioseo()->helpers->attachmentUrlToPostId( $imageId ) : $imageId;
-		$imageUrl     = wp_get_attachment_image_url( $attachmentId, 'full' );
-
-		$data = [
-			'@type' => 'ImageObject',
-			'@id'   => trailingslashit( home_url() ) . '#' . $graphId,
-			'url'   => $imageUrl ? $imageUrl : $imageId,
-		];
-
-		if ( ! $attachmentId ) {
-			return $data;
-		}
-
-		$metaData = wp_get_attachment_metadata( $attachmentId );
-		if ( $metaData ) {
-			$data['width']  = (int) $metaData['width'];
-			$data['height'] = (int) $metaData['height'];
-		}
-
-		$caption = $this->getImageCaption( $attachmentId );
-		if ( ! empty( $caption ) ) {
-			$data['caption'] = $caption;
-		}
-
-		return $data;
-	}
-
-	/**
-	 * Get the image caption.
-	 *
-	 * @since 4.1.4
-	 *
-	 * @param  int    $attachmentId The attachment ID.
-	 * @return string               The caption.
-	 */
-	private function getImageCaption( $attachmentId ) {
-		$caption = wp_get_attachment_caption( $attachmentId );
-		if ( ! empty( $caption ) ) {
-			return $caption;
-		}
-
-		return get_post_meta( $attachmentId, '_wp_attachment_image_alt', true );
-	}
-
-	/**
-	 * Returns the graph data for the avatar of a given user.
-	 *
-	 * @since 4.0.0
-	 *
-	 * @param  int    $userId  The user ID.
-	 * @param  string $graphId The graph ID.
-	 * @return array           The graph data.
-	 */
-	protected function avatar( $userId, $graphId ) {
-		if ( ! get_option( 'show_avatars' ) ) {
-			return [];
-		}
-
-		$avatar = get_avatar_data( $userId );
-		if ( ! $avatar['found_avatar'] ) {
-			return [];
-		}
-
-		return array_filter( [
-			'@type'   => 'ImageObject',
-			'@id'     => aioseo()->schema->context['url'] . "#$graphId",
-			'url'     => $avatar['url'],
-			'width'   => $avatar['width'],
-			'height'  => $avatar['height'],
-			'caption' => get_the_author_meta( 'display_name', $userId )
-		] );
-	}
 
 	/**
 	 * Iterates over a list of functions and sets the results as graph data.

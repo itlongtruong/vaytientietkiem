@@ -228,7 +228,7 @@ abstract class Base {
 	 * @return false|Pods
 	 */
 	public function get_pod_item_by_id_or_slug( $id_or_slug ) {
-		$pod = pods( $this->object, $id_or_slug );
+		$pod = pods_get_instance( $this->object, $id_or_slug );
 
 		if ( ! $pod || is_wp_error( $pod ) || ! $pod->valid() || ! $pod->exists() ) {
 			return false;
@@ -282,7 +282,7 @@ abstract class Base {
 	 *
 	 * @return bool Whether the user has access to the pod item.
 	 */
-	public function check_permission( Pods $pod, $author_field, int $user_id = null ) {
+	public function check_permission( Pods $pod, $author_field, $user_id = null ) {
 		// Maybe use the current user ID.
 		if ( null === $user_id ) {
 			if ( ! is_user_logged_in() ) {
@@ -795,7 +795,7 @@ abstract class Base {
 
 				$doc_endpoint_obj->register_documentation_provider( $rest_doc_route, $this );
 			} catch ( Exception $exception ) {
-				// Do nothing.
+				pods_debug_log( $exception );
 			}
 		}
 

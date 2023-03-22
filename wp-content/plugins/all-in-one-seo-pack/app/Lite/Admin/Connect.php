@@ -24,9 +24,6 @@ class Connect {
 
 		add_action( 'admin_menu', [ $this, 'addDashboardPage' ] );
 		add_action( 'admin_init', [ $this, 'maybeLoadConnect' ] );
-
-		// Create the plugin upgrader with our custom skin.
-		$this->installer = new Utils\PluginUpgraderSilentAjax( new Utils\PluginUpgraderSkin() );
 	}
 
 	/**

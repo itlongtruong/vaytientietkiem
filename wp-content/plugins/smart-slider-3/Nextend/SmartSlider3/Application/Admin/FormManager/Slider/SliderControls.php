@@ -12,6 +12,8 @@ use Nextend\SmartSlider3\Widget\WidgetGroupFactory;
 
 class SliderControls extends AbstractSliderTab {
 
+    use OrderableTrait;
+
     /**
      * SliderControls constructor.
      *
@@ -77,7 +79,7 @@ class SliderControls extends AbstractSliderTab {
 
         $plugins = WidgetGroupFactory::getGroups();
 
-        OrderableTrait::uasort($plugins);
+        self::uasort($plugins);
 
         unset($plugins['autoplay']);
         unset($plugins['indicator']);

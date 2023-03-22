@@ -9,7 +9,7 @@ use Nextend\Framework\Form\ContainerGeneral;
 class ContainerAnimationTab extends ContainerGeneral {
 
     public function renderContainer() {
-        echo '<div class="n2_container_animation__tab" data-tab="' . $this->name . '">';
+        echo '<div class="n2_container_animation__tab" data-tab="' . esc_attr($this->name) . '">';
         parent::renderContainer();
         echo '</div>';
     }

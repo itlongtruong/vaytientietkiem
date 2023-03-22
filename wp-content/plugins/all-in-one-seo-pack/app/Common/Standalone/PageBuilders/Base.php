@@ -94,7 +94,7 @@ abstract class Base {
 	 * @return boolean Whether or not the plugin is active.
 	 */
 	public function isPluginActive() {
-		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+		include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 		foreach ( $this->plugins as $basename ) {
 			if ( is_plugin_active( $basename ) ) {
@@ -134,8 +134,10 @@ abstract class Base {
 		$integrationSlug = $this->integrationSlug;
 		aioseo()->core->assets->load( "src/vue/standalone/$integrationSlug/main.js", [], aioseo()->helpers->getVueData( 'post', $this->getPostId(), $this->integrationSlug ) );
 
-		aioseo()->core->assets->enqueueCss( 'integrations.css', [], 'src/vue/assets/scss/integrations/main.scss' );
+		aioseo()->core->assets->enqueueCss( 'src/vue/assets/scss/integrations/main.scss', [], 'src/vue/assets/scss/integrations/main.scss' );
 
+		aioseo()->admin->addAioseoModalPortal();
+		aioseo()->admin->enqueueAioseoModalPortal();
 		aioseo()->main->enqueueTranslations();
 	}
 
@@ -160,6 +162,18 @@ abstract class Base {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Returns the page builder edit url for the given Post ID.
+	 *
+	 * @since 4.3.1
+	 *
+	 * @param  int    $postId The Post ID.
+	 * @return string         The Edit URL.
+	 */
+	public function getEditUrl( $postId ) { // phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
+		return '';
 	}
 
 	/**

@@ -163,17 +163,17 @@ class BeaverBuilder {
             }
         }
         ?>
-        <select name="<?php echo $name; ?>">
+        <select name="<?php echo esc_attr($name); ?>">
             <option value=""><?php n2_e('None'); ?></option>
             <?php
             foreach ($choices as $id => $choice) {
                 if (is_array($choice)) {
                     ?>
-                    <optgroup label="<?php echo $choice['label']; ?>">
+                    <optgroup label="<?php echo esc_attr($choice['label']); ?>">
                         <?php
                         foreach ($choice['choices'] as $_id => $_choice) {
                             ?>
-                            <option <?php if ($_id == $value){ ?>selected <?php } ?>value="<?php echo $_id; ?>"><?php echo $_choice; ?></option>
+                            <option <?php if ($_id == $value){ ?>selected <?php } ?>value="<?php echo esc_attr($_id); ?>"><?php echo esc_html($_choice); ?></option>
                             <?php
                         }
                         ?>
@@ -181,7 +181,7 @@ class BeaverBuilder {
                     <?php
                 } else {
                     ?>
-                    <option <?php if ($id == $value){ ?>selected <?php } ?>value="<?php echo $id; ?>"><?php echo $choice; ?></option>
+                    <option <?php if ($id == $value){ ?>selected <?php } ?>value="<?php echo esc_attr($id); ?>"><?php echo esc_html($choice); ?></option>
                     <?php
                 }
             }
@@ -189,10 +189,10 @@ class BeaverBuilder {
         </select>
         <div style="line-height:2;padding:10px;"><?php n2_e('OR'); ?></div>
 
-        <a href="#" onclick="NextendSmartSliderSelectModal(jQuery(this).siblings('select')) ;return false;" class="fl-builder-smart-slider-select fl-builder-button fl-builder-button-small fl-builder-button-primary" title="Select slider"><?php echo n2_('Select Slider'); ?></a>
+        <a href="#" onclick="NextendSmartSliderSelectModal(jQuery(this).siblings('select')) ;return false;" class="fl-builder-smart-slider-select fl-builder-button fl-builder-button-small fl-builder-button-primary" title="Select slider"><?php n2_e('Select Slider'); ?></a>
         <script>
             (function ($) {
-                var value = $('select[name="<?php echo $name; ?>"]').val();
+                var value = $('select[name="<?php echo esc_js($name); ?>"]').val();
                 if (value == '' || value == '0') {
                     $('.fl-builder-smart-slider-select').trigger('click');
                 }

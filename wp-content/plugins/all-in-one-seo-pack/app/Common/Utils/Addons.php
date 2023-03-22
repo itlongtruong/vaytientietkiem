@@ -45,7 +45,7 @@ class Addons {
 
 		$addons = aioseo()->core->cache->get( 'addons' );
 		if ( null === $addons || $flushCache ) {
-			$response = wp_remote_get( $this->getAddonsUrl(), [ 'timeout' => 10 ] );
+			$response = aioseo()->helpers->wpRemoteGet( $this->getAddonsUrl() );
 			if ( 200 === wp_remote_retrieve_response_code( $response ) ) {
 				$addons = json_decode( wp_remote_retrieve_body( $response ) );
 			}
@@ -118,6 +118,7 @@ class Addons {
 			'addons'  => [],
 			// Translators: 1 - Opening bold tag, 2 - Plugin short name ("AIOSEO"), 3 - "Pro", 4 - Closing bold tag.
 			'message' => sprintf(
+				// Translators: 1 - Opening HTML strong tag, 2 - The short plugin name ("AIOSEO"), 3 - "Pro", 4 - Closing HTML strong tag.
 				__( 'The following addons cannot be used, because they require %1$s%2$s %3$s%4$s to work:', 'all-in-one-seo-pack' ),
 				'<strong>',
 				AIOSEO_PLUGIN_SHORT_NAME,
@@ -143,9 +144,9 @@ class Addons {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  string  $sku        The addon sku.
-	 * @param  boolean $flushCache Whether or not to flush the cache.
-	 * @return object              The addon.
+	 * @param  string      $sku        The addon sku.
+	 * @param  bool        $flushCache Whether or not to flush the cache.
+	 * @return null|object             The addon.
 	 */
 	public function getAddon( $sku, $flushCache = false ) {
 		$addon     = null;
@@ -236,10 +237,11 @@ class Addons {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  string $name The addon name/sku.
-	 * @return bool         Whether or not the installation was succesful.
+	 * @param  string $name    The addon name/sku.
+	 * @param  bool   $network Whether or not we are in a network environment.
+	 * @return bool            Whether or not the installation was succesful.
 	 */
-	public function installAddon( $name ) {
+	public function installAddon( $name, $network = false ) {
 		if ( ! $this->canInstall() ) {
 			return false;
 		}
@@ -270,7 +272,7 @@ class Addons {
 
 		// Activate the plugin silently.
 		$pluginUrl = ! empty( $installer->pluginSlugs[ $name ] ) ? $installer->pluginSlugs[ $name ] : $name;
-		$activated = activate_plugin( $pluginUrl );
+		$activated = activate_plugin( $pluginUrl, '', $network );
 
 		if ( ! is_wp_error( $activated ) ) {
 			return $name;
@@ -316,7 +318,7 @@ class Addons {
 		}
 
 		// Activate the plugin silently.
-		$activated = activate_plugin( $pluginBasename );
+		$activated = activate_plugin( $pluginBasename, '', $network );
 
 		if ( is_wp_error( $activated ) ) {
 			return false;
@@ -353,7 +355,7 @@ class Addons {
 	 * @return bool True if yes, false if not.
 	 */
 	public function canUpdate() {
-		if ( ! current_user_can( 'update_plugins' ) ) {
+		if ( ! current_user_can( 'update_plugins' ) && ! aioseo()->helpers->isDoingWpCli() ) {
 			return false;
 		}
 
@@ -427,6 +429,28 @@ class Addons {
 	}
 
 	/**
+	 * Run a function through all addons that support it.
+	 *
+	 * @since 4.2.3
+	 *
+	 * @param  string $class    The class name.
+	 * @param  string $function The function name.
+	 * @param  array  $args     The args for the function.
+	 * @return array            The response from each addon.
+	 */
+	public function doFunction( $class, $function, $args = [] ) {
+		$addonResponses = [];
+
+		foreach ( $this->getLoadedAddons() as $addonSlug => $addon ) {
+			if ( isset( $addon->$class ) && method_exists( $addon->$class, $function ) ) {
+				$addonResponses[ $addonSlug ] = call_user_func_array( [ $addon->$class, $function ], $args );
+			}
+		}
+
+		return $addonResponses;
+	}
+
+	/**
 	 * Retrieves a default addon with whatever information is needed if the API cannot be reached.
 	 *
 	 * @since 4.0.0
@@ -456,37 +480,65 @@ class Addons {
 	protected function getDefaultAddons() {
 		return json_decode( wp_json_encode( [
 			[
-				'sku'                => 'aioseo-image-seo',
-				'name'               => 'Image SEO',
+				'sku'                => 'aioseo-redirects',
+				'name'               => 'Redirection Manager',
 				'version'            => '1.0.0',
 				'image'              => null,
-				'icon'               => 'svg-image-seo',
+				'icon'               => 'svg-redirect',
 				'levels'             => [
-					'individual',
-					'business',
 					'agency',
-					'plus',
+					'business',
 					'pro',
-					'elite',
+					'elite'
 				],
 				'currentLevels'      => [
-					'plus',
 					'pro',
 					'elite'
 				],
 				'requiresUpgrade'    => true,
-				'description'        => '<p>Globally control the Title attribute and Alt text for images in your content. These attributes are essential for both accessibility and SEO.</p>',
+				'description'        => '<p>Our Redirection Manager allows you to easily create and manage redirects for your broken links to avoid confusing search engines and users, as well as losing valuable backlinks. It even automatically sends users and search engines from your old URLs to your new ones.</p>', // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 				'descriptionVersion' => 0,
-				'productUrl'         => 'https://aioseo.com/image-seo',
-				'learnMoreUrl'       => 'https://aioseo.com/image-seo',
-				'manageUrl'          => 'https://route#aioseo-search-appearance:media',
-				'basename'           => 'aioseo-image-seo/aioseo-image-seo.php',
+				'productUrl'         => 'https://aioseo.com/features/redirection-manager/',
+				'learnMoreUrl'       => 'https://aioseo.com/features/redirection-manager/',
+				'manageUrl'          => 'https://route#aioseo-redirects',
+				'basename'           => 'aioseo-redirects/aioseo-redirects.php',
 				'installed'          => false,
 				'isActive'           => false,
 				'canInstall'         => false,
 				'canActivate'        => false,
 				'canUpdate'          => false,
-				'capability'         => $this->getManageCapability( 'aioseo-image-seo' ),
+				'capability'         => $this->getManageCapability( 'aioseo-redirects' ),
+				'minimumVersion'     => '0.0.0',
+				'hasMinimumVersion'  => false
+			],
+			[
+				'sku'                => 'aioseo-link-assistant',
+				'name'               => 'Link Assistant',
+				'version'            => '1.0.0',
+				'image'              => null,
+				'icon'               => 'svg-link-assistant',
+				'levels'             => [
+					'agency',
+					'pro',
+					'elite'
+				],
+				'currentLevels'      => [
+					'pro',
+					'elite'
+				],
+				'requiresUpgrade'    => true,
+				'description'        => '<p>Super-charge your SEO with Link Assistant! Get relevant suggestions for adding internal links to older content as well as finding any orphaned posts that have no internal links. Use our reporting feature to see all link suggestions or add them directly from any page or post.</p>', // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+				'descriptionVersion' => 0,
+				'productUrl'         => 'https://aioseo.com/feature/internal-link-assistant/',
+				'learnMoreUrl'       => 'https://aioseo.com/feature/internal-link-assistant/',
+				'manageUrl'          => 'https://route#aioseo-link-assistant',
+				'basename'           => 'aioseo-link-assistant/aioseo-link-assistant.php',
+				'installed'          => false,
+				'isActive'           => false,
+				'canInstall'         => false,
+				'canActivate'        => false,
+				'canUpdate'          => false,
+				'capability'         => $this->getManageCapability( 'aioseo-link-assistant' ),
 				'minimumVersion'     => '0.0.0',
 				'hasMinimumVersion'  => false
 			],
@@ -590,69 +642,6 @@ class Addons {
 				'hasMinimumVersion'  => false
 			],
 			[
-				'sku'                => 'aioseo-redirects',
-				'name'               => 'Redirection Manager',
-				'version'            => '1.0.0',
-				'image'              => null,
-				'icon'               => 'svg-redirect',
-				'levels'             => [
-					'agency',
-					'business',
-					'pro',
-					'elite'
-				],
-				'currentLevels'      => [
-					'pro',
-					'elite'
-				],
-				'requiresUpgrade'    => true,
-				'description'        => '<p>Our Redirection Manager allows you to easily create and manage redirects for your broken links to avoid confusing search engines and users, as well as losing valuable backlinks. It even automatically sends users and search engines from your old URLs to your new ones.</p>', // phpcs:ignore Generic.Files.LineLength.MaxExceeded
-				'descriptionVersion' => 0,
-				'productUrl'         => 'https://aioseo.com/features/redirection-manager/',
-				'learnMoreUrl'       => 'https://aioseo.com/features/redirection-manager/',
-				'manageUrl'          => 'https://route#aioseo-redirects',
-				'basename'           => 'aioseo-redirects/aioseo-redirects.php',
-				'installed'          => false,
-				'isActive'           => false,
-				'canInstall'         => false,
-				'canActivate'        => false,
-				'canUpdate'          => false,
-				'capability'         => $this->getManageCapability( 'aioseo-redirects' ),
-				'minimumVersion'     => '0.0.0',
-				'hasMinimumVersion'  => false
-			],
-			[
-				'sku'                => 'aioseo-link-assistant',
-				'name'               => 'Link Assistant',
-				'version'            => '1.0.0',
-				'image'              => null,
-				'icon'               => 'svg-link-assistant',
-				'levels'             => [
-					'agency',
-					'pro',
-					'elite'
-				],
-				'currentLevels'      => [
-					'pro',
-					'elite'
-				],
-				'requiresUpgrade'    => true,
-				'description'        => '<p>Super-charge your SEO with Link Assistant! Get relevant suggestions for adding internal links to older content as well as finding any orphaned posts that have no internal links. Use our reporting feature to see all link suggestions or add them directly from any page or post.</p>', // phpcs:ignore Generic.Files.LineLength.MaxExceeded
-				'descriptionVersion' => 0,
-				'productUrl'         => 'https://aioseo.com/feature/internal-link-assistant/',
-				'learnMoreUrl'       => 'https://aioseo.com/feature/internal-link-assistant/',
-				'manageUrl'          => 'https://route#aioseo-link-assistant',
-				'basename'           => 'aioseo-link-assistant/aioseo-link-assistant.php',
-				'installed'          => false,
-				'isActive'           => false,
-				'canInstall'         => false,
-				'canActivate'        => false,
-				'canUpdate'          => false,
-				'capability'         => $this->getManageCapability( 'aioseo-link-assistant' ),
-				'minimumVersion'     => '0.0.0',
-				'hasMinimumVersion'  => false
-			],
-			[
 				'sku'                => 'aioseo-index-now',
 				'name'               => 'IndexNow',
 				'version'            => '1.0.0',
@@ -672,7 +661,7 @@ class Addons {
 					'pro',
 					'elite'
 				],
-				'requiresUpgrade'    => false,
+				'requiresUpgrade'    => true,
 				'description'        => '<p>Add IndexNow support to instantly notify search engines when your content has changed. This helps the search engines to prioritize the changes on your website and helps you rank faster.</p>', // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 				'descriptionVersion' => 0,
 				'downloadUrl'        => '',
@@ -705,7 +694,7 @@ class Addons {
 					'pro',
 					'elite'
 				],
-				'requiresUpgrade'    => false,
+				'requiresUpgrade'    => true,
 				'description'        => '<p>Manage your post and term SEO meta via the WordPress REST API. This addon also works seamlessly with headless WordPress installs.</p>', // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 				'descriptionVersion' => 0,
 				'downloadUrl'        => '',
@@ -721,7 +710,51 @@ class Addons {
 				'capability'         => null,
 				'minimumVersion'     => '0.0.0',
 				'hasMinimumVersion'  => false
+			],
+			[
+				'sku'                => 'aioseo-image-seo',
+				'name'               => 'Image SEO',
+				'version'            => '1.0.0',
+				'image'              => null,
+				'icon'               => 'svg-image-seo',
+				'levels'             => [
+					'individual',
+					'business',
+					'agency',
+					'plus',
+					'pro',
+					'elite',
+				],
+				'currentLevels'      => [
+					'plus',
+					'pro',
+					'elite'
+				],
+				'requiresUpgrade'    => true,
+				'description'        => '<p>Globally control the Title attribute and Alt text for images in your content. These attributes are essential for both accessibility and SEO.</p>',
+				'descriptionVersion' => 0,
+				'productUrl'         => 'https://aioseo.com/image-seo',
+				'learnMoreUrl'       => 'https://aioseo.com/image-seo',
+				'manageUrl'          => 'https://route#aioseo-search-appearance:media',
+				'basename'           => 'aioseo-image-seo/aioseo-image-seo.php',
+				'installed'          => false,
+				'isActive'           => false,
+				'canInstall'         => false,
+				'canActivate'        => false,
+				'canUpdate'          => false,
+				'capability'         => $this->getManageCapability( 'aioseo-image-seo' ),
+				'minimumVersion'     => '0.0.0',
+				'hasMinimumVersion'  => false
 			]
 		] ) );
 	}
+
+	/**
+	 * Check for updates for all addons.
+	 *
+	 * @since 4.2.4
+	 *
+	 * @return void
+	 */
+	public function registerUpdateCheck() {}
 }

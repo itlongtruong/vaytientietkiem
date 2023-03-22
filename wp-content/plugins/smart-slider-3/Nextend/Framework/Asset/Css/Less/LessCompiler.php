@@ -35,6 +35,7 @@ use stdClass;
  * The `lessc_formatter` takes a CSS tree, and dumps it to a formatted string,
  * handling things like indentation.
  */
+#[\AllowDynamicProperties]
 class LessCompiler {
 
     static public $VERSION = "v0.3.8";
@@ -1482,7 +1483,7 @@ class LessCompiler {
                 $width    = strlen($colorStr) == 3 ? 16 : 256;
 
                 for ($i = 3; $i > 0; $i--) { // 3 2 1
-                    $t   = $num % $width;
+                    $t   = fmod($num, $width);
                     $num /= $width;
 
                     $c[$i] = $t * (256 / $width) + $t * floor(16 / $width);
@@ -1575,7 +1576,7 @@ class LessCompiler {
         }
 
         // type based operators
-        $fname = "op_${ltype}_${rtype}";
+        $fname = "op_{$ltype}_{$rtype}";
         if (is_callable(array(
             $this,
             $fname

@@ -16,6 +16,7 @@ use Nextend\Framework\Form\Element\Text\TextAutoComplete;
 use Nextend\Framework\Form\Element\Textarea;
 use Nextend\Framework\Form\Element\Token;
 use Nextend\Framework\Form\Form;
+use Nextend\Framework\Sanitize;
 use Nextend\SmartSlider3\Application\Admin\Layout\Block\Forms\Button\BlockButton;
 use Nextend\SmartSlider3\Application\Admin\TraitAdminUrl;
 use Nextend\SmartSlider3\Platform\Joomla\JoomlaShim;
@@ -178,7 +179,7 @@ class ViewSettingsGeneral extends AbstractViewSettings {
             'tipDescription' => n2_('The new URL you want to use. E.g. https://newsite.com')
         ));
 
-        echo $form->render();
+        $form->render();
 
         echo '<input name="namespace" value="default" type="hidden">';
     }
